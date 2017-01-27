@@ -1,3 +1,5 @@
+Meyes Briggs type: INFP 
+
 1. We will complete the project, including the additional honors option work. We will have a deeper understanding of programming and teamwork.
 
 2. I want to have a successful team project where I don't have to pick up the slack of other members. I hope to find healthier ways to work in a team than I am used to in school team projects.
