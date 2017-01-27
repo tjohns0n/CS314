@@ -1,3 +1,5 @@
+Meyes Briggs type: ENFP
+
 1.What are your expectations about what your team will accomplish this semester?
 
 We all do our best to achieve the expectations and ideal scores.
