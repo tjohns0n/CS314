@@ -1,3 +1,5 @@
+Myers-Briggs Type: ENTJ
+
 1. Complete the assigned functionality of the software. Get the map application working on mobile and desktop with dynamic resizing through grommet.io, make the server able to accept and service multiple request at the same time.
 
 2. Learn agile and scrum, get experience with grommet and working within a development team
