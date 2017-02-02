@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title>Component Test - Layout</title>
+    <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400italic,400,700' rel='stylesheet' type='text/css'>
+    <link href='http://grommet.io/assets/latest/css/grommet.min.css' rel='stylesheet' type='text/css'>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.1/react-with-addons.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.1/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+    <script src="http://grommet.io/assets/latest/grommet.min.js"></script>
+</head>
+<body>
+    <div id="content"></div>
+    <script type="text/babel">
+
+    class HelloWorldApp extends React.Component {
+        render () {
+            return (
+            <Grommet.App>
+                <Grommet.Heading tag='h1'>Grommet Layout Components:</Grommet.Heading>
+                <Grommet.Heading tag='h2'>Boxes:</Grommet.Heading>
+                <Grommet.Box colorIndex='light-2'>
+                    <Grommet.Paragraph>Paragraph in a box</Grommet.Paragraph>
+                </Grommet.Box>
+                <br />
+                <Grommet.Box colorIndex='accent-1' align='center'>
+                    <Grommet.Heading tag='h3' margin='small'>You can put just about anything in a box</Grommet.Heading>
+                    <Grommet.Paragraph size='small'>This makes them a very useful base for design in Grommet.</Grommet.Paragraph>
+                    <Grommet.Box align='center' pad='small' direction='row'>
+                        <Grommet.Box align='center' pad='medium' margin='small' colorIndex='light-2' separator='vertical'>Box 1</Grommet.Box>
+                        <Grommet.Box align='center' pad='medium' margin='small' colorIndex='accent-2' separator='vertical'>Box 2</Grommet.Box>
+                        <Grommet.Box align='center' pad='medium' margin='small' colorIndex='light-2' separator='vertical'>Box 3</Grommet.Box>
+                        <Grommet.Box align='center' pad='medium' margin='small' colorIndex='accent-2' separator='vertical'>Box 4</Grommet.Box>
+                        <Grommet.Box align='center' pad='medium' margin='small' colorIndex='light-2' separator='vertical'>Box 5</Grommet.Box>
+                    </Grommet.Box>
+                </Grommet.Box>
+                <br />
+                <br />
+                <Grommet.Box>
+                    <Grommet.Heading tag='h2'>Grommet can do splits:</Grommet.Heading>
+                    <Grommet.Split flex='right' fixed='false'>
+                        <Grommet.Box pad='large' colorIndex='accent-1'>
+                            <Grommet.Headline size='small'>Side Content</Grommet.Headline>
+                            <Grommet.Paragraph>Hello</Grommet.Paragraph>
+                            <Grommet.Paragraph>How are you?</Grommet.Paragraph>
+                            <Grommet.Paragraph>I am well</Grommet.Paragraph>
+                        </Grommet.Box>
+                        <Grommet.Box pad='large'>
+                            <Grommet.Headline size='large'>Here's the main content</Grommet.Headline>
+                            <Grommet.Split>
+                                <Grommet.Box colorIndex='accent1' full='false'>
+                                    <Grommet.Paragraph>A Split</Grommet.Paragraph>
+                                </Grommet.Box>
+                                <Grommet.Box colorIndex='accent2' full='false'>
+                                    <Grommet.Paragraph>within a split</Grommet.Paragraph>
+                                </Grommet.Box>
+                            </Grommet.Split>
+                            <Grommet.Paragraph>I'm having trouble getting rid of the space above</Grommet.Paragraph>
+                        </Grommet.Box>
+                    </Grommet.Split>
+                </Grommet.Box>
+            </Grommet.App>
+            );
+        }
+    };
+
+    var element = document.getElementById('content');
+    ReactDOM.render(React.createElement(HelloWorldApp), element);
+    </script>
+</body>
+</html>
