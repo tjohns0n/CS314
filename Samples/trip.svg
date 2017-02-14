@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<svg width="1280" height="1024" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+ <!-- Created with SVG-edit - http://svg-edit.googlecode.com/ -->
+ <g>
+  <title>Legs</title>
+  <!-- The legs should be drawn as individual line strokes. -->
+  <line id="leg1" y2="110" x2="500" y1="100" x1="100" stroke-width="3" stroke="#999999"/>
+  <line id="leg2" y2="900" x2="1140" y1="110" x1="500" stroke-width="3" stroke="#999999"/>
+  <line id="leg3" y2="700" x2="120" y1="900" x1="1140" stroke-width="3" stroke="#999999"/>
+  <line id="leg4" y2="400" x2="200" y1="700" x1="120" stroke-width="3" stroke="#999999"/>
+  <line id="leg5" y2="100" x2="100" y1="400" x1="200" stroke-width="3" stroke="#999999"/>
+ </g>
+ <g>
+  <title>Borders</title>
+  <!-- The border outline should provide a minimum 50 pixel border, centered in the window -->
+  <line id="north" y2="50" x2="1230" y1="50" x1="50" stroke-width="5" stroke="#666666"/>
+  <line id="east" y2="974" x2="1230" y1="50" x1="1230" stroke-width="5" stroke="#666666"/>
+  <line id="south" y2="974" x2="50" y1="974" x1="1230" stroke-width="5" stroke="#666666"/>
+  <line id="west" y2="50" x2="50" y1="974" x1="50" stroke-width="5" stroke="#666666"/>
+ </g>
+ <g>
+  <title>Titles</title>
+  <!-- There should be a single title in the border area at the top. -->
+  <!-- There should be a single footer in the border at the top that displays the total number of miles for the trip. -->
+  <text text-anchor="middle" font-family="Sans-serif" font-size="24" id="state" y="40" x="640">Colorado</text>
+  <text text-anchor="middle" font-family="Sans-serif" font-size="24" id="distance" y="1014" x="640">9999 miles</text>
+ </g>
+ <g>
+  <title>Locations</title>
+  <!-- These could be the ids or the names for the locations, but not both -->
+  <text font-family="Sans-serif" font-size="16" id="id1" y="100" x="100">CityA</text>
+  <text font-family="Sans-serif" font-size="16" id="id2" y="110" x="500">CityB</text>
+  <text font-family="Sans-serif" font-size="16" id="id3" y="900" x="1140">CityC</text>
+  <text font-family="Sans-serif" font-size="16" id="id4" y="700" x="120">CityD</text>
+  <text font-family="Sans-serif" font-size="16" id="id5" y="400" x="200">CityE</text>
+ </g>
+ <g>
+  <title>Distances</title>
+  <!-- Distances should appear at the middle of the line drawn for the leg -->
+  <!-- The id's should correspond to ids on the legs above -->
+  <text font-family="Sans-serif" font-size="16" id="leg1" y="105" x="300">55</text>
+  <text font-family="Sans-serif" font-size="16" id="leg2" y="505" x="820">80</text>
+  <text font-family="Sans-serif" font-size="16" id="leg3" y="800" x="630">95</text>
+  <text font-family="Sans-serif" font-size="16" id="leg4" y="550" x="160">30</text>
+  <text font-family="Sans-serif" font-size="16" id="leg5" y="250" x="150">35</text>
+ </g>
+</svg>
