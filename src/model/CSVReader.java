@@ -1,4 +1,4 @@
-
+package Model;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -7,22 +7,29 @@ import java.io.IOException;
 
 public class CSVReader{
 
-	private 		String 				csvFileName;
-	private 		BufferedReader 		br;
-	private 		LocationList		loclist;
-	private final 	String 				cvsSplitChar = ",";
+	// args: *.csv 			#csv filename 
+	private String csvFileName;
+	// args: buffer reader 	#read buffer from a file and return a line string
+	private BufferedReader br;
+	// args: location list 	#have a reference of location list
+	//						#send line string to location list function for further process
+	private LocationList loclist;
+	// args: cvs splitchar 	#a char that used for spliting information in cvs format
+	private final String cvsSplitChar = ",";
 
 
-	// Constructor with csvFileName and loclist
-	// csvFileName 
-	// loclist 
+	// Constructor 
+	// args: csvFileName / args: LocationList
+	// #accpet filename and send string to location list
+	// Enhancement: -- location list can be a local args
 	public CSVReader(String csvFileName, LocationList loclist){
 		this.csvFileName= csvFileName;
 		this.loclist 	= loclist;
 		csvHandler();
 	}
 
-	//deal with csv file and extract valid info from each line
+	// csvHandler - private function
+	// #deal with csv file and extract valid info from each line
 	private void csvHandler(){
 		try{
 			// open a buffer reader and check the first line

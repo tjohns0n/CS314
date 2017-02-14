@@ -1,10 +1,13 @@
 
+// ATTENTION: this class is still in process
+
+package Model;
 
 public class ShortestRouteCalculator{
 
-	private 	LocationList	loclist;
-	private		int[]			final_route;
-	private		double 			final_dis;
+	private LocationList loclist;
+	private	int[] final_route;
+	private	double final_dis;
 
 	public ShortestRouteCalculator(LocationList loclist){
 		this.loclist 	= loclist;
