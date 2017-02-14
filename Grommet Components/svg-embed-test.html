@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title>Component Test - Layout</title>
+    <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400italic,400,700' rel='stylesheet' type='text/css'>
+    <link href='http://grommet.io/assets/latest/css/grommet.min.css' rel='stylesheet' type='text/css'>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.1/react-with-addons.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.1/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+    <script src="http://grommet.io/assets/latest/grommet.min.js"></script>
+</head>
+<body>
+    <div id="content"></div>
+    <script type="text/babel">
+
+    class HelloWorldApp extends React.Component {
+        render () {
+            return (
+            <Grommet.App>
+                <Grommet.Heading>Open the accordions below to see an SVG or XML</Grommet.Heading>
+                <Grommet.Accordion openMulti="true">
+                    <Grommet.AccordionPanel heading="Trip Map">
+                        <object type="image/svg+xml" data="../Samples/coloradoMap.svg"></object>
+                    </Grommet.AccordionPanel>
+                    <Grommet.AccordionPanel heading="Trip Itinerary">
+                        <Grommet.Box>
+                            <iframe src="../Samples/trip.xml"></iframe>
+                            <Grommet.Paragraph>The default browser rendering of an XML is very, very ugly, so we'll probably want to use an XSL for styling it on the webpage. Not sure if we'll have time for that in this sprint.</Grommet.Paragraph>
+                        </Grommet.Box>
+                    </Grommet.AccordionPanel>
+                </Grommet.Accordion>
+                <Grommet.Heading>Switch between multiple SVGs here:</Grommet.Heading>
+                <Grommet.Tabs>
+                    <Grommet.Tab title="simple SVG">
+                        <object type="image/svg+xml" data="../Samples/trip.svg"></object>
+                    </Grommet.Tab>
+                    <Grommet.Tab title="detailed SVG">
+                        <object type="image/svg+xml" data="../Samples/coloradoMap.svg"></object>
+                    </Grommet.Tab>
+                </Grommet.Tabs>
+            </Grommet.App>
+            );
+        }
+    };
+
+    var element = document.getElementById('content');
+    ReactDOM.render(React.createElement(HelloWorldApp), element);
+    </script>
+</body>
+</html>

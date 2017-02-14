@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+This sample shows a round trip involving 5 cities. 
+-->
+<trip>
+<!--
+sequence - the order of the legs
+start - the name of the starting location for a leg
+finish - the name of the finishing location for a leg
+mileage - the number of miles (to the nearest whole mile) between the starting and finishing locations
+-->
+<leg>
+  <sequence>1</sequence>
+  <start>name1</start>
+  <finish>name2</finish>
+  <mileage>10</mileage>
+</leg>
+<leg>
+  <sequence>2</sequence>
+  <start>name2</start>
+  <finish>name3</finish>
+  <mileage>20</mileage>
+</leg>
+<leg>
+  <sequence>3</sequence>
+  <start>name3</start>
+  <finish>name4</finish>
+  <mileage>50</mileage>
+</leg>
+<leg>
+  <sequence>4</sequence>
+  <start>name4</start>
+  <finish>name5</finish>
+  <mileage>30</mileage>
+</leg>
+<leg>
+  <sequence>5</sequence>
+  <start>name5</start>
+  <finish>id2</finish>
+  <mileage>name1</mileage>
+</leg>
+</trip>
