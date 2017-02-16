@@ -10,7 +10,7 @@ import org.junit.Test;
 
 public class SVGWriterTest {
 
-	//@Test
+	@Test
 	public void testSVGWriterConstructor1() {
 		
 		try {
@@ -26,7 +26,11 @@ public class SVGWriterTest {
 			 */
 			SVGWriter s = new SVGWriter("test.svg");
 			// Check the header
-			assertTrue(s.header.equals(expected));
+			String cat = s.header.get(0);
+			for (String string : s.originalContent) {
+				cat += string + "\n";
+			}
+			assertTrue(cat.equals(expected));
 			// Check the height and width
 			assertTrue(s.width == 10);
 			assertTrue(s.height == 10);
@@ -36,7 +40,14 @@ public class SVGWriterTest {
 		}
 	}
 	
-	//@Test
+	@Test
+	public void testSVGWriterConstructor2() {
+		SVGWriter s = new SVGWriter(100, 100);
+		String expected = "<?xml version=\"1.0\"?>\n<svg width=\"100\" height=\"100\" xmlns:svg=\"http://www.w3.org/2000/svg\" xmlns=\"http://www.w3.org/2000/svg\">";
+		assertTrue((s.header.get(0) + "\n" + s.header.get(1)).equals(expected));
+	}
+	
+	@Test
 	public void testAddLine() {
 		try {
 			/*
@@ -49,10 +60,12 @@ public class SVGWriterTest {
 			 * Open the SVG using the SVGWriter class
 			 */
 			SVGWriter s = new SVGWriter("test.svg");
-			s.addLine(0, 0, 10, 10);
+			s.addLine(0, 0, 10, 10, "#999999", 3);
+			s.addLine(0.0, 0.0, 10.0, 10.0, "#999999", 3);
 			String expected = s.content.get(0);
-			System.out.println(expected);
-			assertTrue(expected.equals("<line x1=\"0\" y1=\"0\" x2=\"10\" y2=\"10\" />"));
+			assertTrue(expected.equals("<line x1=\"0\" y1=\"0\" x2=\"10\" y2=\"10\" stroke=\"#999999\" stroke-width=\"3\" />"));
+			expected = s.content.get(1);
+			assertTrue(expected.equals("<line x1=\"0\" y1=\"0\" x2=\"10\" y2=\"10\" stroke=\"#999999\" stroke-width=\"3\" />"));
 		}
 		catch (IOException e) {
 			System.out.println("Failed to create file test.svg");
@@ -62,6 +75,29 @@ public class SVGWriterTest {
 	@Test
 	public void testWriteSVG() {
 
+	}
+
+	@Test
+	public void testPadSVG() {
+		SVGWriter s = new SVGWriter("coloradoMap.svg");
+		s.padSVG();
+		s.addTitle("Colorado", "state");
+		s.writeSVG("coloradoMapCopy.svg");
+	}
+	
+	@Test
+	public void testNewGroup() {
+		SVGWriter s = new SVGWriter(100, 100);
+		s.newGroup("Test group");
+		assertTrue(s.content.get(0).equals("<g >"));
+		assertTrue(s.content.get(1).equals("<title >Test group</title>"));
+	}
+
+	@Test
+	public void testEndGroup() {
+		SVGWriter s = new SVGWriter(100, 100);
+		s.endGroup();
+		assertTrue(s.content.get(0).equals("</g>"));
 	}
 
 }
