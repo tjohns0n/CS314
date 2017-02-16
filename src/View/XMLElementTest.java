@@ -52,6 +52,7 @@ public class XMLElementTest {
 	}
 	
 	@Test
+    // Trip trip;
 	public void testBuildStart4() {
 		XMLElement xml = new XMLElement("xml", "version=\"1.0\"");
 		assertTrue(xml.start.equals("<?xml version=\"1.0\"?>"));
