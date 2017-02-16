@@ -15,11 +15,11 @@ public class LocationList{
 		locList = new ArrayList <Location>();
 	}
 
-	// getLocList - External interface function
-	// #return args:locList
-	public ArrayList <Location> getLocList(){
-		return locList;
-	}
+	// // getLocList - External interface function
+	// // #return args:locList
+	// public ArrayList <Location> getLocList(){
+	// 	return locList;
+	// }
 
 	// get - External interface function
 	// #return args:(class)location

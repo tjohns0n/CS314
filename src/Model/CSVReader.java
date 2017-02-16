@@ -25,6 +25,9 @@ public class CSVReader{
 	public CSVReader(String csvFileName, LocationList loclist){
 		this.csvFileName= csvFileName;
 		this.loclist 	= loclist;
+	}
+
+	public void initiate(){
 		csvHandler();
 	}
 
