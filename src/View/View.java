@@ -35,24 +35,6 @@ public class View {
     public String getRootName() {
     	return rootName;
     }
-    
-    /*
-    writeSVG: Create an SVGWriter to output an SVG displaying a Trip.
-    args:
-    trip (unimplemented) - the trip to be drawn to the SVG
-    */
-    public void writeSVG(/*Trip trip*/) {
-        
-    }
-
-    /*
-    writeXML: Create an XMLWriter to output an XML displaying a Trip.
-    args:
-    trip (unimplemented) - the trip to be detailed by the XML 
-    */
-    public void writeXML(/*Trip trip*/) {
-        
-    }
 
     /*
     === Likely to be removed ===
