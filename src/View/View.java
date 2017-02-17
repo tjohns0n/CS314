@@ -94,6 +94,7 @@ public class View {
         itinWrite.writeXML(rootName + ".xml");
     }
 
+
     /*
     === Likely to be removed ===
     display: output text to the console
