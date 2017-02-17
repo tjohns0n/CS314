@@ -126,13 +126,49 @@ public class SVGWriter {
 	}
     
 	/*
+	 * mapPoints - take points from one coordinate system and put them in that of the SVG
+	 * Currently hardcoded to work with the colorado map
+	 * args:
+	 * x - the x coordinate of the point to map
+	 * y - the y coordinate of the point to map
+	 *
+	 * TODO: 
+	 * - change so that any coordinate system can be mapped
+	 */
+	public int[] mapPoints(double x, double y) {
+		int[] mapping = new int[2];
+		x += 109;
+		y -= 41;
+		x *= ((992.6073) / 7);
+		y *= ((709.0824) / -4);
+		x += 37;
+		y += 37;
+		mapping[0] = (int)x;
+		mapping[1] = (int)y;
+		return mapping;
+	}
+
+	/*
 	 * addLine - add a line to the SVG write queue
 	 * args:
 	 * x1, y1, x2, y2 - the x and y coordinates of each point 
 	 * color - the color of the line (accepts SVG color names or hex values with #)
 	 * width - the width of the line 
+	 * map - whether or not the points need to be mapped to the SVG coordinates
+	 * flags - the command line flags as follows:	
 	 */
-    public void addLine(int x1, int y1, int x2, int y2, String color, int width) {
+    public void addLine(int x1, int y1, int x2, int y2, String color, int width, boolean map) {
+		// Change mapping of the coordinates from geographic to SVG:
+    	if (map) {
+    		int[] point1 = mapPoints((double)x1, (double)y1);
+    		x1 = point1[0];
+    		y1 = point1[1];
+
+    		int[] point2 = mapPoints((double)x2, (double)y2);
+    		x2 = point2[0];
+    		y2 = point2[1];
+    	}
+    		
 		// Construct attribute list for the line
     	ArrayList<String> attributes = new ArrayList<String>();
     	attributes.add("x1");
@@ -159,8 +195,19 @@ public class SVGWriter {
 	 * x1, y1, x2, y2 - the x and y coordinates of each point 
 	 * color - the color of the line (accepts SVG color names or hex values with #)
 	 * width - the width of the line 
+	 * map - whether or not the points need to be mapped to the SVG coordinates
 	 */
-	public void addLine(double x1, double y1, double x2, double y2, String color, int width) {
+	public void addLine(double x1, double y1, double x2, double y2, String color, int width, boolean map) {
+		if (map) {
+			int[] point1 = mapPoints((double)x1, (double)y1);
+			x1 = point1[0];
+			y1 = point1[1];
+
+			int[] point2 = mapPoints((double)x2, (double)y2);
+			x2 = point2[0];
+			y2 = point2[1];
+		}
+
 		ArrayList<String> attributes = new ArrayList<String>();
     	attributes.add("x1");
     	attributes.add(Integer.toString((int)x1));
@@ -232,13 +279,20 @@ public class SVGWriter {
 	 * size - the font size
 	 * id - the XML id of the text element
 	 * center - center text on x, y if true
+	 * map - whether or not the points need to be mapped to the SVG coordinates
 	 */
-	private XMLElement addText(String text, int x, int y, int size, String id, boolean center) {
+	private XMLElement addText(String text, double x, double y, int size, String id, boolean center, boolean map) {
+		if (map) {
+			int[] point = mapPoints(x, y);
+			x = (double)point[0];
+			y = (double)point[1];
+		}
+
 		ArrayList<String> attributes = new ArrayList<String>();
 		attributes.add("x");
-		attributes.add(Integer.toString(x));
+		attributes.add(Integer.toString((int)x));
 		attributes.add("y");
-		attributes.add(Integer.toString(y));
+		attributes.add(Integer.toString((int)y));
 		attributes.add("font-size");
 		attributes.add(Integer.toString(size));
 		attributes.add("id");
@@ -258,14 +312,45 @@ public class SVGWriter {
 	 * id - the SVG id of the text element
 	 */
 	public void addTitle(String text, String id) {
-		XMLElement txt = addText(text, (int)(width + 2 * xOffset)/ 2, yOffset - 10, 24, id, true);
+		// Create text element centered on the horizontal axis, 4/5 of the way down the padding on the vertical axis
+		XMLElement txt = addText(text, (width + 2 * xOffset)/ 2, yOffset * 4 / 5, 24, id, true, false);
+		// Add to the header so it's not transformed with the original SVG:
+		header.add(2, txt.getStart() + text + txt.getEnd());
+	}
+
+	public void addFooter(String text, String id) {
+		XMLElement txt = addText(text, (width + 2 * xOffset) / 2, yOffset + (3 * yOffset / 5) + height, 24, id, true, false);
 		header.add(2, txt.getStart() + text + txt.getEnd());
 	}
 
 	/*
+	 * addLineLabel - add a text label in the middle of two x,y coordinates
+	 * text - the text of the label
+	 * id - the id attribute of the text (e.g. "leg1")
+	 * x1, y1, x2, y2 - the coordinates of a line 
+	 */
+	public void addLineLabel(String text, String id, double x1, double y1, double x2, double y2) {
+		XMLElement txt = addText(text, x1 + (x2 - x1) / 2, y1 + (y2 - y1) / 2, 16, id, false, true);
+		content.add(txt.getStart() + text + txt.getEnd());
+	}
+
+	public void addLabel(String text, String id, double x, double y) {
+		XMLElement txt = addText(text, x, y, 16, id, false, true);
+		content.add(txt.getStart() + text + txt.getEnd());
+	}
+
+	/*
 	 * writeSVG - output the SVG to a file
-	*/
-    public void writeSVG(String filename) {
+	 * Returns an ArrayList of all the contents for testing 
+	 */
+    public ArrayList<String> writeSVG(String filename) {
+    	ArrayList<String> testData = new ArrayList<String>();
+    	testData.addAll(header);
+    	if (originalContent != null) {
+    		testData.addAll(originalContent);
+    	}
+    	testData.addAll(content);
+    	testData.addAll(footer);
     	try {
 			// New BufferedWriter with filename of original input file
     		BufferedWriter write = new BufferedWriter(new FileWriter(filename));
@@ -297,5 +382,21 @@ public class SVGWriter {
     	} catch (IOException e) {
     		
     	}
+    	return testData;
     }
+    
+    public static void main(String[] args) {
+		SVGWriter s = new SVGWriter("coloradoMap.svg");
+		s.padSVG();
+		s.addTitle("Colorado", "state");
+		s.addFooter("infinite miles", "footer");
+		// 37. 37, 1029, 746
+		s.addLine(-105.5, 39, -102, 41, "#999999", 3, true);
+		s.addLineLabel("test", "test", -105.5, 39, -102, 41);
+		s.addLabel("test label", "id3", -105.5, 39);
+		//s.addLine(s.mapPoints(-102,41)[0], s.mapPoints(-102, 41)[1], s.mapPoints(-109, 37)[0], s.mapPoints(-109, 37)[1], "black", 3);
+		//s.addLine(37, 37, 1029, 746, "black", 3);
+		s.writeSVG("coloradoMapCopy.svg");
+    }
+    
 }
