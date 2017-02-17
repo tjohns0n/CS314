@@ -60,8 +60,8 @@ public class SVGWriterTest {
 			 * Open the SVG using the SVGWriter class
 			 */
 			SVGWriter s = new SVGWriter("test.svg");
-			s.addLine(0, 0, 10, 10, "#999999", 3);
-			s.addLine(0.0, 0.0, 10.0, 10.0, "#999999", 3);
+			s.addLine(0, 0, 10, 10, "#999999", 3, false);
+			s.addLine(0.0, 0.0, 10.0, 10.0, "#999999", 3, false);
 			String expected = s.content.get(0);
 			assertTrue(expected.equals("<line x1=\"0\" y1=\"0\" x2=\"10\" y2=\"10\" stroke=\"#999999\" stroke-width=\"3\" />"));
 			expected = s.content.get(1);
@@ -82,6 +82,15 @@ public class SVGWriterTest {
 		SVGWriter s = new SVGWriter("coloradoMap.svg");
 		s.padSVG();
 		s.addTitle("Colorado", "state");
+		s.addFooter("infinite miles", "footer");
+		// 37. 37, 1029, 746
+		int[] test1 = s.mapPoints(-105.5, 39);
+		int[] test2 = s.mapPoints(-102, 41);
+		s.addLine(-105.5, 39, -102, 41, "#999999", 3, true);
+		s.addLineLabel("test", "test", -105.5, 39, -102, 41);
+		s.addLabel("test label", "id3", -105.5, 39);
+		//s.addLine(s.mapPoints(-102,41)[0], s.mapPoints(-102, 41)[1], s.mapPoints(-109, 37)[0], s.mapPoints(-109, 37)[1], "black", 3);
+		//s.addLine(37, 37, 1029, 746, "black", 3);
 		s.writeSVG("coloradoMapCopy.svg");
 	}
 	
