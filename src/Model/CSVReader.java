@@ -29,7 +29,7 @@ public class CSVReader{
 	// args: csvFileName / args: LocationList
 	// # accpet filename and send string to location list
 	// Enhancement: -- location list can be a local args
-	public CSVReader(String csvFileName, LocationList loclist){
+	protected CSVReader(String csvFileName, LocationList loclist){
 		this.csvFileName= csvFileName;
 		this.loclist 	= loclist;
 	}

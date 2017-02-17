@@ -14,25 +14,25 @@ public class LocationList{
 
 	// Constructor 
 	// # build a new arraylist reference
-	public LocationList(){
+	protected LocationList(){
 		locList = new ArrayList <Location>();
 	}
 
 	// get - External interface function
 	// # return args:(class)location
-	public Location get(int i){
+	protected Location get(int i){
 		return locList.get(i);
 	}
 
 	// getsize - External interface function
 	// # return args:list.size()
-	public int getsize(){
+	protected int getsize(){
 		return locList.size();
 	}
 
 	// showLocList - Output interface function
 	// # show a list of locations information in specific format
-	public void showLocList(){
+	protected void showLocList(){
 		for (int i = 0; i < 75; i++)
 			System.out.print("-");
 		System.out.printf("\n%25s%15s%15s%20s\n",
@@ -51,11 +51,12 @@ public class LocationList{
 	// # accept a string array, which is the template to correspond the information
 	// # auto-added the location information read from the line to location list
 	// Enhancement: -- the title information may have more want to store in location
-	public void lineHandler(String line, String[] title){
+	protected void lineHandler(String line, String[] title){
 		String name 	= "";
 		String latitude = "";
 		String longitude= "";
 		String info 	= "";
+		String template = "";
 
 		String parts[] = line.split(cvsSplitChar);
 		for(int i = 0; i < parts.length; i++){
@@ -66,11 +67,15 @@ public class LocationList{
 				latitude = parts[i];
 			else if (title[i].toUpperCase().equals("LONGITUDE"))
 				longitude = parts[i];
-			else if (title[i].toUpperCase().equals("INFO"))
-				info = parts[i];
+			else{
+				if(template != "") template += ",";
+				if(info != "") info += ",";
+				template += title[i];
+				info += parts[i];
+			}
 		}
 
-		Location loc = new Location(name, latitude, longitude, info);
+		Location loc = new Location(name, latitude, longitude, info, template);
 		if(checkValid(loc) == true)
 			locList.add(loc);
 	}

@@ -1,7 +1,5 @@
 package Model;
 
-import java.util.ArrayList;
-
 public class Trip{
 
 	// args: locList 		

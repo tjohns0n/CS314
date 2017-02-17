@@ -17,38 +17,44 @@ public class Location{
 	// args: altitude 		
 	// # location altitude (height)
 	// still not used yet
-	private String altitude;	
+	private String altitude;
 	
 	// args: info 			
 	// # location other info
 	private String info;
 
+	// args: info 			
+	// # location other info template
+	private String template;
+
 	// Constructor 
 	// args: name / args: latitude / args: longitude / args: info
 	// # add a location with all needed infomation
 	// Enhancement: -- altitude may be added in constructor
-	public Location(String name, String latitude, String longitude, String info){
+	protected Location(String name, String latitude, String longitude, String info, String template){
 		this.name = name;
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.info = info;
+		this.template = template;
 	}
 
 	// Constructor 
 	// args: name / args: latitude / args: longitude
 	// # add a location with all basic infomation
 	// Enhancement: -- altitude may be added in constructor
-	public Location(String name, String latitude, String longitude){
+	protected Location(String name, String latitude, String longitude){
 		this.name = name;
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.info = "";
+		this.template = "";
 	}
 
 	// showLoc - Output interface function
 	// # show the location itself information in specific format
 	protected void showLoc(){
-		System.out.printf("%25s%15s%15s%20s\n", name, latitude, longitude, info);
+		System.out.printf("%25s\n%25s\n%25s\n%25s\n%25s\n", name, latitude, longitude, info, template);
 	}
 
 	// getName - External interface function
@@ -75,5 +81,11 @@ public class Location{
 	// # return args:info
 	protected String getInfo(){
 		return info;
+	}
+
+	// getInfo - External interface function
+	// # return args:template
+	protected String getTemplate(){
+		return template;
 	}
 }

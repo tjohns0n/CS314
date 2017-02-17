@@ -30,7 +30,7 @@ public class ShortestRouteCalculator{
 	// args: LocationList / args: startIndex
 	// # LocationList is the information where the shortestroute algorithm built from
 	// # startIndex is the index where the city in the LocationList
-	public ShortestRouteCalculator(LocationList locList, int startIndex){
+	protected ShortestRouteCalculator(LocationList locList, int startIndex){
 		this.locList = locList;
 		this.startIndex = startIndex;
 	}
