@@ -1,40 +1,31 @@
+//DTR-14
+//TripCo.java
+//main method for TripCo project
+//Parses arguments and sends them to presenter
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
-import Presenter.Presenter;
-
+import Presenter.*;
 
 public class TripCo{
 	//List of input .csv files
 	static ArrayList<File> files;
-	//List of optional flags
-	static ArrayList<String> opt;
-	//List of Trips
-	//ArrayList<Trip> trips;
-	//Vanilla constructor just for files
-	static ArrayList<File> out;
-	//Parse passed list of option flags and applies them
-	private static void parseOpt(){
-		if(!opt.isEmpty() && opt!= null){
-			for(int i=0; i<opt.size();i++){
-				String next=opt.get(i);
-				//Switch for grabbing and applying option flags
-				//Often will be just assigning a value to certain static variables (debug, multi-trip booleans, etc.)
-				switch(next){
-					case "":
-					default: break;
-				}
-			}
-		}
-		
-	}
+	//Optional argument booleans
+	static boolean ID;
+	static boolean mileage;
+	static boolean name;
+	
 	private static void usage(){
 		System.out.println("TripCo is a trip planning program that creates the shortest trip from a given list of locations");
-		System.out.println("TripCo Currently only takes (a) .csv file(s) of longitude and lattitude coordinates to construct a trip from");
+		System.out.println("TripCo takes a .csv file of longitude and lattitude coordinates to construct a trip from");
 		System.out.println(".csv Location files should have the first line as a template line with labels for subsequent lines' data");
-		System.out.println("EX: TripCo list.csv");
+		System.out.println("Optional arguments:");
+		System.out.println("	-i : shows the ID of the locations on the map");
+		System.out.println("	-m : Display mileage of legs on map");
+		System.out.println("	-n : shows the names of the locations on the map (default implied)");
+		System.out.println("EX: TripCo -mn list.csv");
 	}
+	
 	public static void main(String[] args){
 		//Need at least one input file
 		if(args.length < 1){
@@ -46,49 +37,57 @@ public class TripCo{
 			if(arg.substring(arg.length()-4, arg.length()).equals(".csv")){
 				files.add(new File(arg));
 				continue;
-			}System.out.println();
-			//Switch for args, so order don't matter
-			//If an arg matches an option add it to opt so parseOpt can do it's job
-			//Else the arg is more vital to operation and should have it's own parser (like file one above)
-			//Or the info needed for the arg can be processed here
-			switch(arg){
-				case "":
-				default: break;
+			}
+			//Switch for optional flags, so order don't matter
+			if(arg.charAt(0)=='-'){
+				if(arg.length()>1){
+					int ind = 1;
+					while(ind<arg.length()){
+						char next = arg.charAt(ind);
+						switch(next){
+							case 'i': ID = true; break;
+							case 'm': mileage= true; break;
+							case 'n': name = true; break;
+							default:{
+								System.out.println("Argument: '" +arg+"' not a recognized argument");
+								System.out.println("Argument: '" +arg+"' will be ignored");
+								break;
+							}
+						}
+						ind++;
+					}
+				}
+				else{
+					System.out.println("Argument: '" +arg+"' not a recognized argument");
+					System.out.println("Argument: '" +arg+"' will be ignored");
+				}
+			}
+			else{
+				System.out.println("Argument: '" +arg+"' not a recognized argument");
+				System.out.println("Argument: '" +arg+"' will be ignored");
 			}
 		}
-		parseOpt();
-		//Instantiate and call Model to process input
-		//Input file reading and processing loop
-		for(int i=0;i<files.size();i++){
-			//read = new FileReader(files.get(i));
-			//ArrayList<Location> locs = read.ReadFile();
-			//tripper = new Model(locs);
-			//trips.add(tripper.NearestNeighbor);
+		if(ID && name){
+			System.out.println("Cannot display both ID's and names of locations");
+			System.out.println("Pick one options -i or -n (default)");
+			usage();
+			return;
 		}
-		//Handle choosing which file, probably an option for separate trips or all as one
-		/* View part of flow
-		 * Output file writing loop
-		for(int j=0;j<tripper.size();i++){
-			write = new XMLWriter(tripper.get(i));
-			//Option handler (if) for output name specified
-			String outName = "Out"+j;
-			out.add(write.writeOut(outName+".xml"));
-			mapper = new SVGWriter(tripper.get(i));
-			out.add(mapper.draw(outName+".svg"));
+		if(!name && !ID){
+			name=true;
 		}
-		
-		*/
-		
+		boolean[] opt = {ID, mileage, name};
 		//Instantiate Presenter, put in running loop to check for needed updates
-		Presenter present = new Presenter();
-		try {
-			present.initiate();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		Presenter present = new Presenter(files, opt);
+		present.run();		
 		//Grab port number to feed to js
-		int port = present.getPort();
+		int port = present.getServPort();
+		//TODO
+		//Init webpage here or in presenter?
+		
+		
+		//String jspage = js/file/path
+		//String url = "localhost:"+Integer.toString(port)+":"+jspage;
 		/* Open js webpage with proper port set
 		 * Send XML
 		 * Presenter.sendFileToClient(out.get(0))
