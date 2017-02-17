@@ -1,95 +1,133 @@
+//DTR-14
+//Presenter.java
+//Takes ArrayList of files and boolean array for options
 package Presenter;
-
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.util.ArrayList;
 
-//Presenter side of MVP
-//Server side of client-server for webpage
+import Model.Model;
+import Model.LocationList;
+import View.View;
 
-//TODO
-//Integrate rest
-//Provide listening loop
-//Make listening loop into threadable run() method
 
-public class Presenter{
-	int port; //Port number
-	ServerSocket srv; //Server Socket
-	Socket clin; //Client Socket
-	OutputStream out; //Client socket Output Stream
-	InputStream in; //Client socket Input Stream
+
+public class Presenter implements Runnable{
+	//ArrayList of files
+	ArrayList<File> inFiles;
 	
-	//Constructor with a specific port to try
-	public Presenter(int setPort){
-		port = setPort;
+	//Optional booleans
+	boolean ID;
+	boolean name;
+	boolean mileage;
+	int port;
+	
+	//Server, not initially instantiated
+	Server serv;
+	
+	public Presenter(ArrayList<File> files, boolean[] options){
+		inFiles=files;
+		port = 0;
+		for(int i=0; i<options.length;i++){
+			if(i==0)
+				ID=options[i];
+			if(i==1)
+				name=options[i];
+			if(i==2)
+				mileage = options[i];
+		}
 	}
-	//Default Construct, finds own port
-	public Presenter(){
+	public Presenter(ArrayList<File> files){
+		inFiles=files;
+		ID=false;
+		name=true;
+		mileage=false;
 		port = 0;
 	}
-	//Port number getter
-	public int getPort(){
-		return port;
+	public Presenter(ArrayList<File> files, int Port){
+		inFiles=files;
+		ID=false;
+		name=true;
+		mileage=false;
+		port = Port;
 	}
-	//Initializes connection, sockets ,and streams
-	public void initiate() throws IOException{
-		srv = new ServerSocket(port);
-		clin = srv.accept();
-		in = clin.getInputStream();
-		out = clin.getOutputStream();
-		if(port == 0){
-			port = srv.getLocalPort();
+	@Override
+	public void run() {
+		//Instantiate and call Model to process input
+		Model mod = new Model(inFiles.get(0).getName());
+		
+		//Input file reading and processing loop
+		/* TODO
+		 * Loop for multiple file handling, for later
+		for(int i=0;i<files.size();i++){
+			
 		}
+		*/
+		
+		
+		LocationList ll = mod.getLocList();
+		//TODO
+		//Mem mgmt?
+		//mod.close();
+		View vw = new View(inFiles.get(0).getName(), mileage, name, ID);
+		
+		
+		for(int i=0; i<ll.getsize();i++){
+			//TODO
+			//Send view necessary info for drawing SVG / writing XML 
+			
+			
+			
+		}
+		//Place holders
+		vw.writeSVG();
+		vw.writeXML();
+		
+		String xml = vw.getRootName()+".xml";
+		String svg = vw.getRootName()+".svg";
+		File xmlf = new File(xml);
+		File svgf = new File(svg);
+		if(port == 0)
+			serv = new Server();
+		else
+			serv = new Server(port);
+		try {
+			serv.initiate();
+		} catch (IOException e) {
+			System.out.println("Server could not intiate on port: "+serv.getPort());
+			e.printStackTrace();
+		}
+		try {
+			serv.sendFileToClient(xmlf);
+		} catch (IOException e) {
+			System.out.println("Server could not send file to webpage on port: "+serv.getPort());
+			e.printStackTrace();
+		}
+		try {
+			serv.sendFileToClient(svgf);
+		} catch (IOException e) {
+			System.out.println("Server could not send file to webpage on port: "+serv.getPort());
+			e.printStackTrace();
+		}
+		//TODO
+		//Init webpage here or in TripCo?
+		
+		//String jspage = /js/full/file/path
+		//String url = "localhost:"+Integer.toString(port)+jspage;
+		/* Open js webpage with proper port set
+		 * Send XML
+		 * Presenter.sendFileToClient(out.get(0))
+		 * Send SVG
+		 * Presenter.sendFileToClient(out.get(1))
+		 * Loop for rest/interactions
+		 */
+		//Rest loop goes here
+		//Loop for serv to listen
+		//Parse the rest and tell serv what to do, may need model/view to do work too
 	}
-	//Sends Files to client socket output stream
-	//TODO
-	//Currently sending byte by byte, faster way surely possible
-	//Can send array of bytes similar to current method, but would need to be buffered and handle that buffer
-	public boolean sendFileToClient(File file) throws IOException{
-		FileInputStream reader = new FileInputStream(file); //Reads file to be sent
-		int bytbybyt = reader.read(); //Byte by Byte
-		if (bytbybyt == -1 || !file.exists()){ //Check before sending anything
-			//File empty
-			reader.close();
-			return false;
-		}
-		while(bytbybyt != -1){ //Loop byte by byte to be sent to client
-			out.write(bytbybyt);
-			bytbybyt = reader.read();
-		}
-		reader.close();	
-		return true;
-	}
-	//Attempts to close all streams and sockets
-	public void closeAll(){
-		try {
-			in.close();
-		} catch (IOException e) {
-			System.out.println("Unable to close client input stream");
-			e.printStackTrace();
-		}
-		try {
-			out.close();
-		} catch (IOException e) {
-			System.out.println("Unable to close client output stream");
-			e.printStackTrace();
-		}
-		try {
-			clin.close();
-		} catch (IOException e) {
-			System.out.println("Unable to close client socket");
-			e.printStackTrace();
-		}
-		try {
-			srv.close();
-		} catch (IOException e) {
-			System.out.println("Unable to close server socket");
-			e.printStackTrace();
-		}
+	
+	public int getServPort(){
+		return serv.getPort();
 	}
 	
 }
