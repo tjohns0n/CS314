@@ -341,8 +341,16 @@ public class SVGWriter {
 
 	/*
 	 * writeSVG - output the SVG to a file
-	*/
-    public void writeSVG(String filename) {
+	 * Returns an ArrayList of all the contents for testing 
+	 */
+    public ArrayList<String> writeSVG(String filename) {
+    	ArrayList<String> testData = new ArrayList<String>();
+    	testData.addAll(header);
+    	if (originalContent != null) {
+    		testData.addAll(originalContent);
+    	}
+    	testData.addAll(content);
+    	testData.addAll(footer);
     	try {
 			// New BufferedWriter with filename of original input file
     		BufferedWriter write = new BufferedWriter(new FileWriter(filename));
@@ -374,5 +382,21 @@ public class SVGWriter {
     	} catch (IOException e) {
     		
     	}
+    	return testData;
     }
+    
+    public static void main(String[] args) {
+		SVGWriter s = new SVGWriter("coloradoMap.svg");
+		s.padSVG();
+		s.addTitle("Colorado", "state");
+		s.addFooter("infinite miles", "footer");
+		// 37. 37, 1029, 746
+		s.addLine(-105.5, 39, -102, 41, "#999999", 3, true);
+		s.addLineLabel("test", "test", -105.5, 39, -102, 41);
+		s.addLabel("test label", "id3", -105.5, 39);
+		//s.addLine(s.mapPoints(-102,41)[0], s.mapPoints(-102, 41)[1], s.mapPoints(-109, 37)[0], s.mapPoints(-109, 37)[1], "black", 3);
+		//s.addLine(37, 37, 1029, 746, "black", 3);
+		s.writeSVG("coloradoMapCopy.svg");
+    }
+    
 }
