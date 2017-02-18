@@ -55,7 +55,7 @@ public class LocationList{
 		String name 	= "";
 		String latitude = "";
 		String longitude= "";
-		String info 	= "";
+		String extras 	= "";
 		String template = "";
 
 		String parts[] = line.split(cvsSplitChar);
@@ -69,13 +69,13 @@ public class LocationList{
 				longitude = parts[i];
 			else{
 				if(template != "") template += ",";
-				if(info != "") info += ",";
+				if(extras != "") extras += ",";
 				template += title[i];
-				info += parts[i];
+				extras += parts[i];
 			}
 		}
 
-		Location loc = new Location(name, latitude, longitude, info, template);
+		Location loc = new Location(name, latitude, longitude, extras, template);
 		if(checkValid(loc) == true)
 			locList.add(loc);
 	}

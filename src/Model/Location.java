@@ -20,8 +20,8 @@ public class Location{
 	private String altitude;
 	
 	// args: info 			
-	// # location other info
-	private String info;
+	// # location other extras
+	private String extras;
 
 	// args: info 			
 	// # location other info template
@@ -31,11 +31,11 @@ public class Location{
 	// args: name / args: latitude / args: longitude / args: info
 	// # add a location with all needed infomation
 	// Enhancement: -- altitude may be added in constructor
-	protected Location(String name, String latitude, String longitude, String info, String template){
+	protected Location(String name, String latitude, String longitude, String extras, String template){
 		this.name = name;
 		this.latitude = latitude;
 		this.longitude = longitude;
-		this.info = info;
+		this.extras = extras;
 		this.template = template;
 	}
 
@@ -47,14 +47,14 @@ public class Location{
 		this.name = name;
 		this.latitude = latitude;
 		this.longitude = longitude;
-		this.info = "";
+		this.extras = "";
 		this.template = "";
 	}
 
 	// showLoc - Output interface function
 	// # show the location itself information in specific format
 	protected void showLoc(){
-		System.out.printf("%25s\n%25s\n%25s\n%25s\n%25s\n", name, latitude, longitude, info, template);
+		System.out.printf("%25s\n%25s\n%25s\n%25s\n%25s\n", name, latitude, longitude, extras, template);
 	}
 
 	// getName - External interface function
@@ -79,8 +79,8 @@ public class Location{
 
 	// getInfo - External interface function
 	// # return args:info
-	protected String getInfo(){
-		return info;
+	protected String getExtras(){
+		return extras;
 	}
 
 	// getInfo - External interface function

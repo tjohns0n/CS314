@@ -21,15 +21,17 @@ public class Trip{
 		int cnt = 0;
 		for(int i = 0; i < route.length; i++){
 			String news = "";
+			news += Integer.toString(route[i][1]) + ",";
 			news += locList.get(route[i][0]).getName() + ",";
 			news += Double.toString(locList.get(route[i][0]).getLatitude()) + ",";
 			news += Double.toString(locList.get(route[i][0]).getLongitude()) + ",";
-			news += Integer.toString(route[i][1]);
+			news += locList.get(route[i][0]).getExtras() + ",";
+			news += locList.get(route[i][0]).getTemplate();
 			strings[cnt++] = news;
 		}
-		for(int i = 0; i < strings.length; i++){
-			System.out.println(strings[i].toString());
-		}
+		 for(int i = 0; i < strings.length; i++){
+		 	System.out.println(strings[i].toString());
+		 }
 		return strings;
 	}
 

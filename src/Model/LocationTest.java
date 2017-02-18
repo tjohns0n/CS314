@@ -14,7 +14,7 @@ public class LocationTest{
 		assertTrue("name not read correctly", loc.getName().equals("name1"));
 		assertTrue("latitude not read correctly", loc.getLatitude() == 134.23);
 		assertTrue("longitude not read correctly", loc.getLongitude() == -424.32);
-		assertTrue("info not read correctly", loc.getInfo().equals("denver,4231"));
+		assertTrue("info not read correctly", loc.getExtras().equals("denver,4231"));
 		assertTrue("info not read correctly", loc.getTemplate().equals("city,altitude"));
 	}
 
@@ -26,7 +26,7 @@ public class LocationTest{
 		assertTrue("name not read correctly", loc.getName().equals("name2"));
 		assertTrue("latitude not read correctly", loc.getLatitude() == -424.32);
 		assertTrue("longitude not read correctly", loc.getLongitude() == 134.23);
-		assertTrue("info not read correctly", loc.getInfo().equals(""));
+		assertTrue("info not read correctly", loc.getExtras().equals(""));
 		assertTrue("info not read correctly", loc.getTemplate().equals(""));
 	}
 
@@ -59,7 +59,7 @@ public class LocationTest{
 		
 		Location loc = new Location("name1", "134.23", "-424.32", "denver,4231", "city,altitude");
 
-		assertTrue("info not read correctly", loc.getInfo().equals("denver,4231"));
+		assertTrue("info not read correctly", loc.getExtras().equals("denver,4231"));
 	}
 
 	@Test

@@ -31,7 +31,7 @@ public class LocationListTest{
 		assertTrue("wrong get", loclist.get(5).getName().equals("Uncompahgre Peak"));
 		assertTrue("wrong get", loclist.get(6).getLatitude() == 37.9667);
 		assertTrue("wrong get", loclist.get(7).getLongitude() == -106.1115);
-		assertTrue("wrong get", loclist.get(5).getInfo().equals("6,14309,4249,Uncompahgre Peak,San Juan"));
+		assertTrue("wrong get", loclist.get(5).getExtras().equals("6,14309,4249,Uncompahgre Peak,San Juan"));
 		assertTrue("wrong get", loclist.get(9).getTemplate().equals("id,Elevation,Estimated Prominence,Quadrangle,Range"));
 	}
 
