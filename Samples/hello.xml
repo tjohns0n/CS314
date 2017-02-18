@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<trip >
+
+<leg >
+<sequence >1</sequence>
+<start >Not Denver</start>
+<finish >Not CO Springs</finish>
+<mileage >50</mileage>
+</leg>
+
+<leg >
+<sequence >2</sequence>
+<start >Not CO Springs</start>
+<finish >Not Fort Collins</finish>
+<mileage >60</mileage>
+</leg>
+
+<leg >
+<sequence >3</sequence>
+<start >Not Fort Collins</start>
+<finish >Not Denver</finish>
+<mileage >100</mileage>
+</leg>
+
+</trip>

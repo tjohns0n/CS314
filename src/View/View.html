@@ -1,0 +1,61 @@
+
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title>Component Test - Layout</title>
+    <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400italic,400,700' rel='stylesheet' type='text/css'>
+    <link href='http://grommet.io/assets/latest/css/grommet.min.css' rel='stylesheet' type='text/css'>
+    <link href="/assets/css/index-hpe.css" rel="stylesheet" type="text/css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.1/react-with-addons.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.1/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+    <script src="http://grommet.io/assets/latest/grommet.min.js"></script>
+</head>
+<body>
+    <div id="content"></div>
+    
+    <script type="text/babel">
+
+    function getData() {
+        return '../../Samples/hello.svg';
+    }
+
+    function getXMLTitle() {
+        return '../../Samples/hello.xml';
+    }
+
+    function SVG(props) {
+        return <object id="map" type="image/svg+xml" data={props.location}></object>;
+    }
+
+    const element = (
+        <Grommet.App><Grommet.Box pad='medium'>
+        <Grommet.Heading align="center">TripCo - Test Build #1</Grommet.Heading>
+        <Grommet.Heading tag="h2">Here is your trip:</Grommet.Heading>
+        <Grommet.Tabs>
+            <Grommet.Tab title="Map">
+                <SVG location={getData()} />
+            </Grommet.Tab>
+            <Grommet.Tab title="Itinerary">
+                <Grommet.Box>
+                <iframe src={getXMLTitle()}></iframe>
+                </Grommet.Box>
+            </Grommet.Tab>
+            <Grommet.Tab title="XML">
+                <Grommet.Heading tag="h3">Click below for a raw XML itinerary</Grommet.Heading>
+                <Grommet.Button label='View XML' href={getXMLTitle()}></Grommet.Button>
+            </Grommet.Tab>
+        </Grommet.Tabs>
+        
+        </Grommet.Box></Grommet.App>
+    );
+
+    ReactDOM.render(
+        element,
+        document.getElementById('content')
+    );
+    </script>
+
+</body>
+</html>
