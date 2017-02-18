@@ -2,69 +2,90 @@ package Model;
 
 public class Location{
 
-	// args: name 			#location name (label) 
+	// args: name 			
+	// # location name (label) 
 	private String name;
-	// args: latitude 		#location latitude
+	
+	// args: latitude 		
+	// # location latitude
 	private String latitude;
-	// args: longitude 		#location longitude
+	
+	// args: longitude 		
+	// # location longitude
 	private String longitude;
-	// args: altitude 		#location altitude (height)
+	
+	// args: altitude 		
+	// # location altitude (height)
 	// still not used yet
-	private String altitude;	
-	// args: info 			#location other info
-	private String info;
+	private String altitude;
+	
+	// args: info 			
+	// # location other extras
+	private String extras;
+
+	// args: info 			
+	// # location other info template
+	private String template;
 
 	// Constructor 
 	// args: name / args: latitude / args: longitude / args: info
-	// #add a location with all needed infomation
+	// # add a location with all needed infomation
 	// Enhancement: -- altitude may be added in constructor
-	public Location(String name, String latitude, String longitude, String info){
+	protected Location(String name, String latitude, String longitude, String extras, String template){
 		this.name = name;
 		this.latitude = latitude;
 		this.longitude = longitude;
-		this.info = info;
+		this.extras = extras;
+		this.template = template;
 	}
 
 	// Constructor 
 	// args: name / args: latitude / args: longitude
-	// #add a location with all basic infomation
+	// # add a location with all basic infomation
 	// Enhancement: -- altitude may be added in constructor
-	public Location(String name, String latitude, String longitude){
+	protected Location(String name, String latitude, String longitude){
 		this.name = name;
 		this.latitude = latitude;
 		this.longitude = longitude;
-		this.info = "";
+		this.extras = "";
+		this.template = "";
 	}
 
 	// showLoc - Output interface function
-	// #show the location itself information in specific format
-	public void showLoc(){
-		System.out.printf("%25s%15s%15s%20s\n", name, latitude, longitude, info);
+	// # show the location itself information in specific format
+	protected void showLoc(){
+		System.out.printf("%25s\n%25s\n%25s\n%25s\n%25s\n", name, latitude, longitude, extras, template);
 	}
 
 	// getName - External interface function
-	// #return args:name
-	public String getName(){
+	// # return args:name
+	protected String getName(){
 		return name;
 	}
 
 	// getLatitude - External interface function
-	// #return args:latitude
+	// # return args:latitude
 	// Improvement: -- add some process to make string to a valid double
-	public double getLatitude(){
+	protected double getLatitude(){
 		return Double.parseDouble(latitude);
 	}
 
 	// getLongitude - External interface function
-	// #return args:longitude
+	// # return args:longitude
 	// Improvement: -- add some process to make string to a valid double
-	public double getLongitude(){
+	protected double getLongitude(){
 		return  Double.parseDouble(longitude);
 	}
 
 	// getInfo - External interface function
-	// #return args:info
-	public String getInfo(){
-		return info;
+	// # return args:info
+	protected String getExtras(){
+		return extras;
+	}
+
+	// getInfo - External interface function
+	// # return args:template
+	protected String getTemplate(){
+		return template;
 	}
 }
