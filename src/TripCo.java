@@ -14,10 +14,10 @@ public class TripCo{
 	static boolean ID;
 	static boolean mileage;
 	static boolean name;
-	
+	//Std usage message
 	private static void usage(){
 		System.out.println("TripCo is a trip planning program that creates the shortest trip from a given list of locations");
-		System.out.println("TripCo takes a .csv file of longitude and lattitude coordinates to construct a trip from");
+		System.out.println("TripCo takes an absolute file path to a .csv file of longitude and lattitude coordinates to construct a trip from");
 		System.out.println(".csv Location files should have the first line as a template line with labels for subsequent lines' data");
 		System.out.println("Optional arguments:");
 		System.out.println("	-i : shows the ID of the locations on the map");
@@ -32,11 +32,15 @@ public class TripCo{
 			usage();
 			return;
 		}
+		files = new ArrayList<File>();
+		//Parse args
 		for(int h=0;h<args.length;h++){
 			String arg = args[h];
-			if(arg.substring(arg.length()-4, arg.length()).equals(".csv")){
-				files.add(new File(arg));
-				continue;
+			if(arg.length()>=5){
+				if(arg.substring(arg.length()-4, arg.length()).equalsIgnoreCase(".csv")){
+					files.add(new File(arg));
+					continue;
+				}
 			}
 			//Switch for optional flags, so order don't matter
 			if(arg.charAt(0)=='-'){
@@ -82,12 +86,8 @@ public class TripCo{
 		present.run();		
 		//Grab port number to feed to js
 		int port = present.getServPort();
-		//TODO
-		//Init webpage here or in presenter?
 		
-		
-		//String jspage = js/file/path
-		//String url = "localhost:"+Integer.toString(port)+":"+jspage;
+
 		/* Open js webpage with proper port set
 		 * Send XML
 		 * Presenter.sendFileToClient(out.get(0))
@@ -96,5 +96,4 @@ public class TripCo{
 		 * Loop for rest/interactions
 		 */
 	}
-
 }
