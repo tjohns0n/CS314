@@ -11,26 +11,29 @@ public class Trip{
 	// # the second column store the accumulated dis
 	private int[][] route;
 
-	public Trip(LocationList locList, int[][] route){
+	protected Trip(LocationList locList, int[][] route){
 		this.locList = locList;
 		this.route = route;
 	}
 
-	protected String[] createTrip(){
-		String[] strings = new String[route.length];
+	protected String[][] createTrip(){
+		String[][] strings = new String[route.length][3];
 		int cnt = 0;
 		for(int i = 0; i < route.length; i++){
-			String news = "";
-			news += Integer.toString(route[i][1]) + ",";
-			news += locList.get(route[i][0]).getName() + ",";
-			news += Double.toString(locList.get(route[i][0]).getLatitude()) + ",";
-			news += Double.toString(locList.get(route[i][0]).getLongitude()) + ",";
-			news += locList.get(route[i][0]).getExtras() + ",";
-			news += locList.get(route[i][0]).getTemplate();
+			String[] news = new String[3];
+			news[0] = news[1] = news[2] = "";
+			news[0] += Integer.toString(route[i][1]) + ",";
+			news[0] += locList.get(route[i][0]).getName() + ",";
+			news[0] += Double.toString(locList.get(route[i][0]).getLatitude()) + ",";
+			news[0] += Double.toString(locList.get(route[i][0]).getLongitude());
+			news[1] += locList.get(route[i][0]).getExtras();
+			news[2] += locList.get(route[i][0]).getTemplate();
 			strings[cnt++] = news;
 		}
 		 for(int i = 0; i < strings.length; i++){
-		 	System.out.println(strings[i].toString());
+		 	for(int j = 0; j < 3; j++)
+		 		System.out.println(strings[i][j].toString());
+		 	System.out.println("-------");
 		 }
 		return strings;
 	}

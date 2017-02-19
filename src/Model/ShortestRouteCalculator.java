@@ -117,7 +117,6 @@ public class ShortestRouteCalculator{
 	// calculateDistance - private function
 	// # calculate the distrance matrix
 	private void calculateDistance(){
-		System.out.println("locList.size" + locList.getsize() );
 		for(int i = 0; i < locList.getsize(); i++)
 			for(int j = i; j < locList.getsize(); j++)
 				dis_matrix[i][j] = dis_matrix[j][i] = distanceCalculator(locList.get(i), locList.get(j));

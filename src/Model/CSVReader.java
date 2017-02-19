@@ -49,12 +49,13 @@ public class CSVReader{
 				System.out.println("Empty File!");
 				return;
 			}
+			//line = line.replaceAll("\\s+", "");
 			// use the first line as a template to extract valid info
 			String title[] = line.split(cvsSplitChar);
-			
 			// handle each line
 			// auto-add the location to the list
 			while((line = br.readLine()) != null){
+				line = line.replaceAll("\\s+", "");
 				loclist.lineHandler(line, title);
 			} 
 		}catch (FileNotFoundException e) {

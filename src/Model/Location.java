@@ -27,6 +27,14 @@ public class Location{
 	// # location other info template
 	private String template;
 
+	// args: locReplaceRegex 			
+	// # replace unrelated info into other char
+	private String locReplaceRegex = "[^0-9WESN\\.-]";
+
+	// args: locSplitRegex 			
+	// # location split character
+	private String locSplitRegex = ",";
+
 	// Constructor 
 	// args: name / args: latitude / args: longitude / args: info
 	// # add a location with all needed infomation
@@ -67,14 +75,15 @@ public class Location{
 	// # return args:latitude
 	// Improvement: -- add some process to make string to a valid double
 	protected double getLatitude(){
-		return Double.parseDouble(latitude);
+		return converter(latitude);
 	}
 
 	// getLongitude - External interface function
 	// # return args:longitude
 	// Improvement: -- add some process to make string to a valid double
 	protected double getLongitude(){
-		return  Double.parseDouble(longitude);
+		return converter(longitude);
+		//return  Double.parseDouble(longitude);
 	}
 
 	// getInfo - External interface function
@@ -87,5 +96,25 @@ public class Location{
 	// # return args:template
 	protected String getTemplate(){
 		return template;
+	}
+
+	// converter -- private function
+	// args: string
+	// # converte Geographic Coordinates into double value
+	private Double converter(String string){
+		String temp = string.replaceAll(locReplaceRegex, ",");
+		String[] parts = temp.split(locSplitRegex);
+		double res = 0;
+		for(int i = 0; i < parts.length; i++){
+			if (parts[i].equals("N") || parts[i].equals("E")) continue;
+			if (parts[i].equals("S") || parts[i].equals("W")) {
+				res = -res;
+				continue;
+			}
+			if (i == 0) res += Double.parseDouble(parts[i]);
+			if (i == 1) res += Double.parseDouble(parts[i])/60.0;
+			if (i == 2) res += Double.parseDouble(parts[i])/3600.0;
+		}
+		return res;
 	}
 }
