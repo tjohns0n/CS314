@@ -3,8 +3,8 @@
 //main method for TripCo project
 //Parses arguments and sends them to presenter
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import Presenter.*;
 
@@ -25,6 +25,13 @@ public class TripCo{
 		System.out.println("	-m : Display mileage of legs on map");
 		System.out.println("	-n : shows the names of the locations on the map");
 		System.out.println("EX: TripCo -mn list.csv");
+	}
+	
+	public TripCo(){
+		ID=false;
+		mileage=false;
+		name=false;
+		files = new ArrayList<File>();
 	}
 	
 	//To string method
@@ -88,14 +95,18 @@ public class TripCo{
 			return;
 		}
 		boolean[] opt = {ID, mileage, name};
-		System.out.println(Arrays.toString(opt));
+		//System.out.println(Arrays.toString(opt));
 		//Instantiate Presenter, put in running loop to check for needed updates
 		Presenter present = new Presenter(files, opt);
-		present.run();		
-		//Grab port number to feed to js
-		int port = present.getServPort();
+		try {
+			present.run();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+			System.out.println("We tried to get the webpage to launch without the server");
+			System.out.println("A bandaid yes, but we tried, and it looks like it didn't work");
+			System.out.println("But the XML and svg files should be in the directory with the proper names/data");
+		}		
 		
-
 		/* Open js webpage with proper port set
 		 * Send XML
 		 * Presenter.sendFileToClient(out.get(0))
