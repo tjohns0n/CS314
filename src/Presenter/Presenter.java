@@ -34,9 +34,9 @@ public class Presenter implements Runnable{
 			if(i==0)
 				ID=options[i];
 			if(i==1)
-				name=options[i];
+				mileage=options[i];
 			if(i==2)
-				mileage = options[i];
+				name = options[i];
 		}
 	}
 	public Presenter(ArrayList<File> files, boolean[] options, int Port){
@@ -46,22 +46,22 @@ public class Presenter implements Runnable{
 			if(i==0)
 				ID=options[i];
 			if(i==1)
-				name=options[i];
+				mileage=options[i];
 			if(i==2)
-				mileage = options[i];
+				name = options[i];
 		}
 	}
 	public Presenter(ArrayList<File> files){
 		inFiles=files;
 		ID=false;
-		name=true;
+		name=false;
 		mileage=false;
 		port = 0;
 	}
 	public Presenter(ArrayList<File> files, int Port){
 		inFiles=files;
 		ID=false;
-		name=true;
+		name=false;
 		mileage=false;
 		port = Port;
 	}
@@ -79,7 +79,9 @@ public class Presenter implements Runnable{
 			
 		}
 		*/
-	
+		System.out.println("ID: "+ID);
+		System.out.println("mileage: "+mileage);
+		System.out.println("Name: "+name);
 		String[][] route = mod.reteriveTrip();
 		//TODO
 		//Mem mgmt?

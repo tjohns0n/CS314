@@ -1,7 +1,9 @@
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 public class TestTripCo {
+	
 	
 	private static TripCo trip = new TripCo();
 	

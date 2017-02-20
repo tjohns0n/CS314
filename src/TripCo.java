@@ -4,6 +4,7 @@
 //Parses arguments and sends them to presenter
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import Presenter.*;
 
@@ -17,13 +18,19 @@ public class TripCo{
 	//Std usage message
 	private static void usage(){
 		System.out.println("TripCo is a trip planning program that creates the shortest trip from a given list of locations");
-		System.out.println("TripCo takes an absolute file path to a .csv file of longitude and lattitude coordinates to construct a trip from");
+		System.out.println("TripCo takes an (absolute if not in directory diretly above src) file path to a .csv file of longitude and lattitude coordinates to construct a trip from");
 		System.out.println(".csv Location files should have the first line as a template line with labels for subsequent lines' data");
 		System.out.println("Optional arguments:");
 		System.out.println("	-i : shows the ID of the locations on the map");
 		System.out.println("	-m : Display mileage of legs on map");
-		System.out.println("	-n : shows the names of the locations on the map (default implied)");
+		System.out.println("	-n : shows the names of the locations on the map");
 		System.out.println("EX: TripCo -mn list.csv");
+	}
+	
+	//To string method
+	@Override
+	public String toString(){
+		return "TripCo is an interactive Colorado trip planning application";
 	}
 	
 	public static void main(String[] args){
@@ -32,6 +39,9 @@ public class TripCo{
 			usage();
 			return;
 		}
+		ID=false;
+		name=false;
+		mileage=false;
 		files = new ArrayList<File>();
 		//Parse args
 		for(int h=0;h<args.length;h++){
@@ -77,10 +87,8 @@ public class TripCo{
 			usage();
 			return;
 		}
-		if(!name && !ID){
-			name=true;
-		}
 		boolean[] opt = {ID, mileage, name};
+		System.out.println(Arrays.toString(opt));
 		//Instantiate Presenter, put in running loop to check for needed updates
 		Presenter present = new Presenter(files, opt);
 		present.run();		
