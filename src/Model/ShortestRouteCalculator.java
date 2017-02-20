@@ -127,7 +127,7 @@ public class ShortestRouteCalculator{
 	// Prerequirements -- assume that the latitude and longitude has no chars
 	private int distanceCalculator(Location l1, Location l2){
 
-		final int R = 6371; // Radius of the earth
+		final int R = 3959; // Radius of the earth
 
 		Double latDistance = Math.toRadians(l1.getLatitude() - l2.getLatitude());
 	    Double lonDistance = Math.toRadians(l1.getLongitude() - l2.getLongitude());
@@ -136,7 +136,7 @@ public class ShortestRouteCalculator{
 	            + Math.cos(Math.toRadians(l1.getLatitude())) * Math.cos(Math.toRadians(l2.getLatitude()))
 	            * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
 	    Double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-	    double distance = R * c * 1000; // convert to meters
+	    double distance = R * c;
 
 	    return (int)distance;
 	}
