@@ -3,7 +3,7 @@
 <html lang="en-US">
 <head>
     <meta charset="UTF-8">
-    <title>Component Test - Layout</title>
+    <title>TripCo</title>
     <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400italic,400,700' rel='stylesheet' type='text/css'>
     <link href='http://grommet.io/assets/latest/css/grommet.min.css' rel='stylesheet' type='text/css'>
     <script src="View.js"></script>
@@ -32,6 +32,7 @@
     }
 
     const element = (
+        
         <Grommet.App><Grommet.Box pad='medium'>
         <Grommet.Heading align="center">TripCo - Test Build #1</Grommet.Heading>
         <Grommet.Heading tag="h2">Here is your trip:</Grommet.Heading>
@@ -59,6 +60,11 @@
         element,
         document.getElementById('content')
     );
+
+    ReactDOM.render(
+        titleElement,
+        document.getElementById('pageTitle')
+    )
     </script>
 
 </body>
