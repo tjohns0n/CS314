@@ -29,7 +29,7 @@ public class Location{
 
 	// args: locReplaceRegex 			
 	// # replace unrelated info into other char
-	private String locReplaceRegex = "[^0-9WESN\\.-]";
+	private String locReplaceRegex = "[^0-9WESN\\.\\s-]";
 
 	// args: locSplitRegex 			
 	// # location split character
@@ -103,17 +103,18 @@ public class Location{
 	// # converte Geographic Coordinates into double value
 	private Double converter(String string){
 		String temp = string.replaceAll(locReplaceRegex, ",");
+		System.out.println(temp);
 		String[] parts = temp.split(locSplitRegex);
 		double res = 0;
 		for(int i = 0; i < parts.length; i++){
-			if (parts[i].equals("N") || parts[i].equals("E")) continue;
-			if (parts[i].equals("S") || parts[i].equals("W")) {
+			if (parts[i].trim().equals("N") || parts[i].trim().equals("E")) continue;
+			if (parts[i].trim().equals("S") || parts[i].trim().equals("W")) {
 				res = -res;
 				continue;
 			}
-			if (i == 0) res += Double.parseDouble(parts[i]);
-			if (i == 1) res += Double.parseDouble(parts[i])/60.0;
-			if (i == 2) res += Double.parseDouble(parts[i])/3600.0;
+			if (i == 0) res += Double.parseDouble(parts[i].trim());
+			if (i == 1) res += Double.parseDouble(parts[i].trim())/60.0;
+			if (i == 2) res += Double.parseDouble(parts[i].trim())/3600.0;
 		}
 		return res;
 	}
