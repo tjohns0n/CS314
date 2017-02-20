@@ -103,7 +103,6 @@ public class Location{
 	// # converte Geographic Coordinates into double value
 	private Double converter(String string){
 		String temp = string.replaceAll(locReplaceRegex, ",");
-		System.out.println(temp);
 		String[] parts = temp.split(locSplitRegex);
 		double res = 0;
 		for(int i = 0; i < parts.length; i++){
