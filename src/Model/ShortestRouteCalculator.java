@@ -53,9 +53,9 @@ public class ShortestRouteCalculator{
 
 	// getFinalDis - External interface function
 	// #return args:final_dis
-	protected int getFinalDis(){
-		return final_dis;
-	}
+//	protected int getFinalDis(){
+//		return final_dis;
+//	}
 
 	// showResult - private function
 	// @ Test
