@@ -14,7 +14,7 @@ public class LocationListTest{
 
 	@Test
 	public void testConstructor() {
-	
+		LocationList loc = new LocationList();
 	}
 
 

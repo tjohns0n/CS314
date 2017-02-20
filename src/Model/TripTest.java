@@ -16,7 +16,7 @@ public class TripTest{
 
 	@Test
 	public void testConstructor() {
-
+		Trip trip =  new Trip(locList, src.getFinalRoute());
 	}
 
 	@Test
