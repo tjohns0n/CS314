@@ -6,7 +6,6 @@
     <title>Component Test - Layout</title>
     <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400italic,400,700' rel='stylesheet' type='text/css'>
     <link href='http://grommet.io/assets/latest/css/grommet.min.css' rel='stylesheet' type='text/css'>
-    <link href="/assets/css/index-hpe.css" rel="stylesheet" type="text/css">
     <script src="View.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.1/react-with-addons.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.1/react-dom.js"></script>
@@ -29,7 +28,7 @@
     }
 
     function SVG(props) {
-        return <object id="map" type="image/svg+xml" data={props.location}></object>;
+        return <img id='map' width="100%" src={props.location}></img>;
     }
 
     const element = (
@@ -38,7 +37,9 @@
         <Grommet.Heading tag="h2">Here is your trip:</Grommet.Heading>
         <Grommet.Tabs>
             <Grommet.Tab title="Map">
+                <Grommet.Box id="mapBox">
                 <SVG location={getData()} />
+                </Grommet.Box>
             </Grommet.Tab>
             <Grommet.Tab title="Itinerary">
                 <Grommet.Box>
