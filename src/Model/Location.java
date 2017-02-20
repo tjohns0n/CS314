@@ -61,9 +61,9 @@ public class Location{
 
 	// showLoc - Output interface function
 	// # show the location itself information in specific format
-	protected void showLoc(){
-		System.out.printf("%25s\n%25s\n%25s\n%25s\n%25s\n", name, latitude, longitude, extras, template);
-	}
+//	protected void showLoc(){
+//		System.out.printf("%25s\n%25s\n%25s\n%25s\n%25s\n", name, latitude, longitude, extras, template);
+//	}
 
 	// getName - External interface function
 	// # return args:name

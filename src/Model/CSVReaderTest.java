@@ -13,7 +13,7 @@ public class CSVReaderTest{
 	private static CSVReader csvr;
 	@Test
 	public void testConstructor() {
-
+		CSVReader cvsr = new CSVReader(fileName, loclist);
 	}
 
 	@Test

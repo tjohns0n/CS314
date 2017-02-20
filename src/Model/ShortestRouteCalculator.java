@@ -59,22 +59,22 @@ public class ShortestRouteCalculator{
 
 	// showResult - private function
 	// @ Test
-	private void showResult(){
-		for(int i = 0; i < locList.getsize(); i++){
-			for(int j = 0 ; j < locList.getsize(); j++)
-				System.out.printf("%10d", dis_matrix[i][j]);
-			System.out.println();
-		}
-		for(int i = 0; i < final_route.length; i++)
-			System.out.print(final_route[i][0] + (i < final_route.length-1 ? " -> " : ""));
-		System.out.println();
-		for(int i = 0; i < final_route.length; i++)
-			System.out.print(final_route[i][1] + (i < final_route.length-1 ? " -> " : ""));
-		System.out.println();
-		for(int i = 0; i < final_route.length; i++)
-			System.out.print(locList.get(final_route[i][0]).getName() + (i < final_route.length-1 ? " -> " : ""));
-		System.out.println("\n" + final_dis);
-	}
+//	private void showResult(){
+//		for(int i = 0; i < locList.getsize(); i++){
+//			for(int j = 0 ; j < locList.getsize(); j++)
+//				System.out.printf("%10d", dis_matrix[i][j]);
+//			System.out.println();
+//		}
+//		for(int i = 0; i < final_route.length; i++)
+//			System.out.print(final_route[i][0] + (i < final_route.length-1 ? " -> " : ""));
+//		System.out.println();
+//		for(int i = 0; i < final_route.length; i++)
+//			System.out.print(final_route[i][1] + (i < final_route.length-1 ? " -> " : ""));
+//		System.out.println();
+//		for(int i = 0; i < final_route.length; i++)
+//			System.out.print(locList.get(final_route[i][0]).getName() + (i < final_route.length-1 ? " -> " : ""));
+//		System.out.println("\n" + final_dis);
+//	}
 
 	// calculator - private function
 	// # calculate the shortest path from all the cities in LocationList

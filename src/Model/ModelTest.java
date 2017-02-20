@@ -10,7 +10,7 @@ public class ModelTest{
 
 	@Test
 	public void testConstructor() {
-
+		Model model = new Model(fileName);
 	}
 
 	@Test
