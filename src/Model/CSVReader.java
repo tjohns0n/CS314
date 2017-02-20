@@ -55,7 +55,7 @@ public class CSVReader{
 			// handle each line
 			// auto-add the location to the list
 			while((line = br.readLine()) != null){
-				line = line.replaceAll("\\s+", "");
+				//line = line.replaceAll("\\s+", "");
 				loclist.lineHandler(line, title);
 			} 
 		}catch (FileNotFoundException e) {

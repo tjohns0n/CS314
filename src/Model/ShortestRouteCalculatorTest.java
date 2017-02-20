@@ -19,8 +19,14 @@ public class ShortestRouteCalculatorTest{
 
 	@Test
 	public void testInitiate() {
+		csvr.initiate();
 		ShortestRouteCalculator src = new ShortestRouteCalculator(locList, 0);
 		src.initiate();
+		int[][] tests = src.getFinalRoute();
+		assertTrue("wrong route", tests[0][1] == 0);
+		assertTrue("wrong route", tests[1][1] == 5);
+		assertTrue("wrong route", tests[5][0] == 17);
+		assertTrue("wrong route", tests[10][1] == 40);
 	}
 
 }

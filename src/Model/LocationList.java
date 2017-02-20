@@ -32,18 +32,18 @@ public class LocationList{
 
 	// showLocList - Output interface function
 	// # show a list of locations information in specific format
-//	protected void showLocList(){
-//		for (int i = 0; i < 75; i++)
-//			System.out.print("-");
-//		System.out.printf("\n%25s%15s%15s%20s\n",
-//				 "name", "latitude", "longitude", "info");
-//		for(int i = 0; i < locList.size(); i++){
-//			locList.get(i).showLoc();
-//		}
-//		for (int i = 0; i < 75; i++)
-//			System.out.print("-");
-//		System.out.println();
-//	}
+	protected void showLocList(){
+		for (int i = 0; i < 75; i++)
+			System.out.print("-");
+		System.out.printf("\n%25s%15s%15s%20s\n",
+				 "name", "latitude", "longitude", "info");
+		for(int i = 0; i < locList.size(); i++){
+			locList.get(i).showLoc();
+		}
+		for (int i = 0; i < 75; i++)
+			System.out.print("-");
+		System.out.println();
+	}
 
 	// lineHandler
 	// args: line / args: title
@@ -62,16 +62,16 @@ public class LocationList{
 		for(int i = 0; i < parts.length; i++){
 
 			if(title[i].toUpperCase().equals("NAME")) 
-				name = parts[i];
+				name = parts[i].trim();
 			else if (title[i].toUpperCase().equals("LATITUDE"))
-				latitude = parts[i];
+				latitude = parts[i].trim();
 			else if (title[i].toUpperCase().equals("LONGITUDE"))
-				longitude = parts[i];
+				longitude = parts[i].trim();
 			else{
 				if(template != "") template += ",";
 				if(extras != "") extras += ",";
-				template += title[i];
-				extras += parts[i];
+				template += title[i].trim();
+				extras += parts[i].trim();
 			}
 		}
 
