@@ -64,26 +64,31 @@ public class View {
      * endLocationName, endLocationID, name and Id of the second location of the leg
      * mileage - the mileage between the two locations
      */
-    public void addLeg(double startLocationLat, double startLocationLong, String startLocationName, String startLocationID,
+    public String addLeg(double startLocationLat, double startLocationLong, String startLocationName, String startLocationID,
                         double endLocationLat, double endLocationLong, String endLocationName, String endLocationID, int mileage) {
 
+    	String testString = "";
     	svgWrite.newGroup("leg" + ++legCount);
         svgWrite.addLine(startLocationLong, startLocationLat, endLocationLong, endLocationLat, "blue", 3, true);
         itinWrite.addLeg(startLocationName, endLocationName, mileage);
 
         if (this.mileage) {
+        	testString += "m";
             svgWrite.addLineLabel(Integer.toString(mileage), "leg" + Integer.toString(legCount), 
                                     startLocationLong, startLocationLat, endLocationLong, endLocationLat);
         }
 
         if (this.names) {
+        	testString += "n";
             svgWrite.addLabel(startLocationName, "loc" + legCount, startLocationLong, startLocationLat);
         }
 
         if (this.ids) {
+        	testString += "i";
             svgWrite.addLabel(startLocationID, "loc" + legCount, startLocationLong, startLocationLat);
         }
         svgWrite.endGroup();
+        return testString;
     }
 
     /*
@@ -101,13 +106,13 @@ public class View {
     args:
     text - The text to be printed to the console
     */
-    public void display(String text) {
+    public String display(String text) {
         System.out.println(text);
+        return text;
     }
     
     public static void main(String[] args) {
-    	View v = new View("hello.csv", "coloradoMap.svg", 300, true, true, false);
-    	System.out.println(v.getRootName());
+    	View v = new View("hello.csv", "coloradoMap.svg", 300, false, false, true);
     	v.addLeg(40, -108, "Not Denver", "id1", 39, -107, "Not CO Springs", "id2", 50);
     	v.addLeg(39, -107, "Not CO Springs", "id2", 40.5, -108, "Not Fort Collins", "id3", 60);
     	v.addLeg(40.5, -108, "Not Fort Collins", "id3", 40, -108, "Not Denver", "id1", 100);
