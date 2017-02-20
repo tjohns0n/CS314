@@ -5,14 +5,15 @@ import org.junit.Test;
 public class TestTripCo {
 	
 	
-	private static TripCo trip = new TripCo();
-	
 	@Test
 	public static void testToString(){
+		TripCo trip = new TripCo();
 		Assert.assertEquals("TripCo is an interactive Colorado trip planning application", trip.toString());
 	}
 
 	public static void main(String[] args) {
 		testToString();
+		System.out.println("here");
+		return;
 	}
 }

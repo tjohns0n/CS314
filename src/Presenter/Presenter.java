@@ -14,7 +14,7 @@ import View.View;
 
 
 
-public class Presenter implements Runnable{
+public class Presenter{
 	//ArrayList of files
 	ArrayList<File> inFiles;
 	
@@ -65,8 +65,7 @@ public class Presenter implements Runnable{
 		mileage=false;
 		port = Port;
 	}
-	@Override
-	public void run() {
+	public void run() throws URISyntaxException{
 		//Instantiate and call Model to process input
 		Model mod = new Model(inFiles.get(0).getAbsolutePath());
 		mod.planTrip();
@@ -79,9 +78,9 @@ public class Presenter implements Runnable{
 			
 		}
 		*/
-		System.out.println("ID: "+ID);
-		System.out.println("mileage: "+mileage);
-		System.out.println("Name: "+name);
+//		System.out.println("ID: "+ID);
+//		System.out.println("mileage: "+mileage);
+//		System.out.println("Name: "+name);
 		String[][] route = mod.reteriveTrip();
 		//TODO
 		//Mem mgmt?
@@ -109,7 +108,7 @@ public class Presenter implements Runnable{
 		//TODO
 		//Make more robust loop for added options
 		for(int i=0; i<route.length-1;i++){
-			//Essentials string split
+			//Essentials string splitarg0
 			//[0]=Accumulated Dist, [1]=name, [2]=lat, [3]=long
 			String[] essentials1 = route[i][0].split(",");
 			String[] essentials2 = route[i+1][0].split(",");
@@ -141,11 +140,7 @@ public class Presenter implements Runnable{
 		
 		//Get URI for webpage launch
 		URI webpage = null;
-		try {
-			webpage = new URI("file://"+pwd+"/src/View/View.html");
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
+		webpage = new URI("file://"+pwd+"/src/View/View.html");
 		//Launch webpage
 		try {
 			java.awt.Desktop.getDesktop().browse(webpage);
@@ -195,9 +190,4 @@ public class Presenter implements Runnable{
 		//Loop for serv to listen
 		//Parse the rest and tell serv what to do, may need model/view to do work too
 	}
-	
-	//Getter for port number, incase needed
-	public int getServPort(){
-		return serv.getPort();
-	}	
 }
