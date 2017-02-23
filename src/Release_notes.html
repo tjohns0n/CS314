@@ -15,18 +15,29 @@
 <div id="content"></div>
     <script type="text/babel">
     
+    var App = Grommet.App;
+    var Heading = Grommet.Heading;
+    var Box = Grommet.Box;
+    var Paragraph = Grommet.Paragraph;
+    var Card = Grommet.Card;
+    var Table = Grommet.Table;
+    var TableRow = Grommet.TableRow;
+    var Anchor = Grommet.Anchor;
+    var Columns = Grommet.Columns;
+    var List = Grommet.List;
+    var ListItem = Grommet.ListItem;
 
     const element = (
         
-        <Grommet.App><Grommet.Box pad='medium'>
-        <Grommet.Heading align="center">TripCo - Test Build #1</Grommet.Heading>
-        <Grommet.Box>
-        <Grommet.Heading tag="h2">Overview:</Grommet.Heading>
-        <Grommet.Paragraph size="large">TripCo is a trip planning program that creates a short trip from a given list of locations. TripCo takes a file path (relative to the folder above src/ or an absolute path) to a .csv file of longitude and latitude coordinates to construct a trip from.</Grommet.Paragraph>
-        <Grommet.Paragraph size="large">.csv Location files should have the first line as a template line with labels for subsequent lines' data.</Grommet.Paragraph>
-        <Grommet.Heading tag="h3">Optional arguments</Grommet.Heading>
+        <App><Box pad='medium'>
+        <Heading align="center">TripCo - Test Build #1</Heading>
+        <Box>
+        <Heading tag="h2">Overview:</Heading>
+        <Paragraph size="large">TripCo is a trip planning program that creates a short trip from a given list of locations. TripCo takes a file path (relative to the folder above src/ or an absolute path) to a .csv file of longitude and latitude coordinates to construct a trip from.</Paragraph>
+        <Paragraph size="large">.csv Location files should have the first line as a template line with labels for subsequent lines' data.</Paragraph>
+        <Heading tag="h3">Optional arguments</Heading>
         
-        <Grommet.Table>
+        <Table>
             <thead>
             <tr>
             <th>Option</th>
@@ -34,92 +45,108 @@
             </tr>
             </thead>
             <tbody>
-            <Grommet.TableRow>
+            <TableRow>
                 <td>-i</td>
                 <td>shows the ID of the locations on the map</td>
-            </Grommet.TableRow>
-            <Grommet.TableRow>
+            </TableRow>
+            <TableRow>
                 <td>-m</td>
                 <td>Display mileage of legs on map</td>
-            </Grommet.TableRow>
-            <Grommet.TableRow>
+            </TableRow>
+            <TableRow>
                 <td>-n</td>
                 <td>shows the names of the locations on the map</td>
-            </Grommet.TableRow>
+            </TableRow>
             </tbody>
-            </Grommet.Table>
-            </Grommet.Box>
+            </Table>
+            </Box>
             
-            <Grommet.Box>
-            <Grommet.Heading tag="h2">Output:</Grommet.Heading>
-            <Grommet.Paragraph size="large">
-            (csv root name).xml - an XML itinerary of the trip, 
-        including the sequence, start location, end location, 
-        and mileage of each leg of the trip
-            </Grommet.Paragraph>
-            <Grommet.Paragraph size="large">
-            (csv root name).svg - an SVG of the trip, drawn over 
-        a map of Colorado. If options are specified, text labels
-        for each one will be added to the map
-            </Grommet.Paragraph>
-            <Grommet.Paragraph size="large">
-            View.html - A web page of the trip will automatically be 
-        opened displaying the SVG and a link to the raw XML data
-            </Grommet.Paragraph>
-            </Grommet.Box>
-            <Grommet.Box>
-            <Grommet.Heading tag="h2">Purpose:</Grommet.Heading>
-            <Grommet.Paragraph size="large">
+            <Box>
+            <Heading tag="h2">Output:</Heading>
+            <Columns>
+                <Card label="(csv root name).XML"
+                            heading="Trip Itinerary"
+                            description="An XML itinerary of the trip, 
+                            including the sequence, start location, end location, 
+                            and mileage of each leg of the trip">
+                </Card>
+                <Card label="(csv root name).SVG"
+                            heading="Trip Map"
+                            description="An SVG map of the trip, drawn over
+                            a map of Colorado. If options are specified, text labels
+                            for each one will be added to the map">
+                </Card>
+                <Card label="View.HTML"
+                            heading="Trip Viewer"
+                            description="A web page of the trip will automatically be
+                            opened displaying the SVG and a link to the raw XML data">
+                </Card>
+            </Columns>
+            </Box>
+            <Box>
+            <Heading tag="h2">Purpose:</Heading>
+            <Paragraph size="large">
             The first release introduces many features. The main feature
         of the TripCo program is the ability to read in a list of 
         locations and produce a short trip between all of them. 
         This trip is then displayed (locally) in a web browser. 
-            </Grommet.Paragraph>
-            </Grommet.Box>
+            </Paragraph>
+            </Box>
             
-            <Grommet.Box>
-            <Grommet.Heading tag="h2">Issues:</Grommet.Heading>
-            <Grommet.Paragraph size="large">
-            - The current release only supports the web presentation
-        locally. Future releases will allow client-server interaction.
-            </Grommet.Paragraph>
-            <Grommet.Paragraph size="large">
-            - There is no way to select individual locations
-        from a .csv, and only a single .csv is accepted
-            </Grommet.Paragraph>
-            <Grommet.Paragraph size="large">
-            - The SVG and web page are fairly basically formatted
-            </Grommet.Paragraph>
-            <Grommet.Paragraph size="large">
-            - The unit tests are not as robust as they could be, and
-        there is no master test runner
-            </Grommet.Paragraph>
-            </Grommet.Box>
+            <Box>
+            <Heading tag="h2">Issues:</Heading>
+            <List selectable={true}>
+                <ListItem justify='between'
+                        separator='horizontal'>
+                    <span>
+                    The current release only supports the web presentation
+                    locally. Future releases will allow client-server interaction.
+                    </span>
+                </ListItem>
+                <ListItem justify='between'
+                        separator='horizontal'>
+                    <span>
+                    There is no way to select individual locations
+                    from a .csv, and only a single .csv is accepted
+                    </span>
+                </ListItem>
+                <ListItem justify='between'
+                        separator='horizontal'>
+                    <span>
+                    The SVG and web page are fairly basically formatted
+                    </span>
+                </ListItem>
+                <ListItem justify='between'
+                        separator='horizontal'>
+                    <span>
+                    The unit tests are not as robust as they could be, and
+                    there is no master test runner
+                    </span>
+                </ListItem>                                
+            </List>
+            <br />
+            </Box>
             
             
-            <Grommet.Box>
-            <Grommet.Heading tag="h2">Notes:</Grommet.Heading>
-            <Grommet.Paragraph size="large">
-            - Assistance for great circle distance from: <Grommet.Anchor href="http://stackoverflow.com/questions/3694380/calculating-distance-between-two-points-using-latitude-longitude-what-am-i-doi" animateIcon={true} label="here"></Grommet.Anchor>
-            </Grommet.Paragraph>
+            <Box>
+            <Heading tag="h2">External libraries and resources used:</Heading>
+            <Columns>
+            <Paragraph size="large">
+            <Anchor href="http://stackoverflow.com/questions/3694380/calculating-distance-between-two-points-using-latitude-longitude-what-am-i-doi" animateIcon={true} label="Great circle distance help"></Anchor>
+            </Paragraph>
+            <Paragraph size="large">
+            <Anchor size="large" href="https://en.wikipedia.org/wiki/Nearest_neighbor_search" animateIcon={true} label="Nearest neighbor help"></Anchor>
+            </Paragraph>
+            <Paragraph size="large">
+            <Anchor size="large" href="https://facebook.github.io/react/" animateIcon={true} label="React"></Anchor>
+            </Paragraph>
+            <Paragraph size="large">
+            <Anchor size="large" href="https://grommet.github.io/" animateIcon={true} label="Grommet"></Anchor>
+            </Paragraph>
+            </Columns>
             
-            <Grommet.Paragraph size="large">
-            - Understanding of nearest neighbor: <Grommet.Anchor size="large" href="https://en.wikipedia.org/wiki/Nearest_neighbor_search" animateIcon={true} label="here"></Grommet.Anchor>
-            </Grommet.Paragraph>
-            
-            <Grommet.Paragraph size="large">
-            - ReactJS and Grommet were used to build the web page: 
-            </Grommet.Paragraph>
-            
-            <Grommet.Paragraph size="large">
-            <Grommet.Anchor size="large" href="https://facebook.github.io/react/" animateIcon={true} label="React"></Grommet.Anchor>
-            </Grommet.Paragraph>
-            <Grommet.Paragraph size="large">
-            <Grommet.Anchor size="large" href="https://grommet.github.io/" animateIcon={true} label="Grommet"></Grommet.Anchor>
-            </Grommet.Paragraph>
-            
-            </Grommet.Box>
-        </Grommet.Box></Grommet.App>
+            </Box>
+        </Box></App>
     );
 
     ReactDOM.render(
