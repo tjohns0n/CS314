@@ -3,89 +3,157 @@
 
 package Model;
 
+import java.util.Arrays;
+
 public class ShortestRouteCalculator{
 
-	private LocationList loclist;
-	private	int[] final_route;
-	private	double final_dis;
+	// args: location list 	
+	// # have a reference of location list
+	private LocationList locList;
+	
+	// args: final_route matrix - 2D
+	// # the first column store the route
+	// # the second column store the accumulated dis
+	private	int[][] final_route;
+	
+	private int[][] test_route;
 
-	public ShortestRouteCalculator(LocationList loclist){
-		this.loclist 	= loclist;
-		final_route = new int[loclist.getsize() + 1];
-		final_dis = Double.MAX_VALUE;
-		calculator();
-		showResult();
+	// args: dis_matrix matrix - 2D
+	// # store the calculated distance between each city
+	private int[][] dis_matrix;
+
+	// args: startIndex
+	// # refer to the city where it decide to start
+	private int startIndex;
+
+	// args: startIndex
+	// # store the final_disance
+	private int final_dis;
+
+	// Constructor 
+	// args: LocationList / args: startIndex
+	// # LocationList is the information where the shortestroute algorithm built from
+	// # startIndex is the index where the city in the LocationList
+	protected ShortestRouteCalculator(LocationList locList, int startIndex){
+		this.locList = locList;
+		this.startIndex = startIndex;
 	}
 
-	public void showResult(){
-		for(int i = 0; i < final_route.length; i++)
-					System.out.print(final_route[i] + " -> ");
-				System.out.println();
-		for(int i = 0; i < final_route.length; i++)
-			System.out.print(loclist.get(final_route[i]).getName() + " -> ");
-		System.out.println(final_dis);
-	}
-
-	private void calculator(){
-		
-		boolean[] vis = new boolean[loclist.getsize()];
-		for(int i = 0; i < loclist.getsize(); i++)
-			vis[i] = false;
-
-		int[] route = new int[loclist.getsize() + 1];
-		int[][] mins = new int[loclist.getsize()][loclist.getsize()];
-		
-		for(int i = 0; i < loclist.getsize(); i++)
-			for(int j = 0; j < loclist.getsize(); j++)
-				mins[i][j] = Integer.MAX_VALUE;
-
-		vis[0] = true;
-		dfs(0, vis, 0, 0, route, mins);
-	}
-
-	private void dfs(int index, boolean[] vis, int step, double dis, int[] route, int[][] mins){
-		// if(mins[index][step] > dis) 
-		// 	mins[index][step] = dis;
-		
-		// if(dis + mins[index][loclist.getsize()-step] < final_dis)
-
-
-		route[step] = index;
-		if(step == loclist.getsize() - 1){
-			//jump out of the loop
-			if(final_dis > dis + distanceCalculator(loclist.get(index), loclist.get(0))){
-				final_dis = dis + distanceCalculator(loclist.get(index), loclist.get(0));
-				route[step+1] = 0;
-				final_route = route.clone();	
-				// for(int i = 0; i < route.length; i++)
-				// 	System.out.print(route[i] + " -> ");
-				// System.out.println(dis);
+	// Initiation
+	// # initiate args and initiate functions
+	protected void initiate(){
+		int final_dis = Integer.MAX_VALUE;
+		this.dis_matrix = new int[locList.getsize()][locList.getsize()];
+		final_route = new int[locList.getsize() + 1][2];
+		test_route = new int[locList.getsize() + 1][2];
+		calculateDistance();
+		int test_dis;
+		for (int i = 0; i < locList.getsize(); i++) {
+			test_dis = calculator(i);
+			if (test_dis < final_dis) {
+				final_dis = test_dis;
+				for (int j = 0; j < final_route.length; j++) {
+					for (int k = 0; k < final_route[0].length; k++) {
+						final_route[j][k] = test_route[j][k];
+					}
+				}
 			}
+			
 		}
-		for(int i = 0; i < loclist.getsize(); i++){
-			// if visited, continue;
-			if(vis[i] == true) continue;
-
-			double temp_dis = distanceCalculator(loclist.get(index), loclist.get(i));
-			// else dfs the next available node
-			vis[i] = true;
-			dis += temp_dis;
-
-			dfs(i, vis, step+1, dis, route, mins);
-
-			// change to next node
-			// reset the vis
-			vis[i] = false;
-			dis -= temp_dis;
-		}
-		route[step] = -1;
-		return;
+		//showResult();
 	}
 
-	// prerequirements: assume that the latitude and longitude has no chars
-	private double distanceCalculator(Location l1, Location l2){
+	// getFinalRoute - External interface function
+	// #return args:final_route
+	protected int[][] getFinalRoute(){
+		return final_route;
+	}
 
-		final int R = 6371; // Radius of the earth
+	protected void printDisMatrix() {
+		System.out.println(locList);
+		for (int i = 0; i < dis_matrix.length; i++) {
+			System.out.println(Arrays.toString(dis_matrix[i]));
+		}
+	}
+
+	// getFinalDis - External interface function
+	// #return args:final_dis
+//	protected int getFinalDis(){
+//		return final_dis;
+//	}
+
+	// showResult - private function
+	// @ Test
+//	private void showResult(){
+//		for(int i = 0; i < locList.getsize(); i++){
+//			for(int j = 0 ; j < locList.getsize(); j++)
+//				System.out.printf("%10d", dis_matrix[i][j]);
+//			System.out.println();
+//		}
+//		for(int i = 0; i < final_route.length; i++)
+//			System.out.print(final_route[i][0] + (i < final_route.length-1 ? " -> " : ""));
+//		System.out.println();
+//		for(int i = 0; i < final_route.length; i++)
+//			System.out.print(final_route[i][1] + (i < final_route.length-1 ? " -> " : ""));
+//		System.out.println();
+//		for(int i = 0; i < final_route.length; i++)
+//			System.out.print(locList.get(final_route[i][0]).getName() + (i < final_route.length-1 ? " -> " : ""));
+//		System.out.println("\n" + final_dis);
+//	}
+
+	// calculator - private function
+	// # calculate the shortest path from all the cities in LocationList
+	// Enhancement -- may calculate a specific range of cities
+	private int calculator(int startIndex){ 
+		//boolean vis, check if city was visited
+		boolean[] vis = new boolean[locList.getsize()];
+		for(int i = 0; i < locList.getsize(); i++) vis[i] = false;
+		int final_dis = 0;
+
+		// to set the startIndex as the first city
+		int i = startIndex;
+		vis[startIndex] = true;
+		test_route[0][0] = startIndex;
+		test_route[0][1] = 0;
+		int cnt = 1;
+
+		// to travel n - 1 cities
+		// each time pick the nearest neighbor
+		for(int step = 0; step < locList.getsize() - 1; step++){
+			int mins = Integer.MAX_VALUE;
+			for(int j = 0; j < locList.getsize(); j++){
+				if(vis[j] == true) continue;
+				if(mins > dis_matrix[i][j]){
+					mins = dis_matrix[i][j];
+					test_route[cnt][0] = j;
+				}
+			}
+			vis[test_route[cnt][0]] = true;
+			final_dis += dis_matrix[i][test_route[cnt][0]];
+			test_route[cnt][1] = final_dis;
+			i = test_route[cnt++][0];
+		}
+		test_route[cnt][0] = startIndex;
+		final_dis += dis_matrix[test_route[cnt-1][0]][startIndex];
+		test_route[cnt][1] = final_dis;
+		//System.out.println(final_dis);
+		return final_dis;
+	}
+
+	// calculateDistance - private function
+	// # calculate the distrance matrix
+	private void calculateDistance(){
+		for(int i = 0; i < locList.getsize(); i++)
+			for(int j = i; j < locList.getsize(); j++)
+				dis_matrix[i][j] = dis_matrix[j][i] = distanceCalculator(locList.get(i), locList.get(j));
+	}
+
+	// distanceCalculator - private function
+	// # calculate the distance between two locations
+	// Prerequirements -- assume that the latitude and longitude has no chars
+	private int distanceCalculator(Location l1, Location l2){
+
+		final int R = 3959; // Radius of the earth
 
 		Double latDistance = Math.toRadians(l1.getLatitude() - l2.getLatitude());
 	    Double lonDistance = Math.toRadians(l1.getLongitude() - l2.getLongitude());
@@ -94,8 +162,9 @@ public class ShortestRouteCalculator{
 	            + Math.cos(Math.toRadians(l1.getLatitude())) * Math.cos(Math.toRadians(l2.getLatitude()))
 	            * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
 	    Double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-	    double distance = R * c * 1000; // convert to meters
+	    double distance = R * c;
 
-	    return distance;
+
+	    return (int)Math.ceil(distance);
 	}
 }

@@ -44,7 +44,8 @@ public class SVGWriter {
 		// Init string
     	try {
 			// Create buffered reader to read an SVG
-			BufferedReader readSVG = new BufferedReader(new FileReader(filename));
+    		String loc = System.getProperty("user.dir");
+			BufferedReader readSVG = new BufferedReader(new FileReader(loc + "/src/View/" + filename));
 			String line;
 			
 			// Read in a line from the SVG and trim the whitespace (may remove trimming later)

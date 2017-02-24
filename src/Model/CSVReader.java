@@ -7,29 +7,39 @@ import java.io.IOException;
 
 public class CSVReader{
 
-	// args: *.csv 			#csv filename 
+	// args: *.csv 			
+	// # csv filename 
 	private String csvFileName;
-	// args: buffer reader 	#read buffer from a file and return a line string
+	
+	// args: buffer reader 	
+	// # read buffer from a file and return a line string
 	private BufferedReader br;
-	// args: location list 	#have a reference of location list
-	//						#send line string to location list function for further process
+	
+	// args: location list 	
+	// # have a reference of location list
+	// # send line string to location list function for further process
 	private LocationList loclist;
-	// args: cvs splitchar 	#a char that used for spliting information in cvs format
+	
+	// args: cvs splitchar 	
+	// # a char that used for spliting information in cvs format
 	private final String cvsSplitChar = ",";
 
 
 	// Constructor 
 	// args: csvFileName / args: LocationList
-	// #accpet filename and send string to location list
+	// # accpet filename and send string to location list
 	// Enhancement: -- location list can be a local args
-	public CSVReader(String csvFileName, LocationList loclist){
+	protected CSVReader(String csvFileName, LocationList loclist){
 		this.csvFileName= csvFileName;
 		this.loclist 	= loclist;
+	}
+
+	protected void initiate(){
 		csvHandler();
 	}
 
 	// csvHandler - private function
-	// #deal with csv file and extract valid info from each line
+	// # deal with csv file and extract valid info from each line
 	private void csvHandler(){
 		try{
 			// open a buffer reader and check the first line
@@ -39,12 +49,13 @@ public class CSVReader{
 				System.out.println("Empty File!");
 				return;
 			}
+			//line = line.replaceAll("\\s+", "");
 			// use the first line as a template to extract valid info
 			String title[] = line.split(cvsSplitChar);
-			
 			// handle each line
 			// auto-add the location to the list
 			while((line = br.readLine()) != null){
+				//line = line.replaceAll("\\s+", "");
 				loclist.lineHandler(line, title);
 			} 
 		}catch (FileNotFoundException e) {

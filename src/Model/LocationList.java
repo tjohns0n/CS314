@@ -4,38 +4,35 @@ import java.util.ArrayList;
 
 public class LocationList{
 
-	// args: locList 		#an array list store a list of locations
+	// args: locList 		
+	// # an array list store a list of locations
 	private ArrayList <Location> locList;
-	// args: cvs splitchar 	#a char that used for spliting information in cvs format
+	
+	// args: cvs splitchar 	
+	// # a char that used for spliting information in cvs format
 	private final String cvsSplitChar = ",";
 
 	// Constructor 
-	// #build a new arraylist reference
-	public LocationList(){
+	// # build a new arraylist reference
+	protected LocationList(){
 		locList = new ArrayList <Location>();
 	}
 
-	// getLocList - External interface function
-	// #return args:locList
-	public ArrayList <Location> getLocList(){
-		return locList;
-	}
-
 	// get - External interface function
-	// #return args:(class)location
-	public Location get(int i){
+	// # return args:(class)location
+	protected Location get(int i){
 		return locList.get(i);
 	}
 
 	// getsize - External interface function
-	// #return args:list.size()
-	public int getsize(){
+	// # return args:list.size()
+	protected int getsize(){
 		return locList.size();
 	}
 
 	// showLocList - Output interface function
-	// #show a list of locations information in specific format
-	public void showLocList(){
+	// # show a list of locations information in specific format
+	protected void showLocList(){
 		for (int i = 0; i < 75; i++)
 			System.out.print("-");
 		System.out.printf("\n%25s%15s%15s%20s\n",
@@ -50,38 +47,43 @@ public class LocationList{
 
 	// lineHandler
 	// args: line / args: title
-	// #accept a string line, which contains all information
-	// #accept a string array, which is the template to correspond the information
-	// #auto-added the location information read from the line to location list
+	// # accept a string line, which contains all information
+	// # accept a string array, which is the template to correspond the information
+	// # auto-added the location information read from the line to location list
 	// Enhancement: -- the title information may have more want to store in location
-	public void lineHandler(String line, String[] title){
+	protected void lineHandler(String line, String[] title){
 		String name 	= "";
 		String latitude = "";
 		String longitude= "";
-		String info 	= "";
+		String extras 	= "";
+		String template = "";
 
 		String parts[] = line.split(cvsSplitChar);
 		for(int i = 0; i < parts.length; i++){
 
 			if(title[i].toUpperCase().equals("NAME")) 
-				name = parts[i];
+				name = parts[i].trim();
 			else if (title[i].toUpperCase().equals("LATITUDE"))
-				latitude = parts[i];
+				latitude = parts[i].trim();
 			else if (title[i].toUpperCase().equals("LONGITUDE"))
-				longitude = parts[i];
-			else if (title[i].toUpperCase().equals("INFO"))
-				info = parts[i];
+				longitude = parts[i].trim();
+			else{
+				if(template != "") template += ",";
+				if(extras != "") extras += ",";
+				template += title[i].trim();
+				extras += parts[i].trim();
+			}
 		}
 
-		Location loc = new Location(name, latitude, longitude, info);
+		Location loc = new Location(name, latitude, longitude, extras, template);
 		if(checkValid(loc) == true)
 			locList.add(loc);
 	}
 
 	// checkValid - private function
 	// args: location
-	// #to check if location has already stored in location list
-	// #accomplished by comparing key value
+	// # to check if location has already stored in location list
+	// # accomplished by comparing key value
 	// Enhancement: -- may ues object.contain();
 	private boolean checkValid(Location loc){
 		boolean flag = true;
