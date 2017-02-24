@@ -24,14 +24,18 @@ public class Model{
 		cvsr 	= new CSVReader(csvFileName, locList);
 	}
 
-	private void initiate(){
+	public void planTrip(){
+		boolean run2Opt = false;
+		boolean run3Opt = false;
 		cvsr.initiate();
 		src = new ShortestRouteCalculator(locList, 0);
-		src.initiate();
-	}
-
-	public void planTrip(){
-		initiate();
+		src.findBestNearestNeighbor();
+		if (run2Opt) {
+			src.run2Opt();
+		}
+		if (run3Opt) {
+			src.run3Opt();
+		}
 	}
 
 	public String[][] reteriveTrip(){
@@ -42,8 +46,7 @@ public class Model{
 	public static void main(String args[]){
 		String filename = args[0];
 		Model model = new Model(filename);
-		model.initiate();
+		model.planTrip();
 		model.reteriveTrip();
-		
 	}
 }

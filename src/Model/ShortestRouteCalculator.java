@@ -16,6 +16,8 @@ public class ShortestRouteCalculator{
 	// # the second column store the accumulated dis
 	private	int[][] final_route;
 	
+	// temp version of route
+	// assigned to final_route if better than current
 	private int[][] test_route;
 
 	// args: dis_matrix matrix - 2D
@@ -30,6 +32,10 @@ public class ShortestRouteCalculator{
 	// # store the final_disance
 	private int final_dis;
 
+	// Whether or not to run 2-opt and 3-opt
+	private boolean opt2;
+	private boolean opt3;
+
 	// Constructor 
 	// args: LocationList / args: startIndex
 	// # LocationList is the information where the shortestroute algorithm built from
@@ -37,19 +43,26 @@ public class ShortestRouteCalculator{
 	protected ShortestRouteCalculator(LocationList locList, int startIndex){
 		this.locList = locList;
 		this.startIndex = startIndex;
+		// Set final distance to Int.MAX for finding minimum distance later
+		final_dis = Integer.MAX_VALUE;
+		// Init arrays
+		dis_matrix = new int[locList.getsize()][locList.getsize()];
+		final_route = new int[locList.getsize() + 1][2];
+		test_route = new int[locList.getsize() + 1][2];
+		// Populate a distance table of locations
+		calculateDistanceTable();
 	}
 
 	// Initiation
 	// # initiate args and initiate functions
-	protected void initiate(){
-		int final_dis = Integer.MAX_VALUE;
-		this.dis_matrix = new int[locList.getsize()][locList.getsize()];
-		final_route = new int[locList.getsize() + 1][2];
-		test_route = new int[locList.getsize() + 1][2];
-		calculateDistance();
+	protected void findBestNearestNeighbor(){
+		// temp var for each NN total distance
 		int test_dis;
+		// start NN at each location
 		for (int i = 0; i < locList.getsize(); i++) {
-			test_dis = calculator(i);
+			test_dis = nearestNeighbor(i);
+			// Replace final_route with test_route if test_route better
+			// TODO: Optimize so copying only takes place once 
 			if (test_dis < final_dis) {
 				final_dis = test_dis;
 				for (int j = 0; j < final_route.length; j++) {
@@ -78,33 +91,33 @@ public class ShortestRouteCalculator{
 
 	// getFinalDis - External interface function
 	// #return args:final_dis
-//	protected int getFinalDis(){
-//		return final_dis;
-//	}
+	protected int getFinalDis(){
+		return final_dis;
+	}
 
 	// showResult - private function
-	// @ Test
-//	private void showResult(){
-//		for(int i = 0; i < locList.getsize(); i++){
-//			for(int j = 0 ; j < locList.getsize(); j++)
-//				System.out.printf("%10d", dis_matrix[i][j]);
-//			System.out.println();
-//		}
-//		for(int i = 0; i < final_route.length; i++)
-//			System.out.print(final_route[i][0] + (i < final_route.length-1 ? " -> " : ""));
-//		System.out.println();
-//		for(int i = 0; i < final_route.length; i++)
-//			System.out.print(final_route[i][1] + (i < final_route.length-1 ? " -> " : ""));
-//		System.out.println();
-//		for(int i = 0; i < final_route.length; i++)
-//			System.out.print(locList.get(final_route[i][0]).getName() + (i < final_route.length-1 ? " -> " : ""));
-//		System.out.println("\n" + final_dis);
-//	}
+	private void showResult(){
+		for(int i = 0; i < locList.getsize(); i++){
+			for(int j = 0 ; j < locList.getsize(); j++)
+				System.out.printf("%10d", dis_matrix[i][j]);
+			System.out.println();
+		}
+		for(int i = 0; i < final_route.length; i++)
+			System.out.print(final_route[i][0] + (i < final_route.length-1 ? " -> " : ""));
+		System.out.println();
+		for(int i = 0; i < final_route.length; i++)
+			System.out.print(final_route[i][1] + (i < final_route.length-1 ? " -> " : ""));
+		System.out.println();
+		for(int i = 0; i < final_route.length; i++)
+			System.out.print(locList.get(final_route[i][0]).getName() + (i < final_route.length-1 ? " -> " : ""));
+		System.out.println("\n" + final_dis);
+	}
 
 	// calculator - private function
 	// # calculate the shortest path from all the cities in LocationList
+	// startIndex - where the NN tour should start
 	// Enhancement -- may calculate a specific range of cities
-	private int calculator(int startIndex){ 
+	private int nearestNeighbor(int startIndex){ 
 		//boolean vis, check if city was visited
 		boolean[] vis = new boolean[locList.getsize()];
 		for(int i = 0; i < locList.getsize(); i++) vis[i] = false;
@@ -140,9 +153,17 @@ public class ShortestRouteCalculator{
 		return final_dis;
 	}
 
+	protected void run2Opt() {
+
+	}
+
+	protected void run3Opt() {
+		
+	}
+
 	// calculateDistance - private function
 	// # calculate the distrance matrix
-	private void calculateDistance(){
+	private void calculateDistanceTable(){
 		for(int i = 0; i < locList.getsize(); i++)
 			for(int j = i; j < locList.getsize(); j++)
 				dis_matrix[i][j] = dis_matrix[j][i] = distanceCalculator(locList.get(i), locList.get(j));
