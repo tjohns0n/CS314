@@ -21,7 +21,7 @@ public class ShortestRouteCalculatorTest{
 	public void testInitiate() {
 		csvr.initiate();
 		ShortestRouteCalculator src = new ShortestRouteCalculator(locList, 0);
-		src.initiate();
+		src.findBestNearestNeighbor();
 		int[][] tests = src.getFinalRoute();
 		assertTrue("wrong route", tests[0][1] == 0);
 		assertTrue("wrong route", tests[1][1] == 5);

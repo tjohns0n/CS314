@@ -22,7 +22,7 @@ public class TripTest{
 	@Test
 	public void testCreateTrip() {
 		csvr.initiate();
-		src.initiate();
+		src.findBestNearestNeighbor();
 		Trip trip = new Trip(locList, src.getFinalRoute());
 		String tests[][] = trip.createTrip();
 		assertTrue("wrong trip", tests[0][0].equals("0,Mount Elbert,39.1177,-106.4453"));
