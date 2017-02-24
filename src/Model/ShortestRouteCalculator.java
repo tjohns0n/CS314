@@ -3,6 +3,8 @@
 
 package Model;
 
+import java.util.Arrays;
+
 public class ShortestRouteCalculator{
 
 	// args: location list 	
@@ -13,6 +15,8 @@ public class ShortestRouteCalculator{
 	// # the first column store the route
 	// # the second column store the accumulated dis
 	private	int[][] final_route;
+	
+	private int[][] test_route;
 
 	// args: dis_matrix matrix - 2D
 	// # store the calculated distance between each city
@@ -38,10 +42,24 @@ public class ShortestRouteCalculator{
 	// Initiation
 	// # initiate args and initiate functions
 	protected void initiate(){
+		int final_dis = Integer.MAX_VALUE;
 		this.dis_matrix = new int[locList.getsize()][locList.getsize()];
 		final_route = new int[locList.getsize() + 1][2];
+		test_route = new int[locList.getsize() + 1][2];
 		calculateDistance();
-		final_dis = calculator();
+		int test_dis;
+		for (int i = 0; i < locList.getsize(); i++) {
+			test_dis = calculator(i);
+			if (test_dis < final_dis) {
+				final_dis = test_dis;
+				for (int j = 0; j < final_route.length; j++) {
+					for (int k = 0; k < final_route[0].length; k++) {
+						final_route[j][k] = test_route[j][k];
+					}
+				}
+			}
+			
+		}
 		//showResult();
 	}
 
@@ -49,6 +67,13 @@ public class ShortestRouteCalculator{
 	// #return args:final_route
 	protected int[][] getFinalRoute(){
 		return final_route;
+	}
+
+	protected void printDisMatrix() {
+		System.out.println(locList);
+		for (int i = 0; i < dis_matrix.length; i++) {
+			System.out.println(Arrays.toString(dis_matrix[i]));
+		}
 	}
 
 	// getFinalDis - External interface function
@@ -79,7 +104,7 @@ public class ShortestRouteCalculator{
 	// calculator - private function
 	// # calculate the shortest path from all the cities in LocationList
 	// Enhancement -- may calculate a specific range of cities
-	private int calculator(){ 
+	private int calculator(int startIndex){ 
 		//boolean vis, check if city was visited
 		boolean[] vis = new boolean[locList.getsize()];
 		for(int i = 0; i < locList.getsize(); i++) vis[i] = false;
@@ -88,8 +113,8 @@ public class ShortestRouteCalculator{
 		// to set the startIndex as the first city
 		int i = startIndex;
 		vis[startIndex] = true;
-		final_route[0][0] = startIndex;
-		final_route[0][1] = 0;
+		test_route[0][0] = startIndex;
+		test_route[0][1] = 0;
 		int cnt = 1;
 
 		// to travel n - 1 cities
@@ -100,17 +125,18 @@ public class ShortestRouteCalculator{
 				if(vis[j] == true) continue;
 				if(mins > dis_matrix[i][j]){
 					mins = dis_matrix[i][j];
-					final_route[cnt][0] = j;
+					test_route[cnt][0] = j;
 				}
 			}
-			vis[final_route[cnt][0]] = true;
-			final_dis += dis_matrix[i][final_route[cnt][0]];
-			final_route[cnt][1] = final_dis;
-			i = final_route[cnt++][0];
+			vis[test_route[cnt][0]] = true;
+			final_dis += dis_matrix[i][test_route[cnt][0]];
+			test_route[cnt][1] = final_dis;
+			i = test_route[cnt++][0];
 		}
-		final_route[cnt][0] = startIndex;
-		final_dis += dis_matrix[final_route[cnt-1][0]][startIndex];
-		final_route[cnt][1] = final_dis;
+		test_route[cnt][0] = startIndex;
+		final_dis += dis_matrix[test_route[cnt-1][0]][startIndex];
+		test_route[cnt][1] = final_dis;
+		//System.out.println(final_dis);
 		return final_dis;
 	}
 
@@ -138,6 +164,7 @@ public class ShortestRouteCalculator{
 	    Double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 	    double distance = R * c;
 
-	    return (int)distance;
+
+	    return (int)Math.ceil(distance);
 	}
 }
