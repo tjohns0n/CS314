@@ -22,7 +22,7 @@ public class ShortestRouteCalculator{
 
 	// args: dis_matrix matrix - 2D
 	// # store the calculated distance between each city
-	private int[][] dis_matrix;
+	private double[][] dis_matrix;
 
 	// args: startIndex
 	// # refer to the city where it decide to start
@@ -30,7 +30,7 @@ public class ShortestRouteCalculator{
 
 	// args: startIndex
 	// # store the final_disance
-	private int final_dis;
+	private double final_dis;
 
 	// Constructor 
 	// args: LocationList / args: startIndex
@@ -40,9 +40,9 @@ public class ShortestRouteCalculator{
 		this.locList = locList;
 		this.startIndex = startIndex;
 		// Set final distance to Int.MAX for finding minimum distance later
-		final_dis = Integer.MAX_VALUE;
+		final_dis = Double.MAX_VALUE;
 		// Init arrays
-		dis_matrix = new int[locList.getsize()][locList.getsize()];
+		dis_matrix = new double[locList.getsize()][locList.getsize()];
 		final_route = new int[locList.getsize() + 1][2];
 		test_route = new int[locList.getsize() + 1][2];
 		// Populate a distance table of locations
@@ -53,7 +53,7 @@ public class ShortestRouteCalculator{
 	// # initiate args and initiate functions
 	protected void findBestNearestNeighbor(){
 		// temp var for each NN total distance
-		int test_dis;
+		double test_dis;
 		// start NN at each location
 		for (int i = 0; i < locList.getsize(); i++) {
 			test_dis = nearestNeighbor(i);
@@ -88,7 +88,7 @@ public class ShortestRouteCalculator{
 	// getFinalDis - External interface function
 	// #return args:final_dis
 	protected int getFinalDis(){
-		return final_dis;
+		return (int)Math.ceil(final_dis);
 	}
 
 	// showResult - private function
@@ -117,7 +117,7 @@ public class ShortestRouteCalculator{
 		//boolean vis, check if city was visited
 		boolean[] vis = new boolean[locList.getsize()];
 		for(int i = 0; i < locList.getsize(); i++) vis[i] = false;
-		int final_dis = 0;
+		double final_dis = 0;
 
 		// to set the startIndex as the first city
 		int i = startIndex;
@@ -129,7 +129,7 @@ public class ShortestRouteCalculator{
 		// to travel n - 1 cities
 		// each time pick the nearest neighbor
 		for(int step = 0; step < locList.getsize() - 1; step++){
-			int mins = Integer.MAX_VALUE;
+			double mins = Double.MAX_VALUE;
 			for(int j = 0; j < locList.getsize(); j++){
 				if(vis[j] == true) continue;
 				if(mins > dis_matrix[i][j]){
@@ -139,14 +139,14 @@ public class ShortestRouteCalculator{
 			}
 			vis[test_route[cnt][0]] = true;
 			final_dis += dis_matrix[i][test_route[cnt][0]];
-			test_route[cnt][1] = final_dis;
+			test_route[cnt][1] = (int)final_dis;
 			i = test_route[cnt++][0];
 		}
 		test_route[cnt][0] = startIndex;
 		final_dis += dis_matrix[test_route[cnt-1][0]][startIndex];
-		test_route[cnt][1] = final_dis;
+		test_route[cnt][1] = (int)final_dis;
 		//System.out.println(final_dis);
-		return final_dis;
+		return (int)Math.ceil(final_dis);
 	}
 
 	public void findBest2Opt() {
@@ -184,12 +184,12 @@ public class ShortestRouteCalculator{
 		for (int i = start; i <= end; i++) {
 			new_route[i][0] = final_route[end + offset][0];
 			offset--;
-			dist = dis_matrix[new_route[i - 1][0]][new_route[i][0]];
+			dist = (int)Math.ceil(dis_matrix[new_route[i - 1][0]][new_route[i][0]]);
 			new_route[i][1] = new_route[i - 1][1] + dist;
 		}
 		for (int i = end + 1; i < new_route.length; i++) {
 			new_route[i][0] = final_route[i][0];
-			dist = dis_matrix[new_route[i - 1][0]][new_route[i][0]];
+			dist = (int)Math.ceil(dis_matrix[new_route[i - 1][0]][new_route[i][0]]);
 			new_route[i][1] = new_route[i - 1][1] + dist;
 		}
 		return new_route;
@@ -217,7 +217,7 @@ public class ShortestRouteCalculator{
 	// distanceCalculator - private function
 	// # calculate the distance between two locations
 	// Prerequirements -- assume that the latitude and longitude has no chars
-	private int distanceCalculator(Location l1, Location l2){
+	private double distanceCalculator(Location l1, Location l2){
 
 		final int R = 3959; // Radius of the earth
 
@@ -231,6 +231,6 @@ public class ShortestRouteCalculator{
 	    double distance = R * c;
 
 
-	    return (int)Math.ceil(distance);
+	    return distance;
 	}
 }
