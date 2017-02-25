@@ -1,6 +1,7 @@
 package Model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class LocationList{
 
@@ -60,7 +61,7 @@ public class LocationList{
 
 		String parts[] = line.split(cvsSplitChar);
 		for(int i = 0; i < parts.length; i++){
-
+			
 			if(title[i].toUpperCase().equals("NAME")) 
 				name = parts[i].trim();
 			else if (title[i].toUpperCase().equals("LATITUDE"))

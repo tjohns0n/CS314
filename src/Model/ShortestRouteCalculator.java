@@ -32,10 +32,6 @@ public class ShortestRouteCalculator{
 	// # store the final_disance
 	private int final_dis;
 
-	// Whether or not to run 2-opt and 3-opt
-	private boolean opt2;
-	private boolean opt3;
-
 	// Constructor 
 	// args: LocationList / args: startIndex
 	// # LocationList is the information where the shortestroute algorithm built from
@@ -153,8 +149,57 @@ public class ShortestRouteCalculator{
 		return final_dis;
 	}
 
-	protected void run2Opt() {
+	public void findBest2Opt() {
+		while(run2Opt()) {
+			continue;
+		}
+	}
+	
+	protected boolean run2Opt() {
+		boolean update = false;
+		for (int i = 1; i < final_route.length - 2; i++) {
+			for (int j = i + 1; j < final_route.length - 1; j++) {
+				int[][] new_route = swap(i, j);
+				int new_dist = new_route[new_route.length - 1][1];
+				int old_dist = final_route[new_route.length - 1][1];
+				if (new_dist < old_dist) {
+					update = true;
+					copyRoute(new_route, final_route);
+					final_dis = new_dist;
+				}
+			}
+		}
+		return update;
+	}
+	
+	protected int[][] swap(int start, int end) {
+		int[][] new_route = new int[final_route.length][final_route[0].length];
+		for (int i = 0; i < start; i++) {
+			new_route[i][0] = final_route[i][0];
+			new_route[i][1] = final_route[i][1];
+		}
+		
+		int offset = 0;
+		int dist = 0;
+		for (int i = start; i <= end; i++) {
+			new_route[i][0] = final_route[end + offset][0];
+			offset--;
+			dist = dis_matrix[new_route[i - 1][0]][new_route[i][0]];
+			new_route[i][1] = new_route[i - 1][1] + dist;
+		}
+		for (int i = end + 1; i < new_route.length; i++) {
+			new_route[i][0] = final_route[i][0];
+			dist = dis_matrix[new_route[i - 1][0]][new_route[i][0]];
+			new_route[i][1] = new_route[i - 1][1] + dist;
+		}
+		return new_route;
+	}
 
+	private void copyRoute(int[][] newRoute, int[][] oldRoute) {
+		for (int i = 0; i < oldRoute.length; i++) {
+			oldRoute[i][0] = newRoute[i][0];
+			oldRoute[i][1] = newRoute[i][1];
+		}
 	}
 
 	protected void run3Opt() {
