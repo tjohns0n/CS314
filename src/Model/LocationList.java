@@ -11,7 +11,6 @@ public class LocationList{
 	
 	// args: cvs splitchar 	
 	// # a char that used for spliting information in cvs format
-	private final String cvsSplitChar = ",";
 	private final String cvsSplitRegex = ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)";
 
 	// Constructor 
