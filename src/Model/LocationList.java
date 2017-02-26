@@ -12,6 +12,7 @@ public class LocationList{
 	// args: cvs splitchar 	
 	// # a char that used for spliting information in cvs format
 	private final String cvsSplitChar = ",";
+	private final String cvsSplitRegex = ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)";
 
 	// Constructor 
 	// # build a new arraylist reference
@@ -59,7 +60,7 @@ public class LocationList{
 		String extras 	= "";
 		String template = "";
 
-		String parts[] = line.split(cvsSplitChar);
+		String parts[] = line.split(cvsSplitRegex);
 		for(int i = 0; i < parts.length; i++){
 			
 			if(title[i].toUpperCase().equals("NAME")) 
