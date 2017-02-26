@@ -33,7 +33,7 @@ public class Location{
 
 	// args: locSplitRegex 			
 	// # location split character
-	private String locSplitRegex = ",";
+	private final String locSplitRegex = ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)";
 
 	// Constructor 
 	// args: name / args: latitude / args: longitude / args: info
