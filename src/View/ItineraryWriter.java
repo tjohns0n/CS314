@@ -68,11 +68,11 @@ public class ItineraryWriter {
         leg.add(seq.getEnd());
         leg.add("\n");
         leg.add(start.getStart());
-        leg.add(startLocation);
+        leg.add(replaceName(startLocation));
         leg.add(start.getEnd());
         leg.add("\n");
         leg.add(finish.getStart());
-        leg.add(endLocation);
+        leg.add(replaceName(endLocation));
         leg.add(finish.getEnd());
         leg.add("\n");
         leg.add(miles.getStart());
@@ -108,6 +108,14 @@ public class ItineraryWriter {
       	}
         // Return the ArrayList data
      	return data;
+    }
+    
+    private String replaceName(String origin){
+    	String temp = origin;
+    	temp = temp.replaceAll("&", "&amp;");
+    	temp = temp.replaceAll("<", "&lt;");
+    	temp = temp.replaceAll(">", "&gt;");
+    	return  temp;
     }
     
     public static void main(String[] args) {
