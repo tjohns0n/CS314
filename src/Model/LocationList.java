@@ -11,7 +11,7 @@ public class LocationList{
 	
 	// args: cvs splitchar 	
 	// # a char that used for spliting information in cvs format
-	private final String cvsSplitRegex = ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)";
+	private final String cvsSplitRegex = ",";
 
 	// Constructor 
 	// # build a new arraylist reference
@@ -36,8 +36,8 @@ public class LocationList{
 	protected void showLocList(){
 		for (int i = 0; i < 75; i++)
 			System.out.print("-");
-		System.out.printf("\n%25s%15s%15s%20s\n",
-				 "name", "latitude", "longitude", "info");
+		System.out.printf("\n%25s%25s%25s%25s%25s\n",
+				 "name", "latitude", "longitude", "extras", "template");
 		for(int i = 0; i < locList.size(); i++){
 			locList.get(i).showLoc();
 		}
@@ -58,22 +58,35 @@ public class LocationList{
 		String longitude= "";
 		String extras 	= "";
 		String template = "";
-
+		String valid 	= "";
+		boolean flag = false;
+		int j = 0;
 		String parts[] = line.split(cvsSplitRegex);
 		for(int i = 0; i < parts.length; i++){
-			
-			if(title[i].toUpperCase().equals("NAME")) 
-				name = parts[i].trim();
-			else if (title[i].toUpperCase().equals("LATITUDE"))
-				latitude = parts[i].trim();
-			else if (title[i].toUpperCase().equals("LONGITUDE"))
-				longitude = parts[i].trim();
+			parts[i] = parts[i].trim();
+			title[j] = title[j].trim();
+			valid += parts[i];
+			if(parts[i].indexOf("\"") == 0 && flag == false){
+				flag = true; valid += ", "; continue;
+			} if(parts[i].indexOf("\"") == parts[i].length()-1 && flag == true){
+				flag = false;
+			} if(flag == true){
+				valid += ", "; continue; 
+			}
+			if(title[j].toUpperCase().equals("NAME")) 
+				name = valid;
+			else if (title[j].toUpperCase().equals("LATITUDE"))
+				latitude = valid;
+			else if (title[j].toUpperCase().equals("LONGITUDE"))
+				longitude = valid;
 			else{
 				if(template != "") template += ",";
 				if(extras != "") extras += ",";
-				template += title[i].trim();
-				extras += parts[i].trim();
+				template += title[j];
+				extras += valid;
 			}
+			valid = "";
+			j++;
 		}
 
 		Location loc = new Location(name, latitude, longitude, extras, template);

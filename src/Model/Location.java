@@ -33,7 +33,7 @@ public class Location{
 
 	// args: locSplitRegex 			
 	// # location split character
-	private final String locSplitRegex = ",(?=([^\"]*\"[^\"]*\")*[^\"]*$)";
+	private final String locSplitRegex = ",";
 
 	// Constructor 
 	// args: name / args: latitude / args: longitude / args: info
@@ -106,14 +106,15 @@ public class Location{
 		String[] parts = temp.split(locSplitRegex);
 		double res = 0;
 		for(int i = 0; i < parts.length; i++){
-			if (parts[i].trim().equals("N") || parts[i].trim().equals("E")) continue;
-			if (parts[i].trim().equals("S") || parts[i].trim().equals("W")) {
+			parts[i] = parts[i].trim();
+			if (parts[i].equals("N") || parts[i].equals("E")) continue;
+			if (parts[i].equals("S") || parts[i].equals("W")) {
 				res = -res;
 				continue;
 			}
-			if (i == 0) res += Double.parseDouble(parts[i].trim());
-			if (i == 1) res += Double.parseDouble(parts[i].trim())/60.0;
-			if (i == 2) res += Double.parseDouble(parts[i].trim())/3600.0;
+			if (i == 0) res += Double.parseDouble(parts[i]);
+			if (i == 1) res += Double.parseDouble(parts[i])/60.0;
+			if (i == 2) res += Double.parseDouble(parts[i])/3600.0;
 		}
 		return res;
 	}
