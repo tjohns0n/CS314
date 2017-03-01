@@ -6,27 +6,30 @@ import org.junit.*;
 
 public class TripTest{
 
-	private final static LocationList locList = new LocationList();;
+	private LocationList locList = new LocationList();;
 
-	private final static String fileName = "Colorado14ers.csv";
+	//private final static String fileName = "Colorado14ers.csv";
 
-	private final static CSVReader csvr = new CSVReader(fileName, locList);
+	//private final static CSVReader csvr = new CSVReader(fileName, locList);
 
-	private final static ShortestRouteCalculator src = new ShortestRouteCalculator(locList, 0);
+	private ShortestRouteCalculator src;// = new ShortestRouteCalculator(locList, 0);
 
 	@Test
 	public void testConstructor() {
+		src = new ShortestRouteCalculator(locList, 0);
 		Trip trip =  new Trip(locList, src.getFinalRoute());
 	}
 
 	@Test
 	public void testCreateTrip() {
-		csvr.initiate();
+		Location l1 = new Location("Mount Elbert", "39.1177", "-106.4453", "Hello", "");
+		Location l2 = new Location("Mount Cool", "39", "-106", "Cool", "");
+		locList.addLocation(l1);
+		locList.addLocation(l2);
+		src = new ShortestRouteCalculator(locList, 0);
 		src.findBestNearestNeighbor();
 		Trip trip = new Trip(locList, src.getFinalRoute());
 		String tests[][] = trip.createTrip();
 		assertTrue("wrong trip", tests[0][0].equals("0,Mount Elbert,39.1177,-106.4453"));
-		assertTrue("wrong trip", tests[1][1].equals("2,14421,1961,Mount Massive,Sawatch"));
-		assertTrue("wrong trip", tests[2][2].equals("id,Elevation,Estimated Prominence,Quadrangle,Range"));
 	}
 }
