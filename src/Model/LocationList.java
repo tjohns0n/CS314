@@ -110,4 +110,8 @@ public class LocationList{
 		return flag;
 	}
 
+	public void addLocation(Location l1) {
+		locList.add(l1);
+	}
+
 }

@@ -92,10 +92,10 @@ public class ShortestRouteCalculator{
 	}
 
 	// showResult - private function
-	private void showResult(){
+	protected void showResult(){
 		for(int i = 0; i < locList.getsize(); i++){
 			for(int j = 0 ; j < locList.getsize(); j++)
-				System.out.printf("%10d", dis_matrix[i][j]);
+				System.out.printf("%d ", (int)dis_matrix[i][j]);
 			System.out.println();
 		}
 		for(int i = 0; i < final_route.length; i++)
@@ -144,27 +144,44 @@ public class ShortestRouteCalculator{
 		}
 		test_route[cnt][0] = startIndex;
 		final_dis += dis_matrix[test_route[cnt-1][0]][startIndex];
-		test_route[cnt][1] = (int)final_dis;
+		test_route[cnt][1] = (int)Math.ceil(final_dis);
 		//System.out.println(final_dis);
 		return (int)Math.ceil(final_dis);
 	}
 
+	/*
+	 * findBest2Opt - call run2Opt until 2-opt doesn't find a better route
+	 */
 	public void findBest2Opt() {
 		while(run2Opt()) {
 			continue;
 		}
 	}
 	
+	/*
+	 * run2Opt - perform a single 2-opt sweep
+	 * returns true if a better route is found, false otherwise
+	 */
 	protected boolean run2Opt() {
+		// Return false if a better route isn't found
 		boolean update = false;
+		// loop through all values of the calculated nn route except the first and last
+		// first location of the trip MUST be the same as the last location, so they should never be swapped
 		for (int i = 1; i < final_route.length - 2; i++) {
+			// compare every element i to every other element j to see if a swap improves the total distance
 			for (int j = i + 1; j < final_route.length - 1; j++) {
+				// swap i and j in the route
 				int[][] new_route = swap(i, j);
+				// get original and new route distances
 				int new_dist = new_route[new_route.length - 1][1];
 				int old_dist = final_route[new_route.length - 1][1];
+				// if there is an improvement in mileage
 				if (new_dist < old_dist) {
+					// return true so another 2-opt sweep is performed
 					update = true;
+					// replace the original nn route with the new one
 					copyRoute(new_route, final_route);
+					// update the final distance
 					final_dis = new_dist;
 				}
 			}
@@ -172,13 +189,26 @@ public class ShortestRouteCalculator{
 		return update;
 	}
 	
-	protected int[][] swap(int start, int end) {
+	/*
+	 * swap - swap two elements for 2-opt 
+	 * a 2-opt swap is different from simply changing two positions
+	 * instead, it swaps the two positions and then reverses the order of every
+	 * element in between. This eliminates cross-overs in the route
+	 * args:
+	 * start - the first element of the swap 
+	 * end - the second element of the swap (inclusive)
+	 */
+	private int[][] swap(int start, int end) {
+		// create a new route the same length as the current route
 		int[][] new_route = new int[final_route.length][final_route[0].length];
+		// copy the original route up to the start value
 		for (int i = 0; i < start; i++) {
 			new_route[i][0] = final_route[i][0];
 			new_route[i][1] = final_route[i][1];
 		}
 		
+		// copy the elements between swap and end (inclusive) backwards
+		// also calculates the new cumulative distances 
 		int offset = 0;
 		int dist = 0;
 		for (int i = start; i <= end; i++) {
@@ -187,14 +217,23 @@ public class ShortestRouteCalculator{
 			dist = (int)Math.ceil(dis_matrix[new_route[i - 1][0]][new_route[i][0]]);
 			new_route[i][1] = new_route[i - 1][1] + dist;
 		}
+		// copy the remainder of the route, updating the cumulative distance
 		for (int i = end + 1; i < new_route.length; i++) {
 			new_route[i][0] = final_route[i][0];
 			dist = (int)Math.ceil(dis_matrix[new_route[i - 1][0]][new_route[i][0]]);
 			new_route[i][1] = new_route[i - 1][1] + dist;
 		}
+		// return the new route so run2Opt can see if this route is better
 		return new_route;
 	}
 
+	/*
+	 * copyRoute - copy an entire route 
+	 * args:
+	 * newRoute - reference to the route you wish to copy 
+	 * oldRoute - reference to the route to be overwritten
+	 * TODO: Use System.arraycopy to do a faster copy
+	 */
 	private void copyRoute(int[][] newRoute, int[][] oldRoute) {
 		for (int i = 0; i < oldRoute.length; i++) {
 			oldRoute[i][0] = newRoute[i][0];
@@ -202,6 +241,9 @@ public class ShortestRouteCalculator{
 		}
 	}
 
+	/*
+	 * TODO: run3Opt - perform 3-opt on a nn tour
+	 */
 	protected void run3Opt() {
 		
 	}
