@@ -1,6 +1,6 @@
 <!-- Team specific values you must change
-GroupID - change team number
-URL - change team number
+GroupID - change team number which i already did in this file
+URL - change team number which i already did in this file
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
