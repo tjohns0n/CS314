@@ -25,7 +25,7 @@ public class Model{
 	}
 
 	public void planTrip(){
-		boolean run2Opt = true;
+		boolean run2Opt = false;
 		boolean run3Opt = false;
 		cvsr.initiate();
 		src = new ShortestRouteCalculator(locList, 0);
@@ -34,7 +34,7 @@ public class Model{
 			src.findBest2Opt();
 		}
 		if (run3Opt) {
-			src.run3Opt();
+			src.findBest3Opt();
 		}
 	}
 

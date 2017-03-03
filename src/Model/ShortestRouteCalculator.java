@@ -183,6 +183,7 @@ public class ShortestRouteCalculator{
 					copyRoute(new_route, final_route);
 					// update the final distance
 					final_dis = new_dist;
+					return update;
 				}
 			}
 		}
@@ -242,10 +243,98 @@ public class ShortestRouteCalculator{
 	}
 
 	/*
+	 * TODO: findBest3Opt - run 3-opt until an improvement is not found
+	 */ 
+	protected void findBest3Opt() {
+
+	}
+
+	/*
 	 * TODO: run3Opt - perform 3-opt on a nn tour
 	 */
-	protected void run3Opt() {
+	private boolean run3Opt() {
+		return false;
+	}
+
+	/*
+	 * compare3OptSwaps - compare all swaps on 3 points not already covered by 2-opt
+	 * args:
+	 * a - the first 3-opt point
+	 * c - the second 3-opt point
+	 * e - the third 3-opt point
+	 * returns:
+	 * the best 3-opt possibility if it is better than the original route
+	 * the original route if it is still the best choice
+	 */
+	private int[][] compare3OptSwaps(int a, int c, int e) {
+		// set the optimal mileage to the original route's mileage
+		int newMileage = final_route[final_route.length - 1][final_route[0].length - 1];
 		
+		// if no improvements are made, best will be 4 
+		int best = 4;
+		
+		// get all 3-opt swaps
+		int[][][] possibleSwaps = swap3(a, c, e);
+		
+		// get mileages of new 3-opt trips 
+		int swap0Mileage = possibleSwaps[0][final_route.length - 1][final_route[0].length - 1];
+		int swap1Mileage = possibleSwaps[1][final_route.length - 1][final_route[0].length - 1];
+		int swap2Mileage = possibleSwaps[3][final_route.length - 1][final_route[0].length - 1];
+		int swap3Mileage = possibleSwaps[3][final_route.length - 1][final_route[0].length - 1];
+
+		// if a trip is better, mark that it is better and update the mileage
+		if (swap0Mileage < newMileage) {
+			best = 0;
+			newMileage = swap0Mileage;
+		}
+		
+		if (swap1Mileage < newMileage) {
+			best = 1;
+			newMileage = swap1Mileage;
+		}
+		
+		if (swap2Mileage < newMileage) {
+			best = 2;
+			newMileage = swap2Mileage;
+		}
+		
+		if (swap3Mileage < newMileage) {
+			best = 3;
+			newMileage = swap3Mileage;
+		}
+		
+		// return the best route
+		if (best == 3) {
+			return possibleSwaps[3];
+		}
+		
+		if (best == 2) {
+			return possibleSwaps[2];
+		}
+		
+		if (best == 1) {
+			return possibleSwaps[1];
+		}
+		
+		if (best == 0) {
+			return possibleSwaps[0];
+		}
+		// return original route if no improvement is made
+		else {
+			return final_route;
+		}
+	}
+
+	/*
+	 * TODO: swap3 - perform all 4 3-opt swaps not done by 2-opt
+	 */
+	private int[][][] swap3(int a, int c, int e) {
+		int b = a + 1;
+		int d = c + 1;
+		int f = e + 1;
+		int[][][] possibleSwaps = new int[4][final_route.length][final_route[0].length];
+
+		return possibleSwaps;
 	}
 
 	// calculateDistance - private function

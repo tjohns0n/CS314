@@ -41,11 +41,18 @@ public class SVGWriter {
     	footer = new ArrayList<String>();
 		originalContent = new ArrayList<String>();
 
-		// Init string
+		// Init string	
+		String loc = System.getProperty("user.dir");
     	try {
 			// Create buffered reader to read an SVG
-    		String loc = System.getProperty("user.dir");
-			BufferedReader readSVG = new BufferedReader(new FileReader(loc + "/src/View/" + filename));
+    		//String loc = System.getProperty("user.dir");
+			BufferedReader readSVG;
+			if (loc.contains("src")) {
+				readSVG = new BufferedReader(new FileReader("View/coloradoMap.svg"));
+			} else {
+				readSVG = new BufferedReader(new FileReader("src/View/coloradoMap.svg"));
+			}
+			
 			String line;
 			
 			// Read in a line from the SVG and trim the whitespace (may remove trimming later)

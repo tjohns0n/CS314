@@ -140,7 +140,12 @@ public class Presenter{
 		
 		//Get URI for webpage launch
 		URI webpage = null;
-		webpage = new URI("file://"+pwd+"/src/View/View.html");
+		if (pwd.contains("src")) {
+			webpage = new URI("file://"+pwd+"/View/View.html");
+		} else {
+			webpage = new URI("file://"+pwd+"/src/View/View.html");
+		}
+		
 		//Launch webpage
 		try {
 			java.awt.Desktop.getDesktop().browse(webpage);
