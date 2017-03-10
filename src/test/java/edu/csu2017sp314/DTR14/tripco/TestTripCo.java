@@ -8,14 +8,14 @@ public class TestTripCo {
 	
 	
 	@Test
-	public static void testToString(){
+	public void testToString(){
 		TripCo trip = new TripCo();
 		Assert.assertEquals("TripCo is an interactive Colorado trip planning application", trip.toString());
 	}
 
-	public static void main(String[] args) {
-		testToString();
-		System.out.println("here");
-		return;
-	}
+	//public static void main(String[] args) {
+	//	testToString();
+	//	System.out.println("here");
+//		return;
+//	}
 }
