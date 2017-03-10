@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<trip >
+
+<leg >
+<sequence >1</sequence>
+<start >Lake County</start>
+<finish >Pitkin County</finish>
+<mileage >30</mileage>
+</leg>
+
+<leg >
+<sequence >2</sequence>
+<start >Pitkin County</start>
+<finish >Eagle County</finish>
+<mileage >31</mileage>
+</leg>
+
+<leg >
+<sequence >3</sequence>
+<start >Eagle County</start>
+<finish >Summit County</finish>
+<mileage >29</mileage>
+</leg>
+
+<leg >
+<sequence >4</sequence>
+<start >Summit County</start>
+<finish >Clear Creek County</finish>
+<mileage >26</mileage>
+</leg>
+
+<leg >
+<sequence >5</sequence>
+<start >Clear Creek County</start>
+<finish >Gilpin County</finish>
+<mileage >14</mileage>
+</leg>
+
+<leg >
+<sequence >6</sequence>
+<start >Gilpin County</start>
+<finish >Boulder County</finish>
+<mileage >17</mileage>
+</leg>
+
+<leg >
+<sequence >7</sequence>
+<start >Boulder County</start>
+<finish >City and County of Broomfield</finish>
+<mileage >21</mileage>
+</leg>
+
+<leg >
+<sequence >8</sequence>
+<start >City and County of Broomfield</start>
+<finish >City and County of Denver</finish>
+<mileage >16</mileage>
+</leg>
+
+<leg >
+<sequence >9</sequence>
+<start >City and County of Denver</start>
+<finish >Jefferson County</finish>
+<mileage >23</mileage>
+</leg>
+
+<leg >
+<sequence >10</sequence>
+<start >Jefferson County</start>
+<finish >Douglas County</finish>
+<mileage >24</mileage>
+</leg>
+
+<leg >
+<sequence >11</sequence>
+<start >Douglas County</start>
+<finish >El Paso County</finish>
+<mileage >41</mileage>
+</leg>
+
+<leg >
+<sequence >12</sequence>
+<start >El Paso County</start>
+<finish >Pueblo County</finish>
+<mileage >46</mileage>
+</leg>
+
+<leg >
+<sequence >13</sequence>
+<start >Pueblo County</start>
+<finish >Crowley County</finish>
+<mileage >40</mileage>
+</leg>
+
+<leg >
+<sequence >14</sequence>
+<start >Crowley County</start>
+<finish >Otero County</finish>
+<mileage >31</mileage>
+</leg>
+
+<leg >
+<sequence >15</sequence>
+<start >Otero County</start>
+<finish >Las Animas County</finish>
+<mileage >43</mileage>
+</leg>
+
+<leg >
+<sequence >16</sequence>
+<start >Las Animas County</start>
+<finish >Baca County</finish>
+<mileage >83</mileage>
+</leg>
+
+<leg >
+<sequence >17</sequence>
+<start >Baca County</start>
+<finish >Prowers County</finish>
+<mileage >47</mileage>
+</leg>
+
+<leg >
+<sequence >18</sequence>
+<start >Prowers County</start>
+<finish >Bent County</finish>
+<mileage >38</mileage>
+</leg>
+
+<leg >
+<sequence >19</sequence>
+<start >Bent County</start>
+<finish >Kiowa County</finish>
+<mileage >37</mileage>
+</leg>
+
+<leg >
+<sequence >20</sequence>
+<start >Kiowa County</start>
+<finish >Cheyenne County</finish>
+<mileage >33</mileage>
+</leg>
+
+<leg >
+<sequence >21</sequence>
+<start >Cheyenne County</start>
+<finish >Kit Carson County</finish>
+<mileage >33</mileage>
+</leg>
+
+<leg >
+<sequence >22</sequence>
+<start >Kit Carson County</start>
+<finish >Lincoln County</finish>
+<mileage >54</mileage>
+</leg>
+
+<leg >
+<sequence >23</sequence>
+<start >Lincoln County</start>
+<finish >Elbert County</finish>
+<mileage >40</mileage>
+</leg>
+
+<leg >
+<sequence >24</sequence>
+<start >Elbert County</start>
+<finish >Arapahoe County</finish>
+<mileage >26</mileage>
+</leg>
+
+<leg >
+<sequence >25</sequence>
+<start >Arapahoe County</start>
+<finish >Adams County</finish>
+<mileage >16</mileage>
+</leg>
+
+<leg >
+<sequence >26</sequence>
+<start >Adams County</start>
+<finish >Morgan County</finish>
+<mileage >39</mileage>
+</leg>
+
+<leg >
+<sequence >27</sequence>
+<start >Morgan County</start>
+<finish >Washington County</finish>
+<mileage >38</mileage>
+</leg>
+
+<leg >
+<sequence >28</sequence>
+<start >Washington County</start>
+<finish >Yuma County</finish>
+<mileage >42</mileage>
+</leg>
+
+<leg >
+<sequence >29</sequence>
+<start >Yuma County</start>
+<finish >Phillips County</finish>
+<mileage >41</mileage>
+</leg>
+
+<leg >
+<sequence >30</sequence>
+<start >Phillips County</start>
+<finish >Sedgwick County</finish>
+<mileage >20</mileage>
+</leg>
+
+<leg >
+<sequence >31</sequence>
+<start >Sedgwick County</start>
+<finish >Logan County</finish>
+<mileage >40</mileage>
+</leg>
+
+<leg >
+<sequence >32</sequence>
+<start >Logan County</start>
+<finish >Weld County</finish>
+<mileage >69</mileage>
+</leg>
+
+<leg >
+<sequence >33</sequence>
+<start >Weld County</start>
+<finish >Larimer County</finish>
+<mileage >59</mileage>
+</leg>
+
+<leg >
+<sequence >34</sequence>
+<start >Larimer County</start>
+<finish >Grand County</finish>
+<mileage >50</mileage>
+</leg>
+
+<leg >
+<sequence >35</sequence>
+<start >Grand County</start>
+<finish >Jackson County</finish>
+<mileage >40</mileage>
+</leg>
+
+<leg >
+<sequence >36</sequence>
+<start >Jackson County</start>
+<finish >Routt County</finish>
+<mileage >37</mileage>
+</leg>
+
+<leg >
+<sequence >37</sequence>
+<start >Routt County</start>
+<finish >Moffat County</finish>
+<mileage >64</mileage>
+</leg>
+
+<leg >
+<sequence >38</sequence>
+<start >Moffat County</start>
+<finish >Rio Blanco County</finish>
+<mileage >42</mileage>
+</leg>
+
+<leg >
+<sequence >39</sequence>
+<start >Rio Blanco County</start>
+<finish >Garfield County</finish>
+<mileage >30</mileage>
+</leg>
+
+<leg >
+<sequence >40</sequence>
+<start >Garfield County</start>
+<finish >Mesa County</finish>
+<mileage >50</mileage>
+</leg>
+
+<leg >
+<sequence >41</sequence>
+<start >Mesa County</start>
+<finish >Delta County</finish>
+<mileage >35</mileage>
+</leg>
+
+<leg >
+<sequence >42</sequence>
+<start >Delta County</start>
+<finish >Gunnison County</finish>
+<mileage >45</mileage>
+</leg>
+
+<leg >
+<sequence >43</sequence>
+<start >Gunnison County</start>
+<finish >Chaffee County</finish>
+<mileage >42</mileage>
+</leg>
+
+<leg >
+<sequence >44</sequence>
+<start >Chaffee County</start>
+<finish >Saguache County[7][8]</finish>
+<mileage >50</mileage>
+</leg>
+
+<leg >
+<sequence >45</sequence>
+<start >Saguache County[7][8]</start>
+<finish >Hinsdale County</finish>
+<mileage >64</mileage>
+</leg>
+
+<leg >
+<sequence >46</sequence>
+<start >Hinsdale County</start>
+<finish >San Juan County</finish>
+<mileage >16</mileage>
+</leg>
+
+<leg >
+<sequence >47</sequence>
+<start >San Juan County</start>
+<finish >Ouray County</finish>
+<mileage >27</mileage>
+</leg>
+
+<leg >
+<sequence >48</sequence>
+<start >Ouray County</start>
+<finish >Montrose County</finish>
+<mileage >33</mileage>
+</leg>
+
+<leg >
+<sequence >49</sequence>
+<start >Montrose County</start>
+<finish >San Miguel County</finish>
+<mileage >30</mileage>
+</leg>
+
+<leg >
+<sequence >50</sequence>
+<start >San Miguel County</start>
+<finish >Dolores County</finish>
+<mileage >19</mileage>
+</leg>
+
+<leg >
+<sequence >51</sequence>
+<start >Dolores County</start>
+<finish >Montezuma County</finish>
+<mileage >29</mileage>
+</leg>
+
+<leg >
+<sequence >52</sequence>
+<start >Montezuma County</start>
+<finish >La Plata County</finish>
+<mileage >42</mileage>
+</leg>
+
+<leg >
+<sequence >53</sequence>
+<start >La Plata County</start>
+<finish >Archuleta County</finish>
+<mileage >44</mileage>
+</leg>
+
+<leg >
+<sequence >54</sequence>
+<start >Archuleta County</start>
+<finish >Mineral County</finish>
+<mileage >32</mileage>
+</leg>
+
+<leg >
+<sequence >55</sequence>
+<start >Mineral County</start>
+<finish >Rio Grande County</finish>
+<mileage >29</mileage>
+</leg>
+
+<leg >
+<sequence >56</sequence>
+<start >Rio Grande County</start>
+<finish >Conejos County</finish>
+<mileage >25</mileage>
+</leg>
+
+<leg >
+<sequence >57</sequence>
+<start >Conejos County</start>
+<finish >Alamosa County</finish>
+<mileage >33</mileage>
+</leg>
+
+<leg >
+<sequence >58</sequence>
+<start >Alamosa County</start>
+<finish >Costilla County</finish>
+<mileage >29</mileage>
+</leg>
+
+<leg >
+<sequence >59</sequence>
+<start >Costilla County</start>
+<finish >Huerfano County</finish>
+<mileage >39</mileage>
+</leg>
+
+<leg >
+<sequence >60</sequence>
+<start >Huerfano County</start>
+<finish >Custer County</finish>
+<mileage >37</mileage>
+</leg>
+
+<leg >
+<sequence >61</sequence>
+<start >Custer County</start>
+<finish >Fremont County</finish>
+<mileage >26</mileage>
+</leg>
+
+<leg >
+<sequence >62</sequence>
+<start >Fremont County</start>
+<finish >Teller County</finish>
+<mileage >32</mileage>
+</leg>
+
+<leg >
+<sequence >63</sequence>
+<start >Teller County</start>
+<finish >Park County</finish>
+<mileage >34</mileage>
+</leg>
+
+<leg >
+<sequence >64</sequence>
+<start >Park County</start>
+<finish >Lake County</finish>
+<mileage >35</mileage>
+</leg>
+
+</trip>
