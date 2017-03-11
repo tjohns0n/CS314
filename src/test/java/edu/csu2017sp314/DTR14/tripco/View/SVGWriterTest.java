@@ -90,18 +90,18 @@ public class SVGWriterTest {
 	public void testAddTitle() {
 		SVGWriter s = new SVGWriter(100, 100);
 		s.addTitle("Test Title", "testid");
-		assertTrue(s.header.get(2).contains("font-size=\"24"));
-		assertTrue(s.header.get(2).contains(">Test Title<"));
-		assertTrue(s.header.get(2).contains("id=\"testid"));
+		assertTrue(s.footer.get(0).contains("font-size=\"24"));
+		assertTrue(s.footer.get(0).contains(">Test Title<"));
+		assertTrue(s.footer.get(0).contains("id=\"testid"));
 	}
 	
 	@Test
 	public void testAddFooter() {
 		SVGWriter s = new SVGWriter(100, 100);
 		s.addFooter("Test Footer", "testid");
-		assertTrue(s.header.get(2).contains("font-size=\"24"));
-		assertTrue(s.header.get(2).contains(">Test Footer<"));
-		assertTrue(s.header.get(2).contains("id=\"testid"));		
+		assertTrue(s.footer.get(1).contains("font-size=\"24"));
+		assertTrue(s.footer.get(1).contains(">Test Footer<"));
+		assertTrue(s.footer.get(1).contains("id=\"testid"));		
 	}
 
 	@Test
@@ -137,15 +137,13 @@ public class SVGWriterTest {
 	@Test
 	public void testPadSVG() {
 		SVGWriter svg = new SVGWriter(100, 100);
-		svg.xOffset = 50;
-		svg.yOffset = 50;
+		svg.xOffset = 37;
+		svg.yOffset = 37;
 		svg.padSVG();
 		// Assert there is a new SVG header with width 2 * xOffset + original width:
-		assertTrue(svg.header.get(1).contains("width=\"200"));
+		assertTrue(svg.header.get(1).contains("width=\"100"));
 		// Assert there is a new SVG header with height 2 * yOffset + original height:
-		assertTrue(svg.header.get(1).contains("height=\"200"));
-		// Assert the original SVG has been translated 50 down and right:
-		assertTrue(svg.header.get(2).contains("translate(50, 50)"));
+		assertTrue(svg.header.get(1).contains("height=\"100"));
 	}
 	
 	
