@@ -55,6 +55,7 @@ public class PresenterTest {
 			Assert.fail();
 		}catch (UnsupportedOperationException o) {
 			System.out.println("Cannot open web browser");
+		}
 	}
         
 	
