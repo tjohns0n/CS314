@@ -53,7 +53,8 @@ public class PresenterTest {
 			e.printStackTrace();
 			System.out.println("URI failure, unable to get working path and this unable launch webpage");
 			Assert.fail();
-		}
+		}catch (UnsupportedOperationException o) {
+			System.out.println("Cannot open web browser");
 	}
         
 	
