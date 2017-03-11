@@ -141,11 +141,9 @@ public class SVGWriterTest {
 		svg.yOffset = 37;
 		svg.padSVG();
 		// Assert there is a new SVG header with width 2 * xOffset + original width:
-		assertTrue(svg.header.get(1).contains("width=\"200"));
+		assertTrue(svg.header.get(1).contains("width=\"100"));
 		// Assert there is a new SVG header with height 2 * yOffset + original height:
-		assertTrue(svg.header.get(1).contains("height=\"200"));
-		// Assert the original SVG has been translated 50 down and right:
-		assertTrue(svg.header.get(2).contains("translate(50, 50)"));
+		assertTrue(svg.header.get(1).contains("height=\"100"));
 	}
 	
 	
