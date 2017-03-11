@@ -68,7 +68,7 @@ public class Presenter{
 	public void run() throws URISyntaxException{
 		//Instantiate and call Model to process input
 		Model mod = new Model(inFiles.get(0).getAbsolutePath());
-		mod.planTrip();
+		mod.planTrip(false, false);
 		//Input file reading and processing loop
 		/* TODO
 		 * Loop for multiple file handling, for later

@@ -24,9 +24,7 @@ public class Model{
 		cvsr 	= new CSVReader(csvFileName, locList);
 	}
 
-	public void planTrip(){
-		boolean run2Opt = true;
-		boolean run3Opt = false;
+	public boolean planTrip(boolean run2Opt, boolean run3Opt){
 		cvsr.initiate();
 		src = new ShortestRouteCalculator(locList, 0);
 		src.findBestNearestNeighbor();
@@ -36,6 +34,7 @@ public class Model{
 		if (run3Opt) {
 			src.findBest3Opt();
 		}
+                return true;
 	}
 
 	public String[][] reteriveTrip(){
@@ -46,7 +45,7 @@ public class Model{
 	public static void main(String args[]){
 		String filename = args[0];
 		Model model = new Model(filename);
-		model.planTrip();
+		model.planTrip(false, false);
 		model.reteriveTrip();
 	}
 }

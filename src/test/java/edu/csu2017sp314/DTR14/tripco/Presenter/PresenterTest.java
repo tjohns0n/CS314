@@ -1,6 +1,9 @@
 package edu.csu2017sp314.DTR14.tripco.Presenter;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
@@ -12,25 +15,20 @@ public class PresenterTest {
 	// TODO add tests
 	private Presenter pres; 
 
-        /*
+        
 	@Test
-	public void testFiles(){
+	public void testFiles() throws IOException, URISyntaxException{
             ArrayList<File> f = new ArrayList<File>();
-            String pwd = System.getProperty("user.dir");
-            System.out.println(pwd);
-            String testFile = pwd+"/src/Presenter/Testfile.csv";
-            f.add(new File(testFile));
+
+            f.add(new File(this.getClass().getClassLoader().getResource("test.csv").toURI()));
             pres = new Presenter(f,9999);
             System.out.println(pres.inFiles.get(0).getAbsolutePath());
 	}
 	
 	@Test
-	public void testRun(){
+	public void testRun() throws IOException, URISyntaxException{
             ArrayList<File> f = new ArrayList<File>();
-		String pwd = System.getProperty("user.dir");
-		System.out.println(pwd);
-		String testFile = pwd+"/src/Presenter/Testfile.csv";
-		f.add(new File(testFile));
+		f.add(new File(this.getClass().getClassLoader().getResource("test.csv").toURI()));
 		pres = new Presenter(f,9999);
 		try{
 			pres.run();
@@ -39,9 +37,11 @@ public class PresenterTest {
 			e.printStackTrace();
 			System.out.println("URI failure, unable to get working path and this unable launch webpage");
 			Assert.fail();
+		}catch (UnsupportedOperationException o) {
+			System.out.println("Cannot open web browser");
 		}
 	}
-        */
+        
 	
 	//TODO
 	//LOOK HERE
