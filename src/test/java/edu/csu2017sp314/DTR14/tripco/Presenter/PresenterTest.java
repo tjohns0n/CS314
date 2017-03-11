@@ -1,6 +1,9 @@
 package edu.csu2017sp314.DTR14.tripco.Presenter;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
@@ -12,25 +15,36 @@ public class PresenterTest {
 	// TODO add tests
 	private Presenter pres; 
 
-        /*
+        
 	@Test
-	public void testFiles(){
+	public void testFiles() throws IOException{
             ArrayList<File> f = new ArrayList<File>();
-            String pwd = System.getProperty("user.dir");
-            System.out.println(pwd);
-            String testFile = pwd+"/src/Presenter/Testfile.csv";
-            f.add(new File(testFile));
+            try (BufferedWriter b = new BufferedWriter(new FileWriter("test.csv"))) {
+                b.write("name,id,Elevation,Estimated Prominence,latitude,longitude,Quadrangle,Range\n");
+                b.write("Mount Elbert,1,14433,9093,39.1177,-106.4453,Mount Elbert,Sawatch\n");
+                b.write("Mount Massive,2,14421,1961,39.1875,-106.4756,Mount Massive,Sawatch\n");
+                b.write("Mount Harvard,3,14420,2360,38.9243,-106.3208,Mount Harvard,Sawatch\n");
+                b.write("Blanca Peak,4,14345,5325,37.5774,-105.4857,Blanca Peak,Sangre de Cristo\n");
+                b.close();
+            }
+
+            f.add(new File("test.csv"));
             pres = new Presenter(f,9999);
             System.out.println(pres.inFiles.get(0).getAbsolutePath());
 	}
 	
 	@Test
-	public void testRun(){
+	public void testRun() throws IOException{
             ArrayList<File> f = new ArrayList<File>();
-		String pwd = System.getProperty("user.dir");
-		System.out.println(pwd);
-		String testFile = pwd+"/src/Presenter/Testfile.csv";
-		f.add(new File(testFile));
+            try (BufferedWriter b = new BufferedWriter(new FileWriter("test.csv"))) {
+                b.write("name,id,Elevation,Estimated Prominence,latitude,longitude,Quadrangle,Range\n");
+                b.write("Mount Elbert,1,14433,9093,39.1177,-106.4453,Mount Elbert,Sawatch\n");
+                b.write("Mount Massive,2,14421,1961,39.1875,-106.4756,Mount Massive,Sawatch\n");
+                b.write("Mount Harvard,3,14420,2360,38.9243,-106.3208,Mount Harvard,Sawatch\n");
+                b.write("Blanca Peak,4,14345,5325,37.5774,-105.4857,Blanca Peak,Sangre de Cristo\n");
+                b.close();
+            }
+		f.add(new File("test.csv"));
 		pres = new Presenter(f,9999);
 		try{
 			pres.run();
@@ -41,7 +55,7 @@ public class PresenterTest {
 			Assert.fail();
 		}
 	}
-        */
+        
 	
 	//TODO
 	//LOOK HERE
