@@ -18,7 +18,7 @@ public class LocationListTest{
 	public void testLineHandler() {
 		loclist = new LocationList();
 		String[] title = {"name", "latitude", "longitude", "zipcode"};
-		loclist.lineHandler("ft collins, 2391.2, 9312.3, 80525" , title);
+		loclist.lineHandler("ft collins, 2391.2, 9312.3, 80525" , title, new String[0]);
 		assertTrue("wrong Handler" , loclist.get(0).getName().equals("ft collins"));
 		assertTrue("wrong Handler" , loclist.get(0).getLatitude() == 2391.2);
 		assertTrue("wrong Handler" , loclist.get(0).getLongitude() == 9312.3);

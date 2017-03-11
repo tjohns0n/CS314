@@ -68,7 +68,12 @@ public class Presenter{
 	public void run() throws URISyntaxException{
 		//Instantiate and call Model to process input
 		Model mod = new Model(inFiles.get(0).getAbsolutePath());
-		mod.planTrip(false, false);
+        // MUST ADD FOR THIS SPRINT:
+        // Plan a trip, optionally using 2-opt or 3-opt
+        // If 3-opt is selected, use 2-opt as well
+        // Pass a String array of selections if using a selection,
+        // Otherwise pass an empty String array
+		mod.planTrip(true, false, new String[0]);
 		//Input file reading and processing loop
 		/* TODO
 		 * Loop for multiple file handling, for later

@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class CSVReader{
 
@@ -34,13 +35,13 @@ public class CSVReader{
 		this.loclist 	= loclist;
 	}
 
-	protected void initiate(){
-		csvHandler();
+	protected void initiate(String[] selection){
+		csvHandler(selection);
 	}
 
 	// csvHandler - private function
 	// # deal with csv file and extract valid info from each line
-	private void csvHandler(){
+	private void csvHandler(String[] selection){
 		try{
 			// open a buffer reader and check the first line
 			br = new BufferedReader(new FileReader(csvFileName));
@@ -56,7 +57,7 @@ public class CSVReader{
 			// auto-add the location to the list
 			while((line = br.readLine()) != null){
 				//line = line.replaceAll("\\s+", "");
-				loclist.lineHandler(line, title);
+				loclist.lineHandler(line, title, selection);
 			} 
 		}catch (FileNotFoundException e) {
 	        e.printStackTrace();
