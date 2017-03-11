@@ -17,34 +17,18 @@ public class PresenterTest {
 
         
 	@Test
-	public void testFiles() throws IOException{
+	public void testFiles() throws IOException, URISyntaxException{
             ArrayList<File> f = new ArrayList<File>();
-            try (BufferedWriter b = new BufferedWriter(new FileWriter("test.csv"))) {
-                b.write("name,id,Elevation,Estimated Prominence,latitude,longitude,Quadrangle,Range\n");
-                b.write("Mount Elbert,1,14433,9093,39.1177,-106.4453,Mount Elbert,Sawatch\n");
-                b.write("Mount Massive,2,14421,1961,39.1875,-106.4756,Mount Massive,Sawatch\n");
-                b.write("Mount Harvard,3,14420,2360,38.9243,-106.3208,Mount Harvard,Sawatch\n");
-                b.write("Blanca Peak,4,14345,5325,37.5774,-105.4857,Blanca Peak,Sangre de Cristo\n");
-                b.close();
-            }
 
-            f.add(new File("test.csv"));
+            f.add(new File(this.getClass().getClassLoader().getResource("test.csv").toURI()));
             pres = new Presenter(f,9999);
             System.out.println(pres.inFiles.get(0).getAbsolutePath());
 	}
 	
 	@Test
-	public void testRun() throws IOException{
+	public void testRun() throws IOException, URISyntaxException{
             ArrayList<File> f = new ArrayList<File>();
-            try (BufferedWriter b = new BufferedWriter(new FileWriter("test.csv"))) {
-                b.write("name,id,Elevation,Estimated Prominence,latitude,longitude,Quadrangle,Range\n");
-                b.write("Mount Elbert,1,14433,9093,39.1177,-106.4453,Mount Elbert,Sawatch\n");
-                b.write("Mount Massive,2,14421,1961,39.1875,-106.4756,Mount Massive,Sawatch\n");
-                b.write("Mount Harvard,3,14420,2360,38.9243,-106.3208,Mount Harvard,Sawatch\n");
-                b.write("Blanca Peak,4,14345,5325,37.5774,-105.4857,Blanca Peak,Sangre de Cristo\n");
-                b.close();
-            }
-		f.add(new File("test.csv"));
+		f.add(new File(this.getClass().getClassLoader().getResource("test.csv").toURI()));
 		pres = new Presenter(f,9999);
 		try{
 			pres.run();
