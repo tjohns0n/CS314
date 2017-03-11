@@ -18,8 +18,8 @@ public class SVGWriter {
     double width;
     double height;
 	// offsets once SVG is padded
-	int xOffset = 50;
-	int yOffset = 50;
+	int xOffset = 37;
+	int yOffset = 37;
     // The SVG content to be written before whatever elements the user adds
     ArrayList<String> header;
 	ArrayList<String> originalContent;
@@ -147,10 +147,10 @@ public class SVGWriter {
 	 */
 	public int[] mapPoints(double x, double y) {
 		int[] mapping = new int[2];
-		x += 109;
+		x += 109;//Left corner
 		y -= 41;
-		x *= ((992.6073) / 7);
-		y *= ((709.0824) / -4);
+		x *= ((992.6073) / 7);//Horizontal scalling
+		y *= ((709.0824) / -4);//Vertical scalling
 		x += 37;
 		y += 37;
 		mapping[0] = (int)x;
@@ -243,14 +243,14 @@ public class SVGWriter {
 	*/
 	public void padSVG() {
 		// Create a new SVG with height = original height + total horizontal paddding, width = orig width + total vertical padding
-		XMLElement svg = new XMLElement("svg", "width=\"" + (width + 2 * xOffset) + 
-			"\" height=\"" + (height + 2 * yOffset) + "\" " +
+		XMLElement svg = new XMLElement("svg", "width=\"" + (width) + 
+			"\" height=\"" + (height) + "\" " +
 			"xmlns:svg=\"http://www.w3.org/2000/svg\" xmlns=\"http://www.w3.org/2000/svg\"");
 		// Place the new SVG tag after the xml header but before the original SVG
 		header.add(1, svg.getStart());
 		
 		// Put the original SVG in a new group and transform that group to be moved by the padding offset
-		XMLElement g = new XMLElement("g", "transform=\"translate(" + xOffset + ", " + yOffset + ")\"");
+		XMLElement g = new XMLElement("g", "");
 		header.add(2, g.getStart());
 		// Close the group
 		footer.add(0, g.getEnd());
@@ -325,12 +325,12 @@ public class SVGWriter {
 		// Create text element centered on the horizontal axis, 4/5 of the way down the padding on the vertical axis
 		XMLElement txt = addText(text, (width + 2 * xOffset)/ 2, yOffset * 4 / 5, 24, id, true, false);
 		// Add to the header so it's not transformed with the original SVG:
-		header.add(2, txt.getStart() + text + txt.getEnd());
+		footer.add(0, txt.getStart() + text + txt.getEnd());
 	}
 
 	public void addFooter(String text, String id) {
-		XMLElement txt = addText(text, (width + 2 * xOffset) / 2, yOffset + (3 * yOffset / 5) + height, 24, id, true, false);
-		header.add(2, txt.getStart() + text + txt.getEnd());
+		XMLElement txt = addText(text, (width + 2 * xOffset) / 2, -yOffset + (3 * yOffset / 5) + height, 24, id, true, false);
+		footer.add(1, txt.getStart() + text + txt.getEnd());
 	}
 
 	/*
