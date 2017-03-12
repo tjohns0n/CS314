@@ -16,7 +16,7 @@ import java.net.Socket;
 //Provide listening loop
 //Make listening loop into threadable run() method
 
-public class Server{
+public class TemServer{
 	private int port; //Port number
 	private ServerSocket srv; //Server Socket
 	private Socket clin; //Client Socket
@@ -24,11 +24,11 @@ public class Server{
 	private InputStream in; //Client socket Input Stream
 	
 	//Constructor with a specific port to try
-	public Server(int setPort){
+	public TemServer(int setPort){
 		port = setPort;
 	}
 	//Default Construct, finds own port
-	public Server(){
+	public TemServer(){
 		port = 0;
 	}
 	//Port number getter

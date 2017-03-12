@@ -5,12 +5,111 @@ To change this template file, choose Tools | Templates
 and open the template in the editor.
 -->
 <html>
-    <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>DTR-14</title>
+<script type="text/javascript" src="/MyHomePage/jquery-2.0.3.min.js">
+</script>
+</head>
+<body>
+    <h1>This is our GUI</h1>
+    
+    <br> 
+    Choose The File To Upload 
+    <br> 
+    <input type="file" id="filename" />
+    <br> 
+    <br> 
+    <input type="button" value="Upload" onclick="sendFile()" />
+    <br>
+    showCityname <input type="checkbox" id="nCheck">
+    <br>
+    showMilage <input type="checkbox" id="mCheck">
+    <br>
+    showInfo <input type="checkbox" id="infoCheck">
+    <br>
+    2opt <input type="checkbox" id="_2optCheck">
+    <br>
+    3opt <input type="checkbox" id="_3optCheck">
+    <br>
+    <br>
+    <input type="button" value="Start Plan My Trip" onclick="startPlanMyTrip()" />
+    
+    
+    <div id="messages"></div>
+    
+    <script>
+        
+        // main refer from 
+        // http://stackoverflow.com/questions/21769470/file-upload-using-java-websocket-api-and-javascript
+        
+        var webSocket;
+        var messages = document.getElementById("messages");
+        
+        // make uri dymatic suitbable to all versions
+        var loc = window.location, new_uri;
+        if (loc.protocol === "https:") {
+            new_uri = "wss:";
+        } else {
+            new_uri = "ws:";
+        }
+        new_uri += "//" + loc.host;
+        new_uri += loc.pathname + "Server";
+        // end of uri dymatic process
+        
+            webSocket = new WebSocket(new_uri)
+
+            webSocket.binaryType = "arraybuffer";
+            
+            webSocket.onopen = function() {
+                writeResponse("Welcome to DTR-14 GUI")
+            };
+
+            webSocket.onmessage = function(evt) {
+                writeResponse(evt.meg)
+            };
+
+            webSocket.onclose = function() {
+                writeResponse("Connection is closed...")
+            };
+            webSocket.onerror = function(e) {
+                writeResponse(e.msg)
+            }
+        
+        function sendFile() {
+            var file = document.getElementById('filename').files[0];
+            webSocket.send(file.name + ' uploads successfully');
+            var reader = new FileReader();
+            var rawData = new ArrayBuffer();            
+
+            reader.loadend = function() {
+
+            }
+            reader.onload = function(e) {
+                rawData = e.target.result;http://stackoverflow.com/questions/21769470/file-upload-using-java-websocket-api-and-javascript
+                webSocket.send(rawData);
+                webSocket.send('end');
+            }
+            
+            reader.readAsArrayBuffer(file);
+            writeResponse(file.name + " sent successfully!");
+        }
+        
+        function startPlanMyTrip(){
+            var name = new Boolean(document.getElementById("nCheck").checked);
+            var milage = new Boolean(document.getElementById("mCheck").checked);
+            var info = new Boolean(document.getElementById("infoCheck").checked);
+            var _2opt = new Boolean(document.getElementById("_2optCheck").checked);
+            var _3opt = new Boolean(document.getElementById("_3optCheck").checked);
+            writeResponse("It's still not available yet")
+            webSocket.send('Starting Plan Your Trip');
+        }
+        
+        function writeResponse(text){
+            messages.innerHTML += "<br/>" + text;
+        }
+
+
+    </script>
+</body>
 </html>
