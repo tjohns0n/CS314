@@ -52,13 +52,20 @@ public class LocationList{
 	// # accept a string array, which is the template to correspond the information
 	// # auto-added the location information read from the line to location list
 	// Enhancement: -- the title information may have more want to store in location
-	protected void lineHandler(String line, String[] title){
+	protected void lineHandler(String line, String[] title, String[] selection){
+		boolean useSelection;
+		if (selection.length == 0) {
+			useSelection = false;
+		} else {
+			useSelection = true;
+		}
 		String name 	= "";
 		String latitude = "";
 		String longitude= "";
 		String extras 	= "";
 		String template = "";
 		String valid 	= "";
+		String id 		= "";
 		boolean flag = false;
 		int j = 0;
 		String parts[] = line.split(cvsSplitRegex);
@@ -66,22 +73,37 @@ public class LocationList{
 			parts[i] = parts[i].trim();
 			title[j] = title[j].trim();
 			valid += parts[i];
-			if(parts[i].indexOf("\"") == 0 && flag == false){
+			// If value starts with a quote, mark that the element may contain commas:
+			if (parts[i].indexOf("\"") == 0 && flag == false) {
 				flag = true; valid += ", "; continue;
-			} if(parts[i].indexOf("\"") == parts[i].length()-1 && flag == true){
+			} 
+			// If the element started with a quote, mark that the element has finished handling: 
+			if (parts[i].indexOf("\"") == parts[i].length()-1 && flag == true) {
 				flag = false;
-			} if(flag == true){
+			} 
+			if (flag == true) {
 				valid += ", "; continue; 
 			}
-			if(title[j].toUpperCase().equals("NAME")) 
+			// If column on csv corresponds to name, assign this element as name:
+			if (title[j].toUpperCase().equals("NAME")) 
 				name = valid;
+			// If column on csv corresponds to latitude, assign this element as latitude:
 			else if (title[j].toUpperCase().equals("LATITUDE"))
 				latitude = valid;
+			// If column on csv corresponds to longitude, assign this element as longitude:
 			else if (title[j].toUpperCase().equals("LONGITUDE"))
 				longitude = valid;
-			else{
+			// If column does not correspond to name, lat, or long:
+			else {
+				// Grab name of ID:
+				if (title[j].toUpperCase().equals("ID")) {
+					id = valid;
+				}
+				// If not first element of template, add a comma:
 				if(template != "") template += ",";
+				// If not first element of extras, add a comma:
 				if(extras != "") extras += ",";
+				// Add element name to title and element contents to extras:
 				template += title[j];
 				extras += valid;
 			}
@@ -90,7 +112,9 @@ public class LocationList{
 		}
 
 		Location loc = new Location(name, latitude, longitude, extras, template);
-		if(checkValid(loc) == true)
+		// Add the location if it's valid AND 
+		// the location is either in the selection or a selection is not being used
+		if(checkValid(loc) == true && (!useSelection || Arrays.asList(selection).contains(id)))
 			locList.add(loc);
 	}
 

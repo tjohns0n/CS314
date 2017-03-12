@@ -10,39 +10,34 @@ import org.junit.*;
 
 public class CSVReaderTest{
 
+	String fileName = this.getClass().getClassLoader().getResource("test.csv").toString().substring(5);
 	private static LocationList loclist;
-
-	private final String fileName = "test.csv";
-
 	private static CSVReader csvr;
 	@Test
 	public void testConstructor() {
-		try {
-			BufferedWriter b = new BufferedWriter(new FileWriter(fileName));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		CSVReader cvsr = new CSVReader(fileName, loclist);
 	}
 
 	@Test
 	public void testInitiate(){
-		try {
-			BufferedWriter b = new BufferedWriter(new FileWriter(fileName));
-			b.write("name,id,Elevation,Estimated Prominence,latitude,longitude,Quadrangle,Range\n");
-			b.write("Mount Elbert,1,14433,9093,39.1177,-106.4453,Mount Elbert, Sawatch");
-			b.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		// Test without subselection:
 		loclist = new LocationList();
 		csvr = new CSVReader(fileName, loclist);
-		csvr.initiate();
+		csvr.initiate(new String[0]);
 		assertTrue(loclist.get(0).getName().equals("Mount Elbert"));
 		assertTrue(loclist.get(0).getLatitude() == 39.1177);
 		assertTrue(loclist.get(0).getLongitude() == -106.4453);
+
+		// Test with subselection:
+		String[] selection = new String[2];
+		selection[0] = "2";
+		selection[1] = "4";
+		loclist = new LocationList();
+		csvr = new CSVReader(fileName, loclist);
+		csvr.initiate(selection);
+		assertTrue(loclist.getsize() == 2);
+		assertTrue(loclist.get(0).getName().equals("Mount Massive"));
+		assertTrue(loclist.get(1).getName().equals("Blanca Peak"));
 	}
 	
 }
