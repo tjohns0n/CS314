@@ -29,10 +29,10 @@ public class Model{
 		src = new ShortestRouteCalculator(locList, 0);
 		src.findBestNearestNeighbor();
 		if (run2Opt) {
-			src.findBest2Opt();
+			src.findBestOpt(false);
 		}
 		if (run3Opt) {
-			src.findBest3Opt();
+			src.findBestOpt(true);
 		}
                 return true;
 	}
