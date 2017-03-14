@@ -14,6 +14,7 @@ public class View {
     // ItineraryWriter and SVGWriter:
     ItineraryWriter itinWrite;
     SVGWriter svgWrite;
+    String select;
     // Number of legs:
     int legCount;
 
@@ -27,11 +28,12 @@ public class View {
     names - Whether or not the SVG should have labels showing the names of each location of a trip
     ids - Whether or not the SVG should have labels showing the id assigned to each location of a trip
     */
-    public View(String rootName, String SVGFile, int totalMileage, boolean mileage, boolean names, boolean ids) {
+    public View(String rootName, String SVGFile, String XMLfile, int totalMileage, boolean mileage, boolean names, boolean ids) {
         itinWrite = new ItineraryWriter();
         svgWrite = new SVGWriter(SVGFile);
         legCount = 0;
-
+        // if no such file, XMLfile = "";
+        select=XMLfile;
         // For now, automatically pad the SVG with whitespace
         svgWrite.padSVG();
         // Store the root of the CSV file name
@@ -99,7 +101,9 @@ public class View {
         itinWrite.writeXML(rootName + ".xml");
     }
 
-
+    public String[] getSelection(){
+        return selectr.getID();
+    }
     /*
     === Likely to be removed ===
     display: output text to the console
@@ -112,7 +116,7 @@ public class View {
     }
     
     public static void main(String[] args) {
-    	View v = new View("hello.csv", "coloradoMap.svg", 300, false, false, true);
+    	View v = new View("hello.csv", "coloradoMap.svg", "", 300, false, false, true);
     	v.addLeg(40, -108, "Not Denver", "id1", 39, -107, "Not CO Springs", "id2", 50);
     	v.addLeg(39, -107, "Not CO Springs", "id2", 40.5, -108, "Not Fort Collins", "id3", 60);
     	v.addLeg(40.5, -108, "Not Fort Collins", "id3", 40, -108, "Not Denver", "id1", 100);
