@@ -72,7 +72,7 @@ public class ShortestRouteCalculatorTest{
 		int[][] test1 = src.getFinalRoute();
 		ShortestRouteCalculator src2 = new ShortestRouteCalculator(locList, 0);
 		src2.findBestNearestNeighbor();
-		src2.findBest2Opt();
+		src2.findBestOpt(false);
 		
 		int[][] test2 = src2.getFinalRoute();
 
