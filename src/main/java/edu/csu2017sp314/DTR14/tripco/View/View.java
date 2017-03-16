@@ -5,7 +5,9 @@ Creates and displays viewable files and pages from data provided by the Presente
 
 package edu.csu2017sp314.DTR14.tripco.View;
 
-public class View {
+import edu.csu2017sp314.DTR14.tripco.Presenter.Presenter;
+
+public class View extends Thread{
 
     // Name of the CSV input file, sans the .csv extension 
     String rootName;
@@ -14,12 +16,30 @@ public class View {
     // ItineraryWriter and SVGWriter:
     ItineraryWriter itinWrite;
     SVGWriter svgWrite;
-    String select;
     // Number of legs:
     int legCount;
-
+    //Input
+    private InputGUI ig;
+    //For Notify
+    Presenter present;
+    
+    public View(Presenter pres){
+    	present = pres;
+    	svgWrite=null;
+    	itinWrite = new ItineraryWriter();
+        svgWrite = null;
+        legCount = 0;
+        ig = new InputGUI(this);
+        // For now, automatically pad the SVG with whitespace
+        svgWrite.padSVG();
+        rootName="";
+        ids=false;
+        mileage=false;
+        names=false;
+    }
+    
     /*
-    View constructor
+    View Command Line constructor
     args:
     rootName - The name of the CSV file, with or without the .csv extension
     SVGFile - The name of the input SVGFile (should be "coloradoMap.svg" for spring 1)
@@ -28,12 +48,13 @@ public class View {
     names - Whether or not the SVG should have labels showing the names of each location of a trip
     ids - Whether or not the SVG should have labels showing the id assigned to each location of a trip
     */
-    public View(String rootName, String SVGFile, String XMLfile, int totalMileage, boolean mileage, boolean names, boolean ids) {
-        itinWrite = new ItineraryWriter();
+    
+    public View(Presenter pres, String rootName, String SVGFile, int totalMileage, boolean mileage, boolean names, boolean ids) {
+    	present = pres;
+    	itinWrite = new ItineraryWriter();
         svgWrite = new SVGWriter(SVGFile);
         legCount = 0;
-        // if no such file, XMLfile = "";
-        select=XMLfile;
+        ig = new InputGUI(this);
         // For now, automatically pad the SVG with whitespace
         svgWrite.padSVG();
         // Store the root of the CSV file name
@@ -51,7 +72,12 @@ public class View {
         this.names = names;
         this.ids = ids;
     }
-
+    public void setTotal(int totalMileage){
+    	svgWrite.addFooter(totalMileage + " miles", "mapfooter");
+    }
+    public void run(){
+    	ig.launch(new String[0]);
+    }
     public String getRootName() {
     	return rootName;
     }
@@ -101,25 +127,38 @@ public class View {
         itinWrite.writeXML(rootName + ".xml");
     }
 
-    public String[] getSelection(){
-        return selectr.getID();
-    }
+
     /*
     === Likely to be removed ===
     display: output text to the console
     args:
     text - The text to be printed to the console
     */
+    
     public String display(String text) {
         System.out.println(text);
         return text;
     }
-    
+    public void Notify(){
+    	//Set options for svg writer
+    	ids=ig.select.getOptions()[0];
+    	mileage=ig.select.getOptions()[1];
+    	names=ig.select.getOptions()[2];
+    	String temp=ig.select.getCSVName();
+        if (temp.substring(temp.length()-4, temp.length()).equals(".csv")) {
+            rootName = temp.substring(0, temp.length() - 4);
+        } else {
+            rootName = temp;
+        }
+        svgWrite = new SVGWriter(ig.select.getBackSVGName());
+        svgWrite.addTitle("Colorado - " + this.rootName, "maptitle");
+    	present.notify();
+    }
     public static void main(String[] args) {
-    	View v = new View("hello.csv", "coloradoMap.svg", "", 300, false, false, true);
-    	v.addLeg(40, -108, "Not Denver", "id1", 39, -107, "Not CO Springs", "id2", 50);
-    	v.addLeg(39, -107, "Not CO Springs", "id2", 40.5, -108, "Not Fort Collins", "id3", 60);
-    	v.addLeg(40.5, -108, "Not Fort Collins", "id3", 40, -108, "Not Denver", "id1", 100);
-    	v.writeFiles();
+//    	View v = new View("hello.csv", "coloradoMap.svg", 300, false, false, true);
+//    	v.addLeg(40, -108, "Not Denver", "id1", 39, -107, "Not CO Springs", "id2", 50);
+//    	v.addLeg(39, -107, "Not CO Springs", "id2", 40.5, -108, "Not Fort Collins", "id3", 60);
+//    	v.addLeg(40.5, -108, "Not Fort Collins", "id3", 40, -108, "Not Denver", "id1", 100);
+//    	v.writeFiles();
     }
 }
