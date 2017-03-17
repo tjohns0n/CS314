@@ -30,8 +30,8 @@ public class SelectionWriter {
         XMLElement slct = new XMLElement("selection", "");
         header.add(slct.getStart());
         header.add("\n");
-        footer.add("\n");
         footer.add(slct.getEnd());
+        footer.add("\n");
         writeBody();
 	}
 	//Writes body of Selection XML
@@ -40,36 +40,38 @@ public class SelectionWriter {
 		XMLElement title = new XMLElement("title", "");
 		body.add("\t");
 		body.add(title.getStart());
-		body.add(select.getName());
+		body.add(select.getTitle());
 		body.add(title.getEnd());
 		body.add("\n");
 		//Add filename
 		XMLElement filename = new XMLElement("filename", "");
 		body.add("\t");
 		body.add(filename.getStart());
-		body.add(select.getFilename());
+		body.add(select.getCSVName());
 		body.add(filename.getEnd());
 		body.add("\n");
-		//Add subset of destinations
-		XMLElement dest = new XMLElement("destinations", "");
-		XMLElement id = new XMLElement("id", "");
-		String[] sub = select.getSubset();
-		body.add("\t");
-		body.add(dest.getStart());
-		body.add("\n");
-		//Add individual ids of subset
-		for(int i=0;i<sub.length;i++){
+		if(select.getSubset().length>1){
+			//Add subset of destinations
+			XMLElement dest = new XMLElement("destinations", "");
+			XMLElement id = new XMLElement("id", "");
+			String[] sub = select.getSubset();
 			body.add("\t");
+			body.add(dest.getStart());
+			body.add("\n");
+			//Add individual ids of subset
+			for(int i=0;i<sub.length;i++){
+				body.add("\t");
+				body.add("\t");
+				body.add(id.getStart());
+				body.add(sub[i]);
+				body.add(id.getEnd());
+				body.add("\n");
+			}
+			//Add closing destinations tag
 			body.add("\t");
-			body.add(id.getStart());
-			body.add(sub[i]);
-			body.add(id.getEnd());
+			body.add(dest.getEnd());
 			body.add("\n");
 		}
-		//Add closing destinations tag
-		body.add("\t");
-		body.add(dest.getEnd());
-		body.add("\n");
 	}
     public boolean writeXML(String filename) {
     	//Return value, assume bad return

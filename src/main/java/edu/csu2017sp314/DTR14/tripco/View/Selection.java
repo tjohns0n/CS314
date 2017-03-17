@@ -12,8 +12,8 @@ public class Selection {
 	private File dataCSV;
 	//Name of select file
 	private String selectFile;
-	//Name of selection
-	private String name;
+	//title of selection
+	private String title;
 	//Filename of background svg map
 	private String backSVG;
 	//Array of subset selections
@@ -25,21 +25,33 @@ public class Selection {
 	private boolean[] opts;
 	//0=2opt 1=3opt
 	
-	//Barebones Constructor
-	public Selection(File dataFile, String selectfile){
-		dataCSV=dataFile;
+	//Bare bones with just select file
+	public Selection(String selectfile){
+		dataCSV=null;
 		selectFile=selectfile;
-		name=selectfile;
+		title=selectfile;
 		backSVG = "";
 		options = new boolean[] {false, false, false};
 		opts = new boolean[] {false, false};
-		subset = null;
+		subset = new String[0];
 	}
-	//Full Constructor
-	public Selection(File dataFile, String selectfile, String Name, String backsvg, boolean[] Options, boolean[] Opts, String[] Subset){
+	
+	
+	//Bare bones with .csv file constructor
+	public Selection(File dataFile, String selectfile){
 		dataCSV=dataFile;
 		selectFile=selectfile;
-		name=Name;
+		title=selectfile;
+		backSVG = "";
+		options = new boolean[] {false, false, false};
+		opts = new boolean[] {false, false};
+		subset = new String[0];
+	}
+	//Full Constructor
+	public Selection(File dataFile, String selectfile, String Title, String backsvg, boolean[] Options, boolean[] Opts, String[] Subset){
+		dataCSV=dataFile;
+		selectFile=selectfile;
+		title=Title;
 		backSVG=backsvg;
 		if(Options.length==3)
 			options=Options;
@@ -58,6 +70,12 @@ public class Selection {
 	}
 	public void setBackSVG(String filename){
 		backSVG=filename;
+	}
+	public void setTitle(String Title){
+		title=Title;
+	}
+	public void setSelectName(String name){
+		selectFile=name;
 	}
 	public void setOpt(boolean[] Opt){
 		if(Opt.length==2){
@@ -97,8 +115,8 @@ public class Selection {
 	public String getFilename(){
 		return selectFile;
 	}
-	public String getName(){
-		return name;
+	public String getTitle(){
+		return title;
 	}
 	public String getBackSVGName(){
 		if(backSVG!=null)

@@ -5,9 +5,14 @@ Creates and displays viewable files and pages from data provided by the Presente
 
 package edu.csu2017sp314.DTR14.tripco.View;
 
-import edu.csu2017sp314.DTR14.tripco.Presenter.Presenter;
+import java.io.File;
+import java.util.ArrayList;
 
-public class View extends Thread{
+import edu.csu2017sp314.DTR14.tripco.Presenter.Presenter;
+import javafx.application.Application;
+import javafx.stage.Stage;
+
+public class View extends Application implements Runnable{
 
     // Name of the CSV input file, sans the .csv extension 
     String rootName;
@@ -20,18 +25,31 @@ public class View extends Thread{
     int legCount;
     //Input
     private InputGUI ig;
+    private Stage stg;
     //For Notify
-    Presenter present;
+    private Presenter present;
     
+    //GUI Constructor
     public View(Presenter pres){
     	present = pres;
     	svgWrite=null;
     	itinWrite = new ItineraryWriter();
-        svgWrite = null;
         legCount = 0;
+        //stg = new Stage();
         ig = new InputGUI(this);
-        // For now, automatically pad the SVG with whitespace
-        svgWrite.padSVG();
+        rootName="";
+        ids=false;
+        mileage=false;
+        names=false;
+    }
+    //Empty constructor, for javafx Application compliance
+    public View(){
+    	present = null;
+    	svgWrite=null;
+    	itinWrite = new ItineraryWriter();
+        legCount = 0;
+        //stg = new Stage();
+        ig = new InputGUI(this);
         rootName="";
         ids=false;
         mileage=false;
@@ -54,7 +72,7 @@ public class View extends Thread{
     	itinWrite = new ItineraryWriter();
         svgWrite = new SVGWriter(SVGFile);
         legCount = 0;
-        ig = new InputGUI(this);
+        ig = null;
         // For now, automatically pad the SVG with whitespace
         svgWrite.padSVG();
         // Store the root of the CSV file name
@@ -72,16 +90,72 @@ public class View extends Thread{
         this.names = names;
         this.ids = ids;
     }
-    public void setTotal(int totalMileage){
-    	svgWrite.addFooter(totalMileage + " miles", "mapfooter");
-    }
+    
+    
+    //Util methods
     public void run(){
-    	ig.launch(new String[0]);
+    	this.launch(new String[0]);
     }
+    @Override
+	public void start(Stage primaryStage) throws Exception {
+		ig.start(primaryStage);
+	}
     public String getRootName() {
     	return rootName;
     }
     
+    //Called by Input gui, sets options from gui, starts svgwriter, wakes up Presenter thread
+    public void Notify(){
+    	//Set options for svg writer
+    	ids=ig.select.getOptions()[0];
+    	mileage=ig.select.getOptions()[1];
+    	names=ig.select.getOptions()[2];
+    	String temp=ig.select.getCSVName();
+        if (temp.substring(temp.length()-4, temp.length()).equals(".csv")) {
+            rootName = temp.substring(0, temp.length() - 4);
+        } else {
+            rootName = temp;
+        }
+        //System.out.println(ig.select.getBackSVGName());
+        svgWrite = new SVGWriter(ig.select.getBackSVGName());
+        svgWrite.padSVG();
+        svgWrite.addTitle("Colorado - " + this.rootName, "maptitle");
+        if(present!=null)
+        	present.notify();
+    }
+    
+    //Getter methods to pull from selection
+    public File getCSV(){
+		return ig.select.getCSV();
+	}
+	public String getCSVName(){
+		return ig.select.getCSVName();
+	}
+	public String getSelectFilename(){
+		return ig.select.getFilename();
+	}
+	public String getSelectTitle(){
+		return ig.select.getTitle();
+	}
+	public String getBackSVGName(){
+		return ig.select.getBackSVGName();
+	}
+	public boolean[] getOptions(){
+		return ig.select.getOptions();
+	}
+	public boolean[] getOpts(){
+		return ig.select.getOpts();
+	}
+	public String[] getSubset(){
+		return ig.select.getSubset();
+	}
+	
+    //SVG Methods
+    
+    //Set Total Mileage for gui view
+    public void setTotal(int totalMileage){
+    	svgWrite.addFooter(totalMileage + " miles", "mapfooter");
+    }
     /*
      * Add a line to the SVG and a leg to the XML. Automatically converts from geographic coordinates.
      * If any of the command line flags are true, labels will automatically be generated as well
@@ -139,26 +213,18 @@ public class View extends Thread{
         System.out.println(text);
         return text;
     }
-    public void Notify(){
-    	//Set options for svg writer
-    	ids=ig.select.getOptions()[0];
-    	mileage=ig.select.getOptions()[1];
-    	names=ig.select.getOptions()[2];
-    	String temp=ig.select.getCSVName();
-        if (temp.substring(temp.length()-4, temp.length()).equals(".csv")) {
-            rootName = temp.substring(0, temp.length() - 4);
-        } else {
-            rootName = temp;
-        }
-        svgWrite = new SVGWriter(ig.select.getBackSVGName());
-        svgWrite.addTitle("Colorado - " + this.rootName, "maptitle");
-    	present.notify();
-    }
+    
     public static void main(String[] args) {
+    	Presenter prez = new Presenter(new ArrayList<File>());
+    	View vw = new View(prez);
+    	vw.run();
 //    	View v = new View("hello.csv", "coloradoMap.svg", 300, false, false, true);
 //    	v.addLeg(40, -108, "Not Denver", "id1", 39, -107, "Not CO Springs", "id2", 50);
 //    	v.addLeg(39, -107, "Not CO Springs", "id2", 40.5, -108, "Not Fort Collins", "id3", 60);
 //    	v.addLeg(40.5, -108, "Not Fort Collins", "id3", 40, -108, "Not Denver", "id1", 100);
 //    	v.writeFiles();
     }
+
+
+	
 }
