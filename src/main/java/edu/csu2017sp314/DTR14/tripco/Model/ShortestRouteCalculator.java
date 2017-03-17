@@ -20,6 +20,9 @@ public class ShortestRouteCalculator{
 	// assigned to final_route if better than current
 	private int[][] test_route;
 
+	// store single 3-opt routes
+	private int[][] opt_route;
+
 	// args: dis_matrix matrix - 2D
 	// # store the calculated distance between each city
 	private double[][] dis_matrix;
@@ -151,10 +154,24 @@ public class ShortestRouteCalculator{
 
 	/*
 	 * findBest2Opt - call run2Opt until 2-opt doesn't find a better route
+	 * args:
+	 * do3Opt - do 3-opt in addition to 2-opt
 	 */
-	public void findBest2Opt() {
-		while(run2Opt()) {
-			continue;
+	public void findBestOpt(boolean do3Opt) {
+		// if 3-opt is selected, interleave 2-opt and 3-opt
+		// run until no better route is found
+		if (do3Opt) {
+			// initialize opt_route, which is used by 3-opt code
+			opt_route = new int[final_route.length][final_route[0].length];
+			while(run2Opt() || run3Opt()) {
+				continue;
+			}
+		// if 3-opt is not selected, only run 2-opt 
+		// run until no better route is found
+		} else {
+			while(run2Opt()) {
+				continue;
+			}
 		}
 	}
 	
@@ -243,98 +260,273 @@ public class ShortestRouteCalculator{
 	}
 
 	/*
-	 * TODO: findBest3Opt - run 3-opt until an improvement is not found
-	 */ 
-	protected void findBest3Opt() {
-
-	}
-
-	/*
 	 * TODO: run3Opt - perform 3-opt on a nn tour
 	 */
 	private boolean run3Opt() {
+		// i is never swapped, so start at index 0
+		for (int i = 0; i < final_route.length - 5; i++) {
+			// must be at least one loc between i and j
+			for (int j = i + 2; j < final_route.length - 3; j++) {
+				// must be at least one loc between j and k
+				// k is swapped, so don't go up to final index
+				for (int k = j + 2; k < final_route.length - 1; k++) {
+					// if there is an improvement, overwrite the old route with the new one
+					if (compare3OptSwaps(i, j, k)) {
+						copyRoute(opt_route, final_route);
+						//System.out.println(final_route[opt_route.length - 1][1]);
+						// an improvement has been found, so exit current 3-opt
+						return true;
+					}
+				}
+			}
+		}
+		// return false if no improvement is found 
 		return false;
 	}
 
 	/*
 	 * compare3OptSwaps - compare all swaps on 3 points not already covered by 2-opt
 	 * args:
-	 * a - the first 3-opt point
-	 * c - the second 3-opt point
-	 * e - the third 3-opt point
+	 * i - the first 3-opt point
+	 * j - the second 3-opt point
+	 * k - the third 3-opt point
 	 * returns:
-	 * the best 3-opt possibility if it is better than the original route
-	 * the original route if it is still the best choice
+	 * true if a better route is found 
+	 * false if a better route is not found
+	 * side effects:
+	 * writes a route to opt_route if it is better than the current route 
 	 */
-	private int[][] compare3OptSwaps(int a, int c, int e) {
-		// set the optimal mileage to the original route's mileage
-		int newMileage = final_route[final_route.length - 1][final_route[0].length - 1];
-		
-		// if no improvements are made, best will be 4 
-		int best = 4;
-		
-		// get all 3-opt swaps
-		int[][][] possibleSwaps = swap3(a, c, e);
-		
-		// get mileages of new 3-opt trips 
-		int swap0Mileage = possibleSwaps[0][final_route.length - 1][final_route[0].length - 1];
-		int swap1Mileage = possibleSwaps[1][final_route.length - 1][final_route[0].length - 1];
-		int swap2Mileage = possibleSwaps[3][final_route.length - 1][final_route[0].length - 1];
-		int swap3Mileage = possibleSwaps[3][final_route.length - 1][final_route[0].length - 1];
+	private boolean compare3OptSwaps(int i, int j, int k) {
+		// currentDistance: distance of current best route between i and k + 1
+		// swapXDistance: distance of possible improved route between i and k + 1
+		double currentDistance, swap0Distance, swap1Distance, swap2Distance, swap3Distance, testDistance;
+		currentDistance = 0;
+		// calculate distance between i and k + 1 on current best route
+		for (int x = i; x <= k; x++) {
+			currentDistance += dis_matrix[final_route[x][0]][final_route[x + 1][0]];
+		}
 
-		// if a trip is better, mark that it is better and update the mileage
-		if (swap0Mileage < newMileage) {
+		testDistance = currentDistance;
+		// find the distances of potential swaps covering the same points
+		swap0Distance = Math.ceil(find3OptSwapDistance(0, i, j, k));
+		swap1Distance = Math.ceil(find3OptSwapDistance(1, i, j, k));
+		swap2Distance = Math.ceil(find3OptSwapDistance(2, i, j, k));
+		swap3Distance = Math.ceil(find3OptSwapDistance(3, i, j, k));
+		
+		
+		
+		// compare swaps with original to see which is best 
+		// best defaults to 4, meaning no better swap is found 
+		int best = 4;
+		if (swap0Distance < Math.floor(currentDistance)) {
+			currentDistance = swap0Distance;
 			best = 0;
-			newMileage = swap0Mileage;
 		}
-		
-		if (swap1Mileage < newMileage) {
+		if (swap1Distance < Math.floor(currentDistance)) {
+			currentDistance = swap1Distance;
 			best = 1;
-			newMileage = swap1Mileage;
 		}
-		
-		if (swap2Mileage < newMileage) {
+		if (swap2Distance < Math.floor(currentDistance)) {
+			currentDistance = swap2Distance;
 			best = 2;
-			newMileage = swap2Mileage;
 		}
-		
-		if (swap3Mileage < newMileage) {
+		if (swap3Distance < Math.floor(currentDistance)) {
+			currentDistance = swap3Distance;
 			best = 3;
-			newMileage = swap3Mileage;
 		}
-		
-		// return the best route
-		if (best == 3) {
-			return possibleSwaps[3];
-		}
-		
-		if (best == 2) {
-			return possibleSwaps[2];
-		}
-		
-		if (best == 1) {
-			return possibleSwaps[1];
-		}
-		
-		if (best == 0) {
-			return possibleSwaps[0];
-		}
-		// return original route if no improvement is made
-		else {
-			return final_route;
+
+		// if no improvement is found, return false so the old route isn't overwritten
+		if (best == 4) {
+			return false;
+		// if an improvement is found, return true so new route will overwrite old route 
+		} else {
+			//System.out.println ("i: " + i + " j: " + j + " k: " + k);
+			//System.out.println("Cur: " + testDistance + " swap0: " + swap0Distance + " swap1: " + swap1Distance + " swap2: " + swap2Distance + " swap3: " + swap3Distance);
+			calculate3OptRoute(best, i, j, k);
+			return true;
 		}
 	}
 
-	/*
-	 * TODO: swap3 - perform all 4 3-opt swaps not done by 2-opt
-	 */
-	private int[][][] swap3(int a, int c, int e) {
-		int b = a + 1;
-		int d = c + 1;
-		int f = e + 1;
-		int[][][] possibleSwaps = new int[4][final_route.length][final_route[0].length];
+	private void calculate3OptRoute(int swap, int i, int j, int k) {
+		int offset;
+		// Write the trip order
+		if (swap == 0) {
+			//System.out.println("swap 0");
+			// copy start of trip through i (same order, same index)
+			for (int x = 0; x <= i; x++) {
+				opt_route[x][0] = final_route[x][0];
+			}
+			// copy j to i + 1 in reverse (different order, same index)
+			offset = j - i + 1;
+			for (int x = i + 1; x <= j; x++) {
+				opt_route[x][0] = final_route[x + offset][0];
+				offset -= 2;
+			}
+			// copy k to j + 1 in reverse (different order, same index)
+			offset = k - j + 1;
+			for (int x = j + 1; x <= k; x++) {
+				opt_route[x][0] = final_route[x + offset][0];
+			}
+			// copy k + 1 to end of trip (same order, same index)
+			for (int x = k + 1; x < final_route.length; x++) {
+				opt_route[x][0] = final_route[x][0];
+			}
+		} else if (swap == 1) {
+			//System.out.println("swap 1");
+			// copy start of trip through i (same direction, same index)
+			for (int x = 0; x <= i; x++) {
+				opt_route[x][0] = final_route[x][0];
+			}
+			// copy j + 1 through k (same direction, different index)
+			offset = (i + 1) - (j + 1);
+			for (int x = j + 1; x <= k; x++) {
+				opt_route[x + offset][0] = final_route[x][0];
+			}
+			// copy i + 1 through j (same direction, different index)
+			offset = (j + 1) - (i + 1);
+			for (int x = i + 1; x <= j; x++) {
+				opt_route[x + offset][0] = final_route[x][0];
+			}
+			// copy k + 1 to end of trip (same direction, same index)
+			for (int x = k + 1; x < final_route.length; x++) {
+				opt_route[x][0] = final_route[x][0];
+			}
+		} else if (swap == 2) {
+			//System.out.println("swap 2");
+			// copy start of trip through i (same direction, same index)
+			for (int x = 0; x <= i; x++) {
+				opt_route[x][0] = final_route[x][0];
+			}
+			// copy j + 1 through k (same direction, different index)
+			offset = (i + 1) - (j + 1);
+			for (int x = j + 1; x <= k; x++) {
+				opt_route[x + offset][0] = final_route[x][0];
+			}
+			// copy j through i + 1 in reverse (different direction, different index)
+			offset = (j - i + 1) + ((j + 1) - (i + 1));
+			for  (int x = i + 1; x <= j; x++) {
+				opt_route[x + offset][0] = final_route[x][0];
+				offset -= 2;
+			}
+			// copy k + 1 to end of trip (same direction, same index)
+			for (int x = k + 1; x < final_route.length; x++) {
+				opt_route[x][0] = final_route[x][0];
+			}
+		} else if (swap == 3) {
+			// copy start through i (same direction, same index)
+			for (int x = 0; x <= i; x++) {
+				opt_route[x][0] = final_route[x][0];
+			}
+			// copy k through j + 1 in reverse (different direction, different index)
+			offset = (k - j + 1) + ((i + 1) - (j + 1));
+			for (int x = j + 1; x < k; x++) {
+				opt_route[x + offset][0] = final_route[x][0];
+			}
+			// copy i + 1 through j (same direction, different index)
+			offset = k - j + 1;
+			//System.out.println(i + " " + j + " " + k);
+			//System.out.println(offset);
+			for (int x = i + 1; x <= j; x++) {
+				opt_route[x + offset][0] = final_route[x][0];
+			}
+			// copy k + 1 to end of trip (same direction, same index)
+			for (int x = k + 1; x < final_route.length; x++) {
+				opt_route[x][0] = final_route[x][0];
+			}
+		}
 
-		return possibleSwaps;
+		// Write the trip distances 
+		opt_route[0][1] = 0;
+		for (int x = 1; x < opt_route.length; x++) {
+			opt_route[x][1] = opt_route[x - 1][1];
+			opt_route[x][1] += (int)Math.ceil(dis_matrix[opt_route[x - 1][0]][opt_route[x][0]]);
+		}
+	}
+
+	private double find3OptSwapDistance(int swap, int i, int j, int k) {
+		// accumulate the distance of the swapped arcs in distance variable
+		double distance = 0;
+
+		// Test first possible swap:
+		if (swap == 0) {
+			// distance between i and j 
+			distance += dis_matrix[final_route[i][0]][final_route[j][0]];
+			// distance between j and i + 1 and points in between
+			for (int x = i + 1; x < j; x++) {
+				distance += dis_matrix[final_route[x][0]][final_route[x + 1][0]];
+			}
+			// distance between i + 1 and k
+			distance += dis_matrix[final_route[i + 1][0]][final_route[k][0]];
+			// distance between k and j + 1 and points in between
+			for (int x = j + 1; x < k; x++) {
+				distance += dis_matrix[final_route[x][0]][final_route[x + 1][0]];
+			}
+			// distance between j + 1 and k + 1
+			distance += dis_matrix[final_route[j + 1][0]][final_route[k + 1][0]];
+		}
+
+		// Test second possible swap:
+		if (swap == 1) {
+			// distance between i and j + 1
+			distance += dis_matrix[final_route[i][0]][final_route[j + 1][0]];
+			// distance between j + 1 and k and points in between
+			for (int x = j + 1; x < k; x++) {
+				distance += dis_matrix[final_route[x][0]][final_route[x + 1][0]];
+			}
+			// distance between k and i + 1
+			distance += dis_matrix[final_route[k][0]][final_route[i + 1][0]];
+			// distance between i + 1 and j and points in between
+			for (int x = i + 1; x < j; x++) {
+				distance += dis_matrix[final_route[x][0]][final_route[x + 1][0]];
+			}
+			// distance between j and k + 1
+			distance += dis_matrix[final_route[j][0]][final_route[k + 1][0]];
+		}
+
+		// Test third possible swap:
+		if (swap == 2) {
+			// distance between i and j + 1
+			distance += dis_matrix[final_route[i][0]][final_route[j + 1][0]];
+			// distance between j + 1 and k and points in between
+			for (int x = j + 1; x < k; x++) {
+				distance += dis_matrix[final_route[x][0]][final_route[x + 1][0]];
+			}
+			// distance between k and j
+			distance += dis_matrix[final_route[k][0]][final_route[j][0]];
+			// distance between j and i + 1 and points in between 
+			for (int x = i + 1; x < j; x++) {
+				distance += dis_matrix[final_route[x][0]][final_route[x + 1][0]];
+			}
+			// distance between i + 1 and k + 1
+			distance += dis_matrix[final_route[i + 1][0]][final_route[k + 1][0]];
+		}
+
+		// Test fourth possible swap:
+		if (swap == 3) {
+			// distance between i and k
+			distance += dis_matrix[final_route[i][0]][final_route[k][0]];
+			// distance between k and j + 1 and points in between
+			for (int x = j + 1; x < k; x++) {
+				distance += dis_matrix[final_route[x][0]][final_route[x + 1][0]];
+			}
+			// distance between j + 1 and i + 1
+			distance += dis_matrix[final_route[j + 1][0]][final_route[i + 1][0]];
+			// distance between i + 1 and j and points in between
+			for (int x = i + 1; x < j; x++) {
+				distance += dis_matrix[final_route[x][0]][final_route[x + 1][0]];
+			}
+			// distance between j and k + 1
+			distance += dis_matrix[final_route[j][0]][final_route[k + 1][0]];
+		}
+
+		// if incorrect swap pattern is asked for, return big number 
+		// so false improvement is not possible
+		if (swap > 3) {
+			distance = Double.MAX_VALUE;
+		}
+
+		// return the accumulated distance
+		return distance;
 	}
 
 	// calculateDistance - private function
