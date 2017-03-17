@@ -35,6 +35,9 @@
                     case "Message":
                         writeResponse(obj.Value);
                         break;
+                    case "Result":
+                        showResult(obj.Root, obj.Name);
+                        break;
                 }
                 
             };
@@ -60,7 +63,7 @@
 
                 reader.loadend = function() {
 
-                };
+                };  
                 reader.onload = function(e) {
                     rawData = e.target.result;
                     var obj = new Object();
@@ -125,3 +128,8 @@
             var jsonString= JSON.stringify(obj);
             webSocket.send(jsonString);
         }
+        
+        function showResult(Root, Name){
+            window.open("http://localhost:8080/TripCoOnline/View.html?" + Root + "&" + Name);
+        }
+         

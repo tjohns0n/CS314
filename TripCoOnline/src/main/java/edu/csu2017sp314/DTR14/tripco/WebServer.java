@@ -9,6 +9,7 @@ package edu.csu2017sp314.DTR14.tripco;
  *
  * @author jimx
  */
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.json.Json;
@@ -39,8 +41,9 @@ public class WebServer {
     private static File uploadedFile = null;
     private static String fileName = null;
     private static FileOutputStream fos = null;
-    private final static String filePath="./../../../../../TripCoOnline/webTemFile/";
-
+    private final static String filePath="./../../../../../TripCoOnline/src/main/webapp/webTemFile/";
+    private final static HashMap<Session, String> maps = new HashMap<Session, String>();
+    
     @OnOpen
     public void open(Session session, EndpointConfig conf) {
         new File(filePath + session.getId()).mkdir();
@@ -62,18 +65,6 @@ public class WebServer {
         } catch (IOException e) {       
             e.printStackTrace();
         }
-    }
-    
-    private void processFile(Session session, String fileName) {   
-        System.out.println("Server: " + fileName);
-        uploadedFile = new File(filePath + session.getId() + "/" + fileName);
-        try {
-            fos = new FileOutputStream(uploadedFile);
-        } catch (FileNotFoundException e) {     
-            e.printStackTrace();
-        }
-        sendBackInformation(session, fileName + " sent successfully!");
-        
     }
         
     @OnMessage
@@ -107,6 +98,7 @@ public class WebServer {
         String[] files = filedir.list();
         for(String s: files){
             File currentFile = new File(filedir.getPath(),s);
+            if (s.contains("csv")) maps.remove(session);
             currentFile.delete();
         }
         filedir.delete();
@@ -130,12 +122,26 @@ public class WebServer {
         sendBackInformation(session, fnames);
     }
     
+    private void processFile(Session session, String fileName) {   
+        System.out.println("Server: " + fileName);
+        if (fileName.contains("csv")) maps.put(session, fileName.substring(0, fileName.indexOf('.')));
+        uploadedFile = new File(filePath + session.getId() + "/" + fileName);
+        try {
+            fos = new FileOutputStream(uploadedFile);
+        } catch (FileNotFoundException e) {     
+            e.printStackTrace();
+        }
+        sendBackInformation(session, fileName + " sent successfully!");
+        
+    }
+
     private void deleteFile(Session session, String ext){
         File filedir = new File(filePath + session.getId());
         String[] files = filedir.list();
         for(String s: files){   
             if(s.toUpperCase().contains(ext)){
                 File currentFile = new File(filedir.getPath(),s);
+                if (s.contains("csv")) maps.remove(session);
                 currentFile.delete();
             }
         }
@@ -151,6 +157,7 @@ public class WebServer {
         }
         return null;
     }
+
     private void sendBackInformation(Session session, String msg){
         JsonObject json = Json.createObjectBuilder()
                .add("Key", "Message")
@@ -193,8 +200,20 @@ public class WebServer {
             return;
         }
         
-//      static ArrayList<File> files;
-        //co.initiate();
+        // TripCo tc = new TripCo();
+        // tc.initiate();
+        
+        JsonObject json = Json.createObjectBuilder()
+               .add("Key", "Result")
+               .add("Root", session.getId())
+               .add("Name", (String)maps.get(session)).build();
+        RemoteEndpoint.Basic remote = session.getBasicRemote();
+        try{
+            remote.sendText(json.toString());
+            System.out.println(json.toString());
+        }catch(IOException e){
+            e.printStackTrace();
+        }
     }
     
    
