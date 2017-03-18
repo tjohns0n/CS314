@@ -94,7 +94,7 @@ public class Presenter{
 		String miles = total[0];
 		String pwd = System.getProperty("user.dir");
 		int totalMileage = Integer.parseInt(miles);
-		View vw = new View(inFiles.get(0).getName(),"coloradoMap.svg", totalMileage, mileage, name, ID);
+		View vw = new View(this, inFiles.get(0).getName(),"coloradoMap.svg", totalMileage, mileage, name, ID);
 		//Find if ID is an actual value or should just be value
 		int idIndex=-1;
 		boolean idPresent = false;
