@@ -3,8 +3,3 @@ jdk:
   - oraclejdk8
 notifications:
   email: false
-sudo: false
-addons:
-  apt:
-    packages:
-      - oracle-java8-install
