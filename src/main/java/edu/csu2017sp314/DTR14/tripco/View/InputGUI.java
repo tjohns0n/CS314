@@ -315,7 +315,7 @@ public class InputGUI extends Application{
 		
 	}
 	
-	private Selection readSelectFile(File slct) throws FileNotFoundException{
+	protected Selection readSelectFile(File slct) throws FileNotFoundException{
 		Selection r = new Selection(slct.getName());
 		Scanner scan = new Scanner(slct);
 		int count = 1;

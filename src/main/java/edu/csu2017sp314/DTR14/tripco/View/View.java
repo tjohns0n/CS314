@@ -6,6 +6,7 @@ Creates and displays viewable files and pages from data provided by the Presente
 package edu.csu2017sp314.DTR14.tripco.View;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import edu.csu2017sp314.DTR14.tripco.Presenter.Presenter;
@@ -200,7 +201,14 @@ public class View extends Application implements Runnable{
         svgWrite.writeSVG(rootName + ".svg");
         itinWrite.writeXML(rootName + ".xml");
     }
-
+    public Selection readSelectionXML(File selection) throws FileNotFoundException{
+    	if(ig==null){
+    		ig = new InputGUI(this);
+    		return ig.readSelectFile(selection);
+    	}
+    	else
+    		return ig.readSelectFile(selection); 
+    }
 
     /*
     === Likely to be removed ===
