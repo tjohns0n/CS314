@@ -15,16 +15,16 @@ import javafx.stage.Stage;
 public class View extends Application implements Runnable{
 
     // Name of the CSV input file, sans the .csv extension 
-    String rootName;
+    public String rootName;
     // Optionally display labels on the SVG
-    boolean mileage, names, ids;
+    public boolean mileage, names, ids;
     // ItineraryWriter and SVGWriter:
-    ItineraryWriter itinWrite;
-    SVGWriter svgWrite;
+    private ItineraryWriter itinWrite;
+    private SVGWriter svgWrite;
     // Number of legs:
-    int legCount;
+    public int legCount;
     //Input
-    private InputGUI ig;
+    public InputGUI ig;
     private Stage stg;
     //For Notify
     private Presenter present;
@@ -74,7 +74,7 @@ public class View extends Application implements Runnable{
         legCount = 0;
         ig = null;
         // For now, automatically pad the SVG with whitespace
-        svgWrite.padSVG();
+        //svgWrite.padSVG();
         // Store the root of the CSV file name
         if (rootName.substring(rootName.length()-4, rootName.length()).equals(".csv")) {
             this.rootName = rootName.substring(0, rootName.length() - 4);
@@ -105,7 +105,7 @@ public class View extends Application implements Runnable{
     }
     
     //Called by Input gui, sets options from gui, starts svgwriter, wakes up Presenter thread
-    public void Notify(){
+    protected void Notify(){
     	//Set options for svg writer
     	ids=ig.select.getOptions()[0];
     	mileage=ig.select.getOptions()[1];

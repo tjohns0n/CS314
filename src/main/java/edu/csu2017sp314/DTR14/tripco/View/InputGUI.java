@@ -32,7 +32,7 @@ public class InputGUI extends Application{
 	public Selection select;
 	private Scene dialog;
 	private Scene chooser;
-	private View vw;
+	public View vw;
 	
 	
 	public InputGUI(View VW){

@@ -73,7 +73,7 @@ public class SelectionWriter {
 			body.add("\n");
 		}
 	}
-    public boolean writeXML(String filename) {
+    protected boolean writeXML(String filename) {
     	//Return value, assume bad return
     	boolean r = false;
     	// Add all elements together

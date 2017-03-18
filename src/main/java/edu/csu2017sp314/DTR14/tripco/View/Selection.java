@@ -110,7 +110,10 @@ public class Selection {
 		return dataCSV;
 	}
 	public String getCSVName(){
-		return dataCSV.getName();
+		if(dataCSV!=null)
+			return dataCSV.getName();
+		else
+			return "";
 	}
 	public String getFilename(){
 		return selectFile;
