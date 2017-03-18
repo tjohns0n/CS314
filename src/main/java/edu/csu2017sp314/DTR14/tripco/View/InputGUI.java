@@ -4,6 +4,8 @@
 
 package edu.csu2017sp314.DTR14.tripco.View;
 
+import edu.csu2017sp314.DTR14.tripco.View.SelectionWriter;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -290,6 +292,7 @@ public class InputGUI extends Application{
 		subBox.getChildren().addAll(sub, subText, subset);
 		grid.add(subBox, 6, 2);
 		Button plan = new Button("Plan Trip");
+		SelectionWriter sw0 = new SelectionWriter(select);
 		plan.setOnAction(e -> {
 			select.setIDOption(id.isSelected());
 			select.setNameOption(name.isSelected());
@@ -301,8 +304,7 @@ public class InputGUI extends Application{
 			else
 				select.setSubset(subset.getText().split(","));
 			//System.out.println(select.getOpts()[0]);
-			SelectionWriter sw = new SelectionWriter(select);
-			sw.writeXML(select.getFilename());
+			sw0.writeXML(select.getFilename());
 			if(vw!=null)
 				vw.Notify();
 			
