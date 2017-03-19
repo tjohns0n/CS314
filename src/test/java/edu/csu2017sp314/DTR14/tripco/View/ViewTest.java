@@ -59,34 +59,34 @@ public class ViewTest {
 	@Test
 	public void testGetCSV(){
 		View v = new View();
-		v.ig.select = new Selection("testSelect.xml");
+		v.setSelection(new Selection("testSelect.xml"));
 		assertTrue(v.getCSV()==null);
 	}
 	@Test
 	public void testGetCSVName(){
 		View v = new View();
-		v.ig.select = new Selection("testSelect.xml");
+		v.setSelection(new Selection("testSelect.xml"));
 		assertTrue(v.getCSV()==null);
 	}
 	@Test
 	public void testGetSelectFileName(){
 		View v = new View();
-		v.ig.select = new Selection("testSelect.xml");
+		v.setSelection(new Selection("testSelect.xml"));
 		assertTrue(v.getSelectFilename().equalsIgnoreCase("testSelect.xml"));
 	}
 	@Test
 	public void testGetBackSVGName(){
 		View v = new View();
-		v.ig.select = new Selection("testSelect.xml");
-		v.ig.select.setBackSVG("test");
+		v.setSelection(new Selection("testSelect.xml"));
+		v.getSelect().setBackSVG("test");
 		assertTrue(v.getBackSVGName().equalsIgnoreCase("test"));
 	}
 	@Test
 	public void testGetOptions(){
 		View v = new View();
-		v.ig.select = new Selection("testSelect.xml");
+		v.setSelection(new Selection("testSelect.xml"));
 		boolean[] t = new boolean[] {true, false, true};
-		v.ig.select.setOptions(t);
+		v.getSelect().setOptions(t);
 		boolean [] ta = v.getOptions();
 		assertTrue(t[0]==ta[0]);
 		assertTrue(t[1]==ta[1]);
@@ -95,9 +95,9 @@ public class ViewTest {
 	@Test
 	public void testGetOpts(){
 		View v = new View();
-		v.ig.select = new Selection("testSelect.xml");
+		v.setSelection(new Selection("testSelect.xml"));
 		boolean[] t = new boolean[] {true, false};
-		v.ig.select.setOpt(t);
+		v.getSelect().setOpt(t);
 		boolean [] ta = v.getOpts();
 		assertTrue(t[0]==ta[0]);
 		assertTrue(t[1]==ta[1]);
@@ -105,9 +105,9 @@ public class ViewTest {
 	@Test
 	public void testGetSubset(){
 		View v = new View();
-		v.ig.select = new Selection("testSelect.xml");
+		v.setSelection(new Selection("testSelect.xml"));
 		String[] t = new String[] {"1", "3"};
-		v.ig.select.setSubset(t);
+		v.getSelect().setSubset(t);
 		String [] ta = v.getSubset();
 		assertTrue(t[0].equalsIgnoreCase(ta[0]));
 		assertTrue(t[1].equalsIgnoreCase(ta[1]));
