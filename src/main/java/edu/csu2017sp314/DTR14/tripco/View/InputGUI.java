@@ -87,6 +87,7 @@ public class InputGUI extends Application{
 		chooseText.setWrappingWidth(150);
 		Button btn = new Button("Choose File");
 		Text check = new Text();
+		check.setWrappingWidth(150);
 		btn.setOnAction(e ->{ 
 			check.setFill(Color.TRANSPARENT);
 			File in=choose1.showOpenDialog(new Stage());
@@ -170,6 +171,7 @@ public class InputGUI extends Application{
 		grid.setColumnSpan(hsep, 3);
 		//Progression to next step (scene)
 		Text warn = new Text();
+		warn.setWrappingWidth(150);
 		Button btn3 = new Button("Start Planning Trip!");
 		btn3.setOnAction(e->{
 			if(select==null){
@@ -184,7 +186,7 @@ public class InputGUI extends Application{
 				}
 				prim.close();
 				//prim = new Stage();
-				setDialogScene();
+				setDialogScene(prim);
 				prim.setScene(dialog);
 				prim.setTitle("Select Options");
 				prim.setOnCloseRequest(f -> {
@@ -204,7 +206,7 @@ public class InputGUI extends Application{
 		chooser = new Scene(grid, 400, 300);
 	}
 	
-	private void setDialogScene(){
+	private void setDialogScene(Stage prim){
 		GridPane grid = new GridPane();
 		//Welcome Text
 		Text welText = new Text("Select options for your trip planning");
@@ -307,7 +309,7 @@ public class InputGUI extends Application{
 			sw0.writeXML(select.getFilename());
 			if(vw!=null)
 				vw.Notify();
-			
+			prim.close();
 		});
 		grid.add(plan, 6, 3);
 		

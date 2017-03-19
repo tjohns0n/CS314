@@ -8,6 +8,7 @@ package edu.csu2017sp314.DTR14.tripco.View;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import edu.csu2017sp314.DTR14.tripco.Presenter.Presenter;
 import javafx.application.Application;
@@ -26,7 +27,7 @@ public class View extends Application implements Runnable{
     public int legCount;
     //Input
     public InputGUI ig;
-    private Stage stg;
+    private Selection slct;
     //For Notify
     private Presenter present;
     
@@ -38,6 +39,7 @@ public class View extends Application implements Runnable{
         legCount = 0;
         //stg = new Stage();
         ig = new InputGUI(this);
+        slct=null;
         rootName="";
         ids=false;
         mileage=false;
@@ -51,6 +53,7 @@ public class View extends Application implements Runnable{
         legCount = 0;
         //stg = new Stage();
         ig = new InputGUI(this);
+        slct=null;
         rootName="";
         ids=false;
         mileage=false;
@@ -74,6 +77,7 @@ public class View extends Application implements Runnable{
         svgWrite = new SVGWriter(SVGFile);
         legCount = 0;
         ig = null;
+        slct=null;
         // For now, automatically pad the SVG with whitespace
         //svgWrite.padSVG();
         // Store the root of the CSV file name
@@ -107,6 +111,7 @@ public class View extends Application implements Runnable{
     
     //Called by Input gui, sets options from gui, starts svgwriter, wakes up Presenter thread
     protected void Notify(){
+    	slct=ig.select;
     	//Set options for svg writer
     	ids=ig.select.getOptions()[0];
     	mileage=ig.select.getOptions()[1];
@@ -126,26 +131,32 @@ public class View extends Application implements Runnable{
     }
     
     //Getter methods to pull from selection
+    public Selection getSelect(){
+    	if(slct!=null)
+    		return slct;
+    	else
+    		return new Selection("empty");
+    }
     public File getCSV(){
-		return ig.select.getCSV();
+		return slct.getCSV();
 	}
 	public String getCSVName(){
-		return ig.select.getCSVName();
+		return slct.getCSVName();
 	}
 	public String getSelectFilename(){
-		return ig.select.getFilename();
+		return slct.getFilename();
 	}
 	public String getSelectTitle(){
-		return ig.select.getTitle();
+		return slct.getTitle();
 	}
 	public String getBackSVGName(){
-		return ig.select.getBackSVGName();
+		return slct.getBackSVGName();
 	}
 	public boolean[] getOptions(){
-		return ig.select.getOptions();
+		return slct.getOptions();
 	}
 	public boolean[] getOpts(){
-		return ig.select.getOpts();
+		return slct.getOpts();
 	}
 	public String[] getSubset(){
 		return ig.select.getSubset();
@@ -201,13 +212,117 @@ public class View extends Application implements Runnable{
         svgWrite.writeSVG(rootName + ".svg");
         itinWrite.writeXML(rootName + ".xml");
     }
+    
+    public void setSelection(Selection select){
+    	this.slct=select;
+    }
+    
     public Selection readSelectionXML(File selection) throws FileNotFoundException{
-    	if(ig==null){
-    		ig = new InputGUI(this);
-    		return ig.readSelectFile(selection);
-    	}
-    	else
-    		return ig.readSelectFile(selection); 
+    	Selection r = new Selection(selection.getName());
+		Scanner scan = new Scanner(selection);
+		int count = 1;
+		boolean dest = false;
+		boolean cont = scan.hasNextLine();
+		ArrayList<String> subs = new ArrayList<String>();
+		while(cont){
+			String temp = scan.nextLine().trim();
+			cont = scan.hasNextLine();
+			switch(count){
+				case 1:{//Check opening XML tag
+					if(temp.length()>4){
+						if(temp.substring(0, 4).equalsIgnoreCase("<xml")){
+							break;
+						}
+						else
+							return r;
+					}
+					else
+						return r;
+				}
+				case 2:{//Check opening selection tag
+					if(temp.length()>10){
+						if(temp.substring(0, 10).equalsIgnoreCase("<selection")){
+							break;
+						}
+						else
+							return r;
+					}
+					else
+						return r;
+				}
+				case 3:{//Check title tag
+					if(temp.length()>6){
+						if(temp.substring(0, 6).equalsIgnoreCase("<title")){
+							temp = temp.substring(temp.indexOf('>')+1);
+							temp = temp.substring(0, temp.indexOf('<'));
+							r.setTitle(temp);
+							break;
+						}
+						else
+							return r;
+					}
+					else
+						return r;
+				}
+				case 4:{//Check opening filename tag
+					if(temp.length()>9){
+						if(temp.substring(0, 9).equalsIgnoreCase("<filename")){
+							temp = temp.substring(temp.indexOf('>')+1);
+							temp = temp.substring(0, temp.indexOf('<'));
+							r.setCSV(new File(temp));;
+							break;
+						}
+						else
+							return r;
+					}
+					else
+						return r;
+				}
+				case 5:{//Check opening destinations tag
+					if(temp.length()>13){
+						if(temp.substring(0, 13).equalsIgnoreCase("<destinations")){
+							dest = true;
+							break;
+						}
+						else
+							return r;
+					}
+					else
+						return r;
+				}
+				default:{//Handle id and closing destinations/selection tag
+					if(dest){
+						if(temp.length()>3){
+							if(temp.substring(0, 3).equalsIgnoreCase("<id")){
+								temp = temp.substring(temp.indexOf('>')+1);
+								temp = temp.substring(0, temp.indexOf('<'));
+								subs.add(temp);
+							}
+						}
+					}
+					if(temp.length()>14){
+						if(temp.substring(0, 14).equalsIgnoreCase("</destinations")){
+							dest = false;
+							break;
+						}
+					}
+					if(temp.length()>11){
+						if(temp.substring(0, 11).equalsIgnoreCase("</selection")){
+							cont = false;
+							break;
+						}
+					}
+				}
+			}
+			count++;
+		}
+		scan.close();
+		if(subs.size()>0){
+			subs.trimToSize();
+			r.setSubset((String[])subs.toArray());
+		}
+		
+		return r;
     }
 
     /*
