@@ -159,7 +159,7 @@ public class View extends Application implements Runnable{
 		return slct.getOpts();
 	}
 	public String[] getSubset(){
-		return ig.select.getSubset();
+		return slct.getSubset();
 	}
 	
     //SVG Methods
