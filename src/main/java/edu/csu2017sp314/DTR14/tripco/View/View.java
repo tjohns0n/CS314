@@ -144,10 +144,10 @@ public class View extends Application implements Runnable{
     protected void Notify(){
     	slct=ig.select;
     	//Set options for svg writer
-    	ids=ig.select.getOptions()[0];
-    	mileage=ig.select.getOptions()[1];
-    	names=ig.select.getOptions()[2];
-    	String temp=ig.select.getCSVName();
+    	ids=slct.getOptions()[0];
+    	mileage=slct.getOptions()[1];
+    	names=slct.getOptions()[2];
+    	String temp=slct.getCSVName();
     	if(temp.length()>4){
 	        if (temp.substring(temp.length()-4, temp.length()).equals(".csv")) {
 	            rootName = temp.substring(0, temp.length() - 4);
@@ -158,7 +158,7 @@ public class View extends Application implements Runnable{
     	else
     		rootName=temp;
         //System.out.println(ig.select.getBackSVGName());
-        svgWrite = new SVGWriter(ig.select.getBackSVGName());
+        svgWrite = new SVGWriter(slct.getBackSVGName());
         svgWrite.padSVG();
         svgWrite.addTitle("Colorado - " + this.rootName, "maptitle");
         if(present!=null)
@@ -201,6 +201,12 @@ public class View extends Application implements Runnable{
     
     //Set Total Mileage for gui view
     public void setTotal(int totalMileage){
+    	if(svgWrite==null){
+    		svgWrite = new SVGWriter(slct.getBackSVGName());
+            svgWrite.padSVG();
+            svgWrite.addTitle("Colorado - " + this.rootName, "maptitle");
+    	}
+    	
     	svgWrite.addFooter(totalMileage + " miles", "mapfooter");
     }
     /*
@@ -250,6 +256,20 @@ public class View extends Application implements Runnable{
     
     public void setSelection(Selection select){
     	this.slct=select;
+    	//Set options for svg writer
+    	ids=slct.getOptions()[0];
+    	mileage=slct.getOptions()[1];
+    	names=slct.getOptions()[2];
+    	String temp=slct.getCSVName();
+    	if(temp.length()>4){
+	        if (temp.substring(temp.length()-4, temp.length()).equals(".csv")) {
+	            rootName = temp.substring(0, temp.length() - 4);
+	        } else {
+	            rootName = temp;
+	        }
+    	}
+    	else
+    		rootName=temp;
     }
     
     public Selection readSelectionXML(File selection) throws FileNotFoundException{
@@ -356,7 +376,6 @@ public class View extends Application implements Runnable{
 			subs.trimToSize();
 			r.setSubset((String[])subs.toArray());
 		}
-		
 		return r;
     }
 
