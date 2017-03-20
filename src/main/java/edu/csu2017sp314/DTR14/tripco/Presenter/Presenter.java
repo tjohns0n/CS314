@@ -3,108 +3,90 @@
 //Takes ArrayList of files and boolean array for options
 package edu.csu2017sp314.DTR14.tripco.Presenter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import edu.csu2017sp314.DTR14.tripco.Model.Model;
 
-import edu.csu2017sp314.DTR14.tripco.Model.*;
 import edu.csu2017sp314.DTR14.tripco.View.GenerateJavascript;
 import edu.csu2017sp314.DTR14.tripco.View.View;
 
 
 
 public class Presenter{
-	//ArrayList of files
-	ArrayList<File> inFiles;
-	
-	//Optional booleans
-	boolean ID;
-	boolean name;
-	boolean mileage;
-	int port;
-	
+
+	//List of input .csv files
+	private static ArrayList<File> files;
+	//Optional argument booleans
+
+	// boolean[] opt = {_id, _mileage, _name, _2opt, _3opt, _gui};
+	private static final int optionSize = 6;
+	private static boolean[] options;
+
 	//Server, not initially instantiated
-	Server serv;
-	
-	public Presenter(ArrayList<File> files, boolean[] options){
-		inFiles=files;
-		port = 0;
-		for(int i=0; i<options.length;i++){
-			if(i==0)
-				ID=options[i];
-			if(i==1)
-				mileage=options[i];
-			if(i==2)
-				name = options[i];
-		}
+	private static Model model;
+	private static View view;
+    private static String _svg;
+    private static String _xml;
+    private static String[] subSet;
+        
+	public Presenter( ArrayList<File> files, String _xml, String _svg, boolean[] options){
+		this.files = files;
+		this.options = options;
+		this._svg = _svg;
+		this._xml = _xml;
 	}
-	public Presenter(ArrayList<File> files, boolean[] options, int Port){
-		inFiles=files;
-		port = Port;
-		for(int i=0; i<options.length;i++){
-			if(i==0)
-				ID=options[i];
-			if(i==1)
-				mileage=options[i];
-			if(i==2)
-				name = options[i];
-		}
-	}
+
 	public Presenter(ArrayList<File> files){
-		inFiles=files;
-		ID=false;
-		name=false;
-		mileage=false;
-		port = 0;
+		this.files = files;
+		Arrays.fill(options, false);
 	}
-	public Presenter(ArrayList<File> files, int Port){
-		inFiles=files;
-		ID=false;
-		name=false;
-		mileage=false;
-		port = Port;
-	}
-	public void run() throws URISyntaxException{
-		//Instantiate and call Model to process input
-		Model mod = new Model(inFiles.get(0).getAbsolutePath());
-        // MUST ADD FOR THIS SPRINT:
-        // Plan a trip, optionally using 2-opt or 3-opt
-        // If 3-opt is selected, use 2-opt as well
-        // Pass a String array of selections if using a selection,
-        // Otherwise pass an empty String array
-		mod.planTrip(true, false, new String[0]);
-		//Input file reading and processing loop
-		/* TODO
-		 * Loop for multiple file handling, for later
-		for(int i=0;i<files.size();i++){
-			Model mode = new Model(inFiles.get(i).getName());
-			mode.initiate();
-			
+
+	public void run() throws URISyntaxException, InterruptedException, FileNotFoundException{
+		if (options[5] == true){
+			// if GUI
+			view = new View(this);
+			Thread vThread = new Thread(view);
+			vThread.run();
+			synchronized(this){
+				this.wait();
+			}
+			this.files.add(view.getCSV());
+			if(this._svg.equals("")) this._svg = view.getBackSVGName();
+			if(this._xml.equals("")) this._xml = view.getSelectFilename();
+			else view.readSelectionXML(new File(_xml));
+			this.options = view.getOptions();
+			this.options[4] = view.getOpts()[0]; this.options[5] = view.getOpts()[1];
+			this.subSet = view.getSubset();
+		} else if(!_xml.isEmpty()){
+			view = new View(this);
+			view.setSelection(view.readSelectionXML(new File(_xml)));
+			this.subSet = view.getSubset();
+			this.options = view.getOptions();
+			this.options[4] = view.getOpts()[0]; this.options[5] = view.getOpts()[1];
+			this.subSet = view.getSubset();
 		}
-		*/
-//		System.out.println("ID: "+ID);
-//		System.out.println("mileage: "+mileage);
-//		System.out.println("Name: "+name);
-		String[][] route = mod.reteriveTrip();
-		//TODO
-		//Mem mgmt?
-		//mod.close();
+		
+		model = new Model(files.get(0).getAbsolutePath());
+		model.planTrip(options[4], options[5], subSet);
+		String[][] route = model.reteriveTrip();
 		String[] total = route[route.length-1][0].split(",");
-		String miles = total[0];
-		String pwd = System.getProperty("user.dir");
-		int totalMileage = Integer.parseInt(miles);
-		View vw = new View(this, inFiles.get(0).getName(),"coloradoMap.svg", totalMileage, mileage, name, ID);
+		int totalMileage = Integer.parseInt(total[0]);
+		view.setTotal(totalMileage);
+		//view = new View(this, files.get(0).getName(), _svg, totalMileage, options[1], options[2], options[0]);
 		//Find if ID is an actual value or should just be value
-		int idIndex=-1;
+		int idIndex = -1;
 		boolean idPresent = false;
 		String[] labels = route[0][2].split(",");
 		//TODO
 		//Add into larger loop to handle routes with multiple formats i.e. multiple extras/template formats
-		for(int i=0; i<labels.length;i++){
+		for(int i = 0; i < labels.length;i ++){
 			if(labels[i].equalsIgnoreCase("ID")){
-				idPresent=true;
-				idIndex=i;
+				idPresent = true;
+				idIndex = i;
 				break;
 			}
 		}
@@ -112,45 +94,36 @@ public class Presenter{
 		int idCount = 1;
 		//TODO
 		//Make more robust loop for added options
-		for(int i=0; i<route.length-1;i++){
+		for(int i = 0; i < route.length - 1; i++){
 			//Essentials string splitarg0
 			//[0]=Accumulated Dist, [1]=name, [2]=lat, [3]=long
 			String[] essentials1 = route[i][0].split(",");
 			String[] essentials2 = route[i+1][0].split(",");
 			//Leg Distance calculated by difference between accumulated miles
 			//First locations should have "0" as accumulated distance
-			int mile = Integer.parseInt(essentials2[0]) -Integer.parseInt(essentials1[0]);
+			int mile = Integer.parseInt(essentials2[0]) - Integer.parseInt(essentials1[0]);
 			if(idPresent){
 				//Split to grab id
 				String[] extras1 = route[i][1].split(",");
 				String[] extras2 = route[i+1][1].split(",");				
-				vw.addLeg(Double.parseDouble(essentials1[2]), Double.parseDouble(essentials1[3]), essentials1[1], extras1[idIndex], 
+				view.addLeg(Double.parseDouble(essentials1[2]), Double.parseDouble(essentials1[3]), essentials1[1], extras1[idIndex], 
 						Double.parseDouble(essentials2[2]), Double.parseDouble(essentials2[3]), essentials2[1], extras2[idIndex], mile);
 			}
 			else{
 				//Vanilla draw
 				//ID is order they are entered
-				vw.addLeg(Double.parseDouble(essentials1[2]), Double.parseDouble(essentials1[3]), essentials1[1], Integer.toString(idCount),
+				view.addLeg(Double.parseDouble(essentials1[2]), Double.parseDouble(essentials1[3]), essentials1[1], Integer.toString(idCount),
 						Double.parseDouble(essentials2[2]), Double.parseDouble(essentials2[3]),essentials2[1], Integer.toString(idCount+1), mile);
 				idCount +=2;
 			}
 		}
 		//Write the files
-		vw.writeFiles();
+		view.writeFiles();
 		//Bandaid fix for js since server still not working
-		GenerateJavascript gjs = new GenerateJavascript(vw.getRootName());
-		//TODO
-		// mem mgmt?
-		// gjs.close()?
+		GenerateJavascript gjs = new GenerateJavascript(view.getRootName());
 		
 		//Get URI for webpage launch
 		URI webpage = null;
-		/*if (pwd.contains("src")) {
-                    
-			webpage = new URI("file://"+pwd+"/webapp/View.html");
-		} else {
-			webpage = new URI("file://"+pwd+"/src/webapp/View.html");
-		}*/
                 webpage = this.getClass().getClassLoader().getResource("View.html").toURI();
 		
 		//Launch webpage
@@ -162,44 +135,6 @@ public class Presenter{
 			System.out.println("A bandaid yes, but we tried, and it looks like it didn't work");
 			System.out.println("But the XML and svg files should be in the directory with the proper names/data");
 		}
-		if(port == 0)
-			serv = new Server();
-		else
-			serv = new Server(port);
-		//TODO
-		//Figure out which websocket lib to use
-		//So we can actually use the server
-//		String xml = vw.getRootName()+".xml";
-//		String svg = vw.getRootName()+".svg";
-//		File xmlf = new File(xml);
-//		File svgf = new File(svg);
-//		try {
-//			serv.initiate();
-//		} catch (IOException e) {
-//			System.out.println("Server could not intiate on port: "+serv.getPort());
-//			e.printStackTrace();
-//		}
-//		try {
-//			serv.sendFileToClient(xmlf);
-//		} catch (IOException e) {
-//			System.out.println("Server could not send file to webpage on port: "+serv.getPort());
-//			e.printStackTrace();
-//		}
-//		try {
-//			serv.sendFileToClient(svgf);
-//		} catch (IOException e) {
-//			System.out.println("Server could not send file to webpage on port: "+serv.getPort());
-//			e.printStackTrace();
-//		}
-		/* Open js webpage with proper port set
-		 * Send XML
-		 * Presenter.sendFileToClient(out.get(0))
-		 * Send SVG
-		 * Presenter.sendFileToClient(out.get(1))
-		 * Loop for rest/interactions
-		 */
-		//Rest loop goes here
-		//Loop for serv to listen
-		//Parse the rest and tell serv what to do, may need model/view to do work too
+
 	}
 }
