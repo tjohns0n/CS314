@@ -1,54 +1,55 @@
 /* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-    var webSocket;
-    var messages = document.getElementById("messages");
-    
-    // make uri dymatic suitbable to all versions
-    var loc = window.location, new_uri;
-    if (loc.protocol === "https:") {
-        new_uri = "wss:";
-    } else {
-        new_uri = "ws:";
-    }
-    new_uri += "//" + document.location.host + document.location.pathname;
-    new_uri += "Server";
-    writeResponse(new_uri + ' ');
-    // end of uri dymatic process
-    
-    webSocket = new WebSocket(new_uri);
-    
-    webSocket.binaryType = "arraybuffer";
-    
-    webSocket.onopen = function() {
-        writeResponse("Welcome to DTR-14 GUI !");
-    };
-
-    webSocket.onmessage = function(event) {
+* To change this license header, choose License Headers in Project Properties.
+* To change this template file, choose Tools | Templates
+* and open the template in the editor.
+*/
+        var webSocket;
+        var messages = document.getElementById("messages");
         
-        var msg = event.data;
-        var obj = JSON.parse(msg);
-        switch(obj.Key)
-        {
-            case "Message":
-                writeResponse(obj.Value);
-                break;
-            case "Result":
-                showResult(obj.Root, obj.Name);
-                break;
+        // make uri dymatic suitbable to all versions
+        var loc = window.location, new_uri;
+        if (loc.protocol === "https:") {
+            new_uri = "wss:";
+        } else {
+            new_uri = "ws:";
         }
+        new_uri += "//" + document.location.host + document.location.pathname;
+        new_uri += "Server";
+        writeResponse(new_uri + ' ');
+        // end of uri dymatic process
         
-    };
+        webSocket = new WebSocket(new_uri);
+        
+        webSocket.binaryType = "arraybuffer";
+        
+        webSocket.onopen = function() {
+            writeResponse("Welcome to DTR-14 GUI !");
+        };
 
-    webSocket.onclose = function() {
-        writeResponse("Connection is closed...");
-    };
-    webSocket.onerror = function(e) {
-        writeResponse(e.msg);
-    };
+        webSocket.onmessage = function(event) {
+            
+            var msg = event.data;
+            var obj = JSON.parse(msg);
+            switch(obj.Key)
+            {
+                case "Message":
+                    writeResponse(obj.Value);
+                    break;
+                case "Result":
+                    showResult(obj.Root, obj.Name);
+                    break;
+            }
+            
+        };
+
+        webSocket.onclose = function() {
+            writeResponse("Connection is closed...");
+        };
+        webSocket.onerror = function(e) {
+            writeResponse(e.msg);
+        };
     
+
     function sendFile() {
         
         var file = document.getElementById('filename').files[0];
@@ -98,10 +99,6 @@
         writeResponse("It's still not available yet");
     }
     
-    function writeResponse(text){
-        messages.innerHTML += "<br/>" + text;
-    }
-    
     function ListFile(){
         var obj = new Object();
         obj.Key = "ListFile";
@@ -127,6 +124,10 @@
         obj.Value = ext;
         var jsonString= JSON.stringify(obj);
         webSocket.send(jsonString);
+    }
+    
+    function writeResponse(text){
+        messages.innerHTML += "<br/>" + text;
     }
     
     function showResult(Root, Name){

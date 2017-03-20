@@ -9,7 +9,6 @@ package edu.csu2017sp314.DTR14.tripco;
  *
  * @author jimx
  */
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -65,6 +64,19 @@ public class WebServer {
         } catch (IOException e) {       
             e.printStackTrace();
         }
+    }
+    
+    private void processFile(Session session, String fileName) {   
+        System.out.println("Server: " + fileName);
+        if (fileName.contains("csv")) maps.put(session, fileName.substring(0, fileName.indexOf('.')));
+        uploadedFile = new File(filePath + session.getId() + "/" + fileName);
+        try {
+            fos = new FileOutputStream(uploadedFile);
+        } catch (FileNotFoundException e) {     
+            e.printStackTrace();
+        }
+        sendBackInformation(session, fileName + " sent successfully!");
+        
     }
         
     @OnMessage
@@ -122,19 +134,6 @@ public class WebServer {
         sendBackInformation(session, fnames);
     }
     
-    private void processFile(Session session, String fileName) {   
-        System.out.println("Server: " + fileName);
-        if (fileName.contains("csv")) maps.put(session, fileName.substring(0, fileName.indexOf('.')));
-        uploadedFile = new File(filePath + session.getId() + "/" + fileName);
-        try {
-            fos = new FileOutputStream(uploadedFile);
-        } catch (FileNotFoundException e) {     
-            e.printStackTrace();
-        }
-        sendBackInformation(session, fileName + " sent successfully!");
-        
-    }
-
     private void deleteFile(Session session, String ext){
         File filedir = new File(filePath + session.getId());
         String[] files = filedir.list();
@@ -157,7 +156,6 @@ public class WebServer {
         }
         return null;
     }
-
     private void sendBackInformation(Session session, String msg){
         JsonObject json = Json.createObjectBuilder()
                .add("Key", "Message")
@@ -200,8 +198,8 @@ public class WebServer {
             return;
         }
         
-        // TripCo tc = new TripCo();
-        // tc.initiate();
+//      static ArrayList<File> files;
+        //co.initiate();
         
         JsonObject json = Json.createObjectBuilder()
                .add("Key", "Result")

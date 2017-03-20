@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TripCo</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="index.css">
+    </head>
+    <body>
+
+    <h1>TripCo Online Version</h1>
+    <div class = "div1">
+        <div class = "box1">
+            <input type="file" id="filename" class="inputfile"/>
+        </div>
+        <div class = "box1"><input type="button" class="button1" value="Upload Chosen File  " onclick="sendFile()" /></div>
+
+    </div>
+    <div class = "div2">
+        <div class = "box2"><input type="checkbox" class="regular-checkbox" id="nCheck"><label for="nCheck" class = "font1">Show Citys</label></div>
+        <div class = "box2"><input type="checkbox" class="regular-checkbox" id="mCheck"><label for="mCheck" class = "font1">Show Milage</label></div>
+        <div class = "box2"><input type="checkbox" class="regular-checkbox" id="infoCheck"><label for="infoCheck" class = "font1">Show Labels</label></div>
+        <div class = "box2"><input type="checkbox" class="regular-checkbox" id="_2optCheck"><label for="_2optCheck" class = "font1">2 Option</label></div>
+        <div class = "box2"><input type="checkbox" class="regular-checkbox" id="_3optCheck"><label for="_3optCheck" class = "font1">3 Option</label></div>
+    </div>
+    <div class = "div3">
+         <div class = "box3"><input type="button width-150px" class="button1" value="Delete All svg File" onclick="deleteSVG()" /></div>
+        <div class = "box3"><input type="button width-150px" class="button1" value="Delete All csv File" onclick="deleteCSV()" /></div>
+        <div class = "box3"><input type="button width-150px" class="button1" value="Delete All xml File" onclick="deleteXML()" /></div>
+        <div class = "box3"><input type="button width-150px" class="button1" value="List My File" onclick="ListFile()" /></div>
+    </div>
+    <div class = "div4">
+        <button class="button2" style="vertical-align:middle" onclick="startPlanMyTrip()"><span>Start Plan My Trip </span></button>
+    </div>
+    
+    <div class = "div5" id="messages">
+        <div class="font2"> User Logs </div>
+        <script type ="text/javascript" src ="Home.js"></script>  
+    </div>        
+          
+    </body>
+</html>
