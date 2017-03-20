@@ -12,6 +12,7 @@ import java.util.Scanner;
 
 import edu.csu2017sp314.DTR14.tripco.Presenter.Presenter;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 
 public class View extends Application implements Runnable{
@@ -96,10 +97,40 @@ public class View extends Application implements Runnable{
         this.ids = ids;
     }
     
+    public View(String rootName, String SVGFile, int totalMileage, boolean mileage, boolean names, boolean ids) {
+    	present = null;
+    	itinWrite = new ItineraryWriter();
+        svgWrite = new SVGWriter(SVGFile);
+        legCount = 0;
+        ig = null;
+        slct=null;
+        // For now, automatically pad the SVG with whitespace
+        //svgWrite.padSVG();
+        // Store the root of the CSV file name
+        if (rootName.substring(rootName.length()-4, rootName.length()).equals(".csv")) {
+            this.rootName = rootName.substring(0, rootName.length() - 4);
+        } else {
+            this.rootName = rootName;
+        }
+
+        // For now, automatically title and foot the SVG 
+        svgWrite.addTitle("Colorado - " + this.rootName, "maptitle");
+        svgWrite.addFooter(totalMileage + " miles", "mapfooter");
+
+        this.mileage = mileage;
+        this.names = names;
+        this.ids = ids;
+    }
+    
     
     //Util methods
     public void run(){
-    	this.launch(new String[0]);
+    	try {
+			this.start(new Stage());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     @Override
 	public void start(Stage primaryStage) throws Exception {
@@ -117,11 +148,15 @@ public class View extends Application implements Runnable{
     	mileage=ig.select.getOptions()[1];
     	names=ig.select.getOptions()[2];
     	String temp=ig.select.getCSVName();
-        if (temp.substring(temp.length()-4, temp.length()).equals(".csv")) {
-            rootName = temp.substring(0, temp.length() - 4);
-        } else {
-            rootName = temp;
-        }
+    	if(temp.length()>4){
+	        if (temp.substring(temp.length()-4, temp.length()).equals(".csv")) {
+	            rootName = temp.substring(0, temp.length() - 4);
+	        } else {
+	            rootName = temp;
+	        }
+    	}
+    	else
+    		rootName=temp;
         //System.out.println(ig.select.getBackSVGName());
         svgWrite = new SVGWriter(ig.select.getBackSVGName());
         svgWrite.padSVG();
@@ -338,9 +373,26 @@ public class View extends Application implements Runnable{
     }
     
     public static void main(String[] args) {
-    	Presenter prez = new Presenter(new ArrayList<File>());
-    	View vw = new View(prez);
-    	vw.run();
+    	//Presenter prez = new Presenter(new ArrayList<File>());
+    	View vw = new View();
+    	Platform.runLater(new Runnable(){
+
+			@Override
+			public void run() {
+				try {
+					vw.start(new Stage());
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				
+			}
+    		
+    	});
+    	
+    	//System.out.println(vw.getSelectFilename());
+    	
 //    	View v = new View("hello.csv", "coloradoMap.svg", 300, false, false, true);
 //    	v.addLeg(40, -108, "Not Denver", "id1", 39, -107, "Not CO Springs", "id2", 50);
 //    	v.addLeg(39, -107, "Not CO Springs", "id2", 40.5, -108, "Not Fort Collins", "id3", 60);
