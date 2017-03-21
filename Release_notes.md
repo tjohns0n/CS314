@@ -51,6 +51,7 @@ Purpose:
         This trip is then displayed (locally) in a web browser. 
         
 Issues:
+        - Because of the way Google Chrome handles local files, you must set your default browser to one other than Chrome. Firefox, as well as any non-Chromium browser should work
         - 3-opt does not produce the correct results
         - 2-opt is only run on the best nn tour, not all tours
         - Specifying a filenames with the -g argument does not prepopulate the GUI file selections
