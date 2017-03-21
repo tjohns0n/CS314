@@ -12,9 +12,9 @@ public class ItineraryWriterTest {
 	@Test
 	public void testConstructor() {
 		ItineraryWriter w = new ItineraryWriter();
-		
+	
 		assertTrue(w.header.get(0).equals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"));
-		assertTrue(w.header.get(2).equals("<trip >"));
+		assertTrue(w.header.get(4).equals("<trip >"));
 		assertTrue(w.footer.get(1).equals("</trip>"));
 	}
 

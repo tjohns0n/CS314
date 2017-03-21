@@ -67,7 +67,8 @@ public class View extends Application {
     
     public View(String rootName, String SVGFile, int totalMileage, boolean mileage, boolean names, boolean ids){
     	itinWrite = new ItineraryWriter();
-    	if(SVGFile.equals("null"))
+    
+    	if(SVGFile == null || SVGFile.trim().equals("") || SVGFile.equals("null"))
     		svgWrite = new SVGWriter(1067, 783);
     	else
     		svgWrite = new SVGWriter(SVGFile);
