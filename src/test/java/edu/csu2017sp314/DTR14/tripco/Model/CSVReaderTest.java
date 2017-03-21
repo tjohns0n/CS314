@@ -9,8 +9,7 @@ import java.io.IOException;
 import org.junit.*;
 
 public class CSVReaderTest{
-
-	String fileName = this.getClass().getClassLoader().getResource("test.csv").toString().substring(5);
+	String fileName = "test.csv";
 	private static LocationList loclist;
 	private static CSVReader csvr;
 	@Test
@@ -20,6 +19,7 @@ public class CSVReaderTest{
 
 	@Test
 	public void testInitiate(){
+		//System.out.println(System.getProperty("user.dir"));
 		// Test without subselection:
 		loclist = new LocationList();
 		csvr = new CSVReader(fileName, loclist);
