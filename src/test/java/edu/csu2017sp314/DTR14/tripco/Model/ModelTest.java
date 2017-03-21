@@ -20,6 +20,9 @@ public class ModelTest{
 
 	@Test
 	public void testPlanTrip() {
+		String loc = System.getProperty("user.dir");
+		System.out.println(loc);
+		//loc+="/main/resources/";
 		Model model = new Model(filename);
 		assertTrue("wrong trip", model.planTrip(false, false, new String[0]));
 	}
