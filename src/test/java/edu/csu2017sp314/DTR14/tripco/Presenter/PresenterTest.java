@@ -1,48 +1,54 @@
 package edu.csu2017sp314.DTR14.tripco.Presenter;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 
+import edu.csu2017sp314.DTR14.tripco.Presenter.Presenter;
+
 public class PresenterTest {
-	// TODO add tests
-	private Presenter pres; 
-
+	
+	private ArrayList<File> files;
+    private Presenter prez;
+    private boolean[] options;
         
-	@Test
-	public void testFiles() throws IOException, URISyntaxException{
-            ArrayList<File> f = new ArrayList<File>();
+    @Before
+    public void initObjects() {
+        files = new ArrayList<File>();
+        files.add(new File("Colorado14ers.csv"));
+        options = new boolean[6];
+        Arrays.fill(options, false);
+        prez = new Presenter(files, null, "coloradoMap.svg", options);
+    }
 
-            f.add(new File(this.getClass().getClassLoader().getResource("test.csv").toURI()));
-            pres = new Presenter(f,9999);
-            System.out.println(pres.inFiles.get(0).getAbsolutePath());
+	@Test
+	public void testConstructor(){
+		// test empty constructor, no side effect
+		new Presenter(files);
+        
+        // test full constructor
+		new Presenter(files, null, "coloradoMap.svg", options);
+		
 	}
 	
+
 	@Test
-	public void testRun() throws IOException, URISyntaxException{
-            ArrayList<File> f = new ArrayList<File>();
-		f.add(new File(this.getClass().getClassLoader().getResource("test.csv").toURI()));
-		pres = new Presenter(f,9999);
+	public void testRun() {
 		try{
-			pres.run();
-			Assert.assertTrue(true);
-		}catch (URISyntaxException e){
-			e.printStackTrace();
-			System.out.println("URI failure, unable to get working path and this unable launch webpage");
-			Assert.fail();
-		}catch (UnsupportedOperationException o) {
-			System.out.println("Cannot open web browser");
+			prez.run();
+			
+		} catch(IOException anIOException){
+			System.out.println("Error in generating an IOException");
+			System.out.println("We tried to get the webpage to launch without the server");
+            System.out.println("A bandaid yes, but we tried, and it looks like it didn't work");
+            System.out.println("But the XML and svg files should be in the directory with the proper names/data");
 		}
 	}
         
-	
 	//TODO
 	//LOOK HERE
 	
