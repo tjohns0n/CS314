@@ -2,6 +2,7 @@ package edu.csu2017sp314.DTR14.tripco.View;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import org.junit.Test;
@@ -47,11 +48,15 @@ public class ItineraryWriterTest {
 	public void testWriteXML() {
 		ItineraryWriter w = new ItineraryWriter();
 		
-		ArrayList<String> testData = w.writeXML("text.xml");
+		ArrayList<String> testData = w.writeXML("test0.xml");
 		
 		assertTrue(testData.contains("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"));
 		assertTrue(testData.contains("<trip >"));
 		assertTrue(testData.contains("</trip>"));
-		
+		String loc = System.getProperty("user.dir");
+		System.out.println(loc);
+		loc+="/main/resources/";
+		File f = new File(loc+"test0.xml");
+		f.delete();
 	}
 }
