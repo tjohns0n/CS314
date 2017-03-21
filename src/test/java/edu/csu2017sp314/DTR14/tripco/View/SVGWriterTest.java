@@ -3,6 +3,7 @@ package edu.csu2017sp314.DTR14.tripco.View;
 import static org.junit.Assert.*;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -127,11 +128,15 @@ public class SVGWriterTest {
 	@Test
 	public void testWriteSVG() {
 		SVGWriter s = new SVGWriter(100, 100);
-		ArrayList<String> testData = s.writeSVG("test.svg");
+		ArrayList<String> testData = s.writeSVG("test0.svg");
 		System.out.println(testData);
 		assertTrue(testData.get(0).equals("<?xml version=\"1.0\"?>"));
 		assertTrue(testData.get(1).contains("<svg"));
 		assertTrue(testData.get(2).equals("</svg>"));
+		String loc = System.getProperty("user.dir");
+		loc+="/main/resources/";
+		File f = new File(loc+"test0.svg");
+		f.delete();
 	}
 
 	@Test
