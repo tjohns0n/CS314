@@ -15,7 +15,6 @@ public class ViewTest {
 	
 	@Test
 	public void testConstructor() {
-		Presenter prez = new Presenter(new ArrayList<File>());
 		View v1 = new View("hello", "coloradoMap.svg", 300, false, false, false);
 		assertTrue("rootName not read correctly", v1.rootName.equals("hello"));
 		assertTrue("v1 flags do not match expected", v1.mileage == false && v1.ids == false && v1.names == false);
@@ -26,8 +25,6 @@ public class ViewTest {
 		assertTrue(v2.mileage == true);
 		assertTrue(v2.names == true);
 		assertTrue(v2.ids == true);
-		View v3 = new View(prez);
-		assertTrue("rootname not empty", v3.rootName.equals(""));
 	}
 	
 	@Test
