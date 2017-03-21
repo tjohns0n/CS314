@@ -1,7 +1,14 @@
 package edu.csu2017sp314.DTR14.tripco.View;
 
 import static org.junit.Assert.*;
+
+import java.util.ArrayList;
+import java.io.File;
+
+
 import org.junit.Test;
+
+import edu.csu2017sp314.DTR14.tripco.Presenter.Presenter;
 
 public class ViewTest {
 	
@@ -42,5 +49,6 @@ public class ViewTest {
 		assertTrue(v.legCount == 1);
 		assertTrue(test.equals("m"));
 	}
+	
 
 }

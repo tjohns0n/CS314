@@ -5,20 +5,57 @@ Creates and displays viewable files and pages from data provided by the Presente
 
 package edu.csu2017sp314.DTR14.tripco.View;
 
-public class View {
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+
+import edu.csu2017sp314.DTR14.tripco.Presenter.Presenter;
+import javafx.application.Application;
+import javafx.stage.Stage;
+
+public class View extends Application {
 
     // Name of the CSV input file, sans the .csv extension 
-    String rootName;
+    public String rootName;
+    private String xmlFile;
+    private String svgFile;
+    private boolean[] options;
+    private boolean[] opts;
+    private String[] subSet;
     // Optionally display labels on the SVG
-    boolean mileage, names, ids;
+    public boolean mileage, names, ids;
     // ItineraryWriter and SVGWriter:
-    ItineraryWriter itinWrite;
-    SVGWriter svgWrite;
+    private ItineraryWriter itinWrite;
+    private SVGWriter svgWrite;
     // Number of legs:
-    int legCount;
+    public int legCount;
+    //Input
+    public InputGUI ig;
+    private Stage stg;
+    private Presenter pres;
+    
+    //Empty constructor, for javafx Application compliance
+    public View(Presenter pres){
+        this.pres = pres;
+    	svgWrite=null;
+    	itinWrite = new ItineraryWriter();
+        legCount = 0;
+        //stg = new Stage();
+        ig = new InputGUI(this);
+        rootName="";
+        ids=false;
+        mileage=false;
+        names=false;
+    }
+    
+    public View(){
+        ig = new InputGUI(this);
+    }
 
     /*
-    View constructor
+    View Command Line constructor
     args:
     rootName - The name of the CSV file, with or without the .csv extension
     SVGFile - The name of the input SVGFile (should be "coloradoMap.svg" for spring 1)
@@ -27,13 +64,14 @@ public class View {
     names - Whether or not the SVG should have labels showing the names of each location of a trip
     ids - Whether or not the SVG should have labels showing the id assigned to each location of a trip
     */
-    public View(String rootName, String SVGFile, int totalMileage, boolean mileage, boolean names, boolean ids) {
-        itinWrite = new ItineraryWriter();
+    
+    public View(String rootName, String SVGFile, int totalMileage, boolean mileage, boolean names, boolean ids){
+    	itinWrite = new ItineraryWriter();
         svgWrite = new SVGWriter(SVGFile);
         legCount = 0;
-
+        ig = null;
         // For now, automatically pad the SVG with whitespace
-        svgWrite.padSVG();
+        //svgWrite.padSVG();
         // Store the root of the CSV file name
         if (rootName.substring(rootName.length()-4, rootName.length()).equals(".csv")) {
             this.rootName = rootName.substring(0, rootName.length() - 4);
@@ -49,10 +87,21 @@ public class View {
         this.names = names;
         this.ids = ids;
     }
+    
+    //Util methods
+    public void run(){
+    	this.launch(View.class, new String[0]);
+    }
+    @Override
+	public void start(Stage primaryStage) throws Exception {
+		ig.start(primaryStage);
+	}
 
     public String getRootName() {
     	return rootName;
     }
+    
+    //Called by Input gui, sets options from gui, starts svgwriter, wakes up Presenter thread
     
     /*
      * Add a line to the SVG and a leg to the XML. Automatically converts from geographic coordinates.
@@ -99,23 +148,29 @@ public class View {
         itinWrite.writeXML(rootName + ".xml");
     }
 
-
     /*
     === Likely to be removed ===
     display: output text to the console
     args:
     text - The text to be printed to the console
     */
+    
     public String display(String text) {
         System.out.println(text);
         return text;
     }
     
-    public static void main(String[] args) {
-    	View v = new View("hello.csv", "coloradoMap.svg", 300, false, false, true);
-    	v.addLeg(40, -108, "Not Denver", "id1", 39, -107, "Not CO Springs", "id2", 50);
-    	v.addLeg(39, -107, "Not CO Springs", "id2", 40.5, -108, "Not Fort Collins", "id3", 60);
-    	v.addLeg(40.5, -108, "Not Fort Collins", "id3", 40, -108, "Not Denver", "id1", 100);
-    	v.writeFiles();
+    public static void main(String[] args) throws Exception {
+    	Presenter prez = new Presenter(new ArrayList<File>());
+    	View vw = new View(prez);
+    	vw.run();
+//    	View v = new View("hello.csv", "coloradoMap.svg", 300, false, false, true);
+//    	v.addLeg(40, -108, "Not Denver", "id1", 39, -107, "Not CO Springs", "id2", 50);
+//    	v.addLeg(39, -107, "Not CO Springs", "id2", 40.5, -108, "Not Fort Collins", "id3", 60);
+//    	v.addLeg(40.5, -108, "Not Fort Collins", "id3", 40, -108, "Not Denver", "id1", 100);
+//    	v.writeFiles();
     }
+
+
+	
 }
