@@ -11,7 +11,7 @@ import org.junit.*;
 
 public class ModelTest{
 
-	String filename = "test.csv";
+	String filename = this.getClass().getClassLoader().getResource("test.csv").toString().substring(5);
 
 	@Test
 	public void testConstructor() {

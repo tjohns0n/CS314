@@ -68,8 +68,8 @@ public class XMLElement {
     		start = "<!-- " + attributes + " -->";
     		return false;
     	// Special case: "xml" - create an XML header
-    	case "xml":
-    		start = "<?xml " + attributes + "?>";
+    	case "xml": case "xml-stylesheet":
+    		start = "<?" + type + " " + attributes + "?>";
     		return false;
     	// Special case: elements with no end tag
     	case "path": case "defs": case "rect": case "polyline": case "line": 

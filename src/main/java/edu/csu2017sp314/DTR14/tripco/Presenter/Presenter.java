@@ -53,22 +53,22 @@ public class Presenter {
             Application.launch(View.class, new String[0]);
             gui_FileHandler();
         }
-        if(_xml == null) subSet = new String[0];
+        if(_xml == null || _xml.trim() == "") subSet = new String[0];
         else subSet = xmlReader.readSelectFile(_xml);
         
-        // System.out.println("csv File = " + files.get(0).getName());
-        // System.out.println("svg File = " + _svg);
-        // System.out.println("xml File = " + _xml);
-        // System.out.println("_i = " + options[0]);
-        // System.out.println("_m = " + options[1]);
-        // System.out.println("_n = " + options[2]);
-        // System.out.println("_2 = " + options[3]);
-        // System.out.println("_3 = " + options[4]);
-        // for(int i = 0; i < subSet.length; i++)
-        //     System.out.println("subSet = " + subSet[i]);
+//         System.out.println("csv File = " + files.get(0).getName());
+//         System.out.println("svg File = " + _svg);
+//         System.out.println("xml File = " + _xml);
+//         System.out.println("_i = " + options[0]);
+//         System.out.println("_m = " + options[1]);
+//         System.out.println("_n = " + options[2]);
+//         System.out.println("_2 = " + options[3]);
+//         System.out.println("_3 = " + options[4]);
+//       for(int i = 0; i < subSet.length; i++)
+//             System.out.println("subSet = " + subSet[i]);
         
         model = new Model(files.get(0).getAbsolutePath());
-        model.planTrip(options[4], options[5], subSet);
+        model.planTrip(options[3], options[4], subSet);
         String[][] route = model.reteriveTrip();
         String[] total = route[route.length - 1][0].split(",");
         int totalMileage = Integer.parseInt(total[0]);
@@ -117,9 +117,9 @@ public class Presenter {
         view.writeFiles();
         //Bandaid fix for js since server still not working
         new GenerateJavascript(view.getRootName());
-
+        
         URI webpage = null;
-        String dir = System.getProperty("user.dir") + "/main/resources/View.html";
+        String dir = this.getClass().getClassLoader().getResource("View.html").toString().substring(5);
 
         System.out.println("Ready to show the webpage = " + dir);
         File webFile = new File(dir);

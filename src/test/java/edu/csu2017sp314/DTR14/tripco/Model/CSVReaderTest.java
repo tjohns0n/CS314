@@ -9,7 +9,7 @@ import java.io.IOException;
 import org.junit.*;
 
 public class CSVReaderTest{
-	String fileName = "test.csv";
+	String fileName = this.getClass().getClassLoader().getResource("test.csv").toString().substring(5);
 	private static LocationList loclist;
 	private static CSVReader csvr;
 	@Test
