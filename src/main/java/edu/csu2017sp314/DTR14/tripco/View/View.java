@@ -67,7 +67,10 @@ public class View extends Application {
     
     public View(String rootName, String SVGFile, int totalMileage, boolean mileage, boolean names, boolean ids){
     	itinWrite = new ItineraryWriter();
-        svgWrite = new SVGWriter(SVGFile);
+    	if(SVGFile.equals("null"))
+    		svgWrite = new SVGWriter(1067, 783);
+    	else
+    		svgWrite = new SVGWriter(SVGFile);
         legCount = 0;
         ig = null;
         // For now, automatically pad the SVG with whitespace
