@@ -93,10 +93,11 @@ public class ItineraryWriter {
      	data.addAll(header);
      	data.addAll(legs);
      	data.addAll(footer);
-
+     	String loc = System.getProperty("user.dir");
+		loc+="/main/resources/";
       	try {
             // New BufferedWriter with filename of original input file
-      		BufferedWriter write = new BufferedWriter(new FileWriter(filename));
+      		BufferedWriter write = new BufferedWriter(new FileWriter(loc+filename));
             // Loop through and write all of the XML data
             for(String s : data) {
                 write.write(s);

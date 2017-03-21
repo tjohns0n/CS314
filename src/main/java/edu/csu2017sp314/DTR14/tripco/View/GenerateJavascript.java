@@ -20,16 +20,16 @@ public class GenerateJavascript {
         lines = new ArrayList<String>();
 
         lines.add("function nameSVG() {");
-        lines.add("\treturn '../../" + filename + ".svg';");
+        lines.add("\treturn '" + filename + ".svg';");
         lines.add("}");
 
         lines.add("function nameXML() {");
-        lines.add("\treturn '../../" + filename + ".xml';");
+        lines.add("\treturn '" + filename + ".xml';");
         lines.add("}");
 
         try {
         	String dir = System.getProperty("user.dir");
-        	BufferedWriter write = new BufferedWriter(new FileWriter(dir + "/View.js"));
+        	BufferedWriter write = new BufferedWriter(new FileWriter(dir + "/main/resources/View.js"));
         	for (String s : lines) {
         		write.write(s + "\n");
         	}

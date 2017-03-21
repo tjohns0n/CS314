@@ -9,18 +9,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class SelectionWriter {
-	//Selection to be written
-	public Selection select;
 	//Header for <XML> and <selection>
-	private ArrayList<String> header;
+	protected ArrayList<String> header;
 	//Holds selection elements
-	private ArrayList<String> body;
+	protected ArrayList<String> body;
     // Contains </selection>
-    private ArrayList<String> footer;
+    protected ArrayList<String> footer;
     // The number of legs of the trip
 	
-	public SelectionWriter(Selection Select){
-		select=Select;
+	public SelectionWriter(String subSet, String xmlFile, String csvFile){
 		header = new ArrayList<String>();
 		body = new ArrayList<String>();
         footer = new ArrayList<String>();
@@ -32,38 +29,53 @@ public class SelectionWriter {
         header.add("\n");
         footer.add(slct.getEnd());
         footer.add("\n");
-        writeBody();
+        writeBody(subSet, xmlFile, csvFile);
+	}
+	public SelectionWriter(String subSet, String xmlFile, String csvFile, boolean go){
+		header = new ArrayList<String>();
+		body = new ArrayList<String>();
+        footer = new ArrayList<String>();
+        XMLElement xml = new XMLElement("xml", "version=\"1.0\" encoding=\"UTF-8\"");
+        header.add(xml.getStart());
+        header.add("\n");
+        XMLElement slct = new XMLElement("selection", "");
+        header.add(slct.getStart());
+        header.add("\n");
+        footer.add(slct.getEnd());
+        footer.add("\n");
+        if(go)
+        	writeBody(subSet, xmlFile, csvFile);
 	}
 	//Writes body of Selection XML
-	private void writeBody(){
+	private void writeBody(String subSet, String xmlFile, String csvFile){
 		//Add title
 		XMLElement title = new XMLElement("title", "");
 		body.add("\t");
 		body.add(title.getStart());
-		body.add(select.getTitle());
+		body.add(xmlFile);
 		body.add(title.getEnd());
 		body.add("\n");
 		//Add filename
 		XMLElement filename = new XMLElement("filename", "");
 		body.add("\t");
 		body.add(filename.getStart());
-		body.add(select.getCSVName());
+		body.add(csvFile);
 		body.add(filename.getEnd());
 		body.add("\n");
-		if(select.getSubset().length>1){
+		String[] subs = subSet.split(",");
+		if(subs.length>1){
 			//Add subset of destinations
 			XMLElement dest = new XMLElement("destinations", "");
 			XMLElement id = new XMLElement("id", "");
-			String[] sub = select.getSubset();
 			body.add("\t");
 			body.add(dest.getStart());
 			body.add("\n");
 			//Add individual ids of subset
-			for(int i=0;i<sub.length;i++){
+			for(int i=0;i<subs.length;i++){
 				body.add("\t");
 				body.add("\t");
 				body.add(id.getStart());
-				body.add(sub[i]);
+				body.add(subs[i]);
 				body.add(id.getEnd());
 				body.add("\n");
 			}
@@ -73,7 +85,7 @@ public class SelectionWriter {
 			body.add("\n");
 		}
 	}
-    protected boolean writeXML(String filename) {
+	protected boolean writeXML(String name) {
     	//Return value, assume bad return
     	boolean r = false;
     	// Add all elements together
@@ -84,7 +96,7 @@ public class SelectionWriter {
      	
       	try {
             //New writer with filename of selection
-      		BufferedWriter write = new BufferedWriter(new FileWriter(select.getFilename()));
+      		BufferedWriter write = new BufferedWriter(new FileWriter(name));
             //Write each element
             for(String s : data) {
                 write.write(s);

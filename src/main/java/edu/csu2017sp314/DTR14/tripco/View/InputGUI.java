@@ -4,12 +4,15 @@
 
 package edu.csu2017sp314.DTR14.tripco.View;
 
-import edu.csu2017sp314.DTR14.tripco.View.SelectionWriter;
-
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -28,21 +31,27 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import edu.csu2017sp314.DTR14.tripco.View.View;
 
 public class InputGUI extends Application{
 	
-	public Selection select;
 	private Scene dialog;
 	private Scene chooser;
+	private String xmlFile;
+	private File csvFile;
+	private String svgFile;
+	private boolean[] options;
+	private String[] SUBSET;
 	public View vw;
 	
 	
 	public InputGUI(View VW){
 		vw = VW;
-		select = null;
 		dialog = null;
 		//setDialogScene();
 		chooser = null;
+        options = new boolean[5];
+        SUBSET=null;
 		/*
 		try {
 			this.start(sg);
@@ -53,10 +62,11 @@ public class InputGUI extends Application{
 	}
 	public InputGUI(){
 		vw = null;
-		select = null;
 		dialog = null;
 		//setDialogScene();
 		chooser = null;
+		options = new boolean[5];
+		SUBSET=null;
 		/*
 		try {
 			this.start(sg);
@@ -65,6 +75,117 @@ public class InputGUI extends Application{
 		}
 		*/
 	}
+	private void readSelection(File input){
+		try {
+			Scanner scan = new Scanner(input);
+			int count = 1;
+			boolean dest = false;
+			boolean cont = scan.hasNextLine();
+			ArrayList<String> subs = new ArrayList<String>();
+			while(cont){
+				String temp = scan.nextLine().trim();
+				cont = scan.hasNextLine();
+				switch(count){
+					case 1:{//Check opening XML tag
+						if(temp.length()>4){
+							if(temp.substring(0, 5).equalsIgnoreCase("<?xml")){
+								break;
+							}
+							else
+								return;
+						}
+						else
+							return;
+					}
+					case 2:{//Check opening selection tag
+						if(temp.length()>10){
+							if(temp.substring(0, 10).equalsIgnoreCase("<selection")){
+								break;
+							}
+							else
+								return;
+						}
+						else
+							return;
+					}
+					case 3:{//Check title tag
+						if(temp.length()>6){
+							if(temp.substring(0, 6).equalsIgnoreCase("<title")){
+								break;
+							}
+							else
+								return;
+						}
+						else
+							return;
+					}
+					case 4:{//Check opening filename tag
+						if(temp.length()>9){
+							if(temp.substring(0, 9).equalsIgnoreCase("<filename")){
+								temp = temp.substring(temp.indexOf('>')+1);
+								temp = temp.substring(0, temp.indexOf('<'));
+								csvFile = new File(temp);
+								break;
+							}
+							else
+								return;
+						}
+						else
+							return;
+					}
+					case 5:{//Check opening destinations tag
+						if(temp.length()>13){
+							if(temp.substring(0, 13).equalsIgnoreCase("<destinations")){
+								dest = true;
+								break;
+							}
+							else
+								return;
+						}
+						else
+							return;
+					}
+					default:{//Handle id and closing destinations/selection tag
+						if(dest){
+							if(temp.length()>3){
+								if(temp.substring(0, 3).equalsIgnoreCase("<id")){
+									temp = temp.substring(temp.indexOf('>')+1);
+									temp = temp.substring(0, temp.indexOf('<'));
+									subs.add(temp.trim());
+								}
+							}
+						}
+						if(temp.length()>14){
+							if(temp.substring(0, 14).equalsIgnoreCase("</destinations")){
+								dest = false;
+								break;
+							}
+						}
+						if(temp.length()>11){
+							if(temp.substring(0, 11).equalsIgnoreCase("</selection")){
+								cont = false;
+								break;
+							}
+						}
+					}
+				}
+				count++;
+			}
+			scan.close();
+			SUBSET = subs.toArray(new String[0]);
+			//System.out.println(Arrays.toString(SUBSET));
+	        return;
+			
+			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+	}
+	
+	
 	private void setChooser(Stage prim){
 		//Welcome Text
 		Text welcome = new Text("Plan trips across the state of Colorado with TripCo!");
@@ -94,16 +215,13 @@ public class InputGUI extends Application{
 			if(in!=null){
 				String name = in.getName();
 				if(name.length()>4){
-					if(name.substring(name.length()-4, name.length()).equalsIgnoreCase(".xml"))
-						try {
-							select = readSelectFile(in);
-							check.setFill(Color.BLACK);
-							check.setText("File Chosen: "+in.getName());
-						} catch (FileNotFoundException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-					else{
+					if(name.substring(name.length()-4, name.length()).equalsIgnoreCase(".xml")) {
+                                        // TODO Auto-generated catch block
+                                        xmlFile = in.getAbsolutePath();
+                                        readSelection(in);
+                                        check.setFill(Color.BLACK);
+                                        check.setText("File Chosen: "+in.getName());
+                                    } else{
 						check.setFill(Color.FIREBRICK);
 						check.setText("File chosen not an .xml document, please select different file");
 					}	
@@ -140,15 +258,28 @@ public class InputGUI extends Application{
 				if(nam.length()>4){
 					if(nam.substring(nam.length()-4, nam.length()).equalsIgnoreCase(".csv")){
 						String entered = newName.getText();
-						String name;
-						if(entered.isEmpty()){//Generate default name
-							name=Long.toString(System.currentTimeMillis()/1000)+".xml";
+						String name = xmlFile;
+						if(name == null){
+							if(entered.isEmpty()){//Generate default name
+								name="temp.xml";
+							}
+							else if(entered.length()>4){
+								if(!entered.substring(entered.length()-4, entered.length()).equalsIgnoreCase(".xml"))
+									name = entered.concat(".xml");
+								else
+									name = entered;
+							}
+							else 
+								name = entered.concat(".xml");
+							xmlFile = name;
+							File file = new File(xmlFile);
+                            try {
+                            	file.createNewFile();
+                            } catch (IOException ex) {
+                            	Logger.getLogger(InputGUI.class.getName()).log(Level.SEVERE, null, ex);
+                            }
 						}
-						else if(!entered.substring(entered.length()-4, entered.length()).equalsIgnoreCase(".xml"))
-							name = entered.concat(".xml");
-						else
-							name = entered;
-						select = new Selection(in, name);
+						csvFile = in;
 						newCheck.setFill(Color.BLACK);
 						newCheck.setText("File Selected: "+nam);
 					}
@@ -174,25 +305,17 @@ public class InputGUI extends Application{
 		warn.setWrappingWidth(150);
 		Button btn3 = new Button("Start Planning Trip!");
 		btn3.setOnAction(e->{
-			if(select==null){
+			if(csvFile == null){
 				warn.setFill(Color.FIREBRICK);
 				warn.setText("No Selection file or new csv file chosen");
 			}
 				
 			else{
-				if(!newName.getText().isEmpty()&&startNew){
-					select.setTitle(newName.getText());
-					select.setSelectName(newName.getText());
-				}
 				prim.close();
 				//prim = new Stage();
 				setDialogScene(prim);
 				prim.setScene(dialog);
 				prim.setTitle("Select Options");
-				prim.setOnCloseRequest(f -> {
-					SelectionWriter sw = new SelectionWriter(select);
-					sw.writeXML(select.getFilename());
-				});
 				prim.show();
 			}
 		});
@@ -233,7 +356,7 @@ public class InputGUI extends Application{
 				String name = back.getName();
 				if(name.length()>4){
 					if(name.substring(name.length()-4, name.length()).equalsIgnoreCase(".svg"))
-						select.setBackSVG(back.getAbsolutePath());
+						svgFile = back.getAbsolutePath();
 						backSlct.setText("background Selected: " + name);
 				}
 			}
@@ -250,14 +373,14 @@ public class InputGUI extends Application{
 		CheckBox name = new CheckBox("Name");
 		CheckBox id = new CheckBox("ID");
 		CheckBox miles = new CheckBox("Mileage");
-		name.setOnAction(e -> {
-			select.setNameOption(name.isSelected());
-		});
 		id.setOnAction(e -> {
-			select.setIDOption(id.isSelected());
+			options[0] = id.isSelected();
 		});
 		miles.setOnAction(e -> {
-			select.setMileageOption(miles.isSelected());
+			options[1] = miles.isSelected();
+		});
+		name.setOnAction(e -> {
+			options[2] = name.isSelected();
 		});
 		VBox optnBox = new VBox();
 		optnBox.setPadding(new Insets(10));
@@ -274,10 +397,10 @@ public class InputGUI extends Application{
 		CheckBox opt2 = new CheckBox("2OPT");
 		CheckBox opt3 = new CheckBox("3OPT");
 		opt2.setOnAction(e -> {
-			select.set2Opt(opt2.isSelected());
+			options[3] = opt2.isSelected();
 		});
 		opt3.setOnAction(e -> {
-			select.set3Opt(opt3.isSelected());
+			options[4] = opt3.isSelected();
 		});
 		VBox optBox = new VBox();
 		optBox.getChildren().addAll(opt, optText, opt2, opt3);
@@ -290,25 +413,24 @@ public class InputGUI extends Application{
 		Text subText = new Text("Select a subset of locations from the datafile. Seperate ID values of desired locations with a comma");
 		subText.setWrappingWidth(150);
 		TextField subset = new TextField();
+		if(sub!=null){
+			subset.setText(Arrays.toString(SUBSET).substring(1, Arrays.toString(SUBSET).length()-1));
+		}
 		VBox subBox = new VBox();
 		subBox.getChildren().addAll(sub, subText, subset);
 		grid.add(subBox, 6, 2);
 		Button plan = new Button("Plan Trip");
-		SelectionWriter sw0 = new SelectionWriter(select);
 		plan.setOnAction(e -> {
-			select.setIDOption(id.isSelected());
-			select.setNameOption(name.isSelected());
-			select.setMileageOption(miles.isSelected());
-			select.set2Opt(opt2.isSelected());
-			select.set3Opt(opt3.isSelected());
-			if(subset.getText().isEmpty())
-				select.setSubset(new String[0]);
-			else
-				select.setSubset(subset.getText().split(","));
-			//System.out.println(select.getOpts()[0]);
-			sw0.writeXML(select.getFilename());
 			if(vw!=null)
-				vw.Notify();
+				try {
+					if(subset.getText() != null){
+						SelectionWriter sw = new SelectionWriter(subset.getText(), xmlFile, csvFile.getAbsolutePath());
+						sw.writeXML(xmlFile);
+					}
+                    writeResults();
+	        } catch (Exception ex) {
+	            Logger.getLogger(InputGUI.class.getName()).log(Level.SEVERE, null, ex);
+	        }
 			prim.close();
 		});
 		grid.add(plan, 6, 3);
@@ -317,113 +439,22 @@ public class InputGUI extends Application{
 		
 	}
 	
-	protected Selection readSelectFile(File slct) throws FileNotFoundException{
-		Selection r = new Selection(slct.getName());
-		Scanner scan = new Scanner(slct);
-		int count = 1;
-		boolean dest = false;
-		boolean cont = scan.hasNextLine();
-		ArrayList<String> subs = new ArrayList<String>();
-		while(cont){
-			String temp = scan.nextLine().trim();
-			cont = scan.hasNextLine();
-			switch(count){
-				case 1:{//Check opening XML tag
-					if(temp.length()>4){
-						if(temp.substring(0, 4).equalsIgnoreCase("<xml")){
-							break;
-						}
-						else
-							return r;
-					}
-					else
-						return r;
-				}
-				case 2:{//Check opening selection tag
-					if(temp.length()>10){
-						if(temp.substring(0, 10).equalsIgnoreCase("<selection")){
-							break;
-						}
-						else
-							return r;
-					}
-					else
-						return r;
-				}
-				case 3:{//Check title tag
-					if(temp.length()>6){
-						if(temp.substring(0, 6).equalsIgnoreCase("<title")){
-							temp = temp.substring(temp.indexOf('>')+1);
-							temp = temp.substring(0, temp.indexOf('<'));
-							r.setTitle(temp);
-							break;
-						}
-						else
-							return r;
-					}
-					else
-						return r;
-				}
-				case 4:{//Check opening filename tag
-					if(temp.length()>9){
-						if(temp.substring(0, 9).equalsIgnoreCase("<filename")){
-							temp = temp.substring(temp.indexOf('>')+1);
-							temp = temp.substring(0, temp.indexOf('<'));
-							r.setCSV(new File(temp));;
-							break;
-						}
-						else
-							return r;
-					}
-					else
-						return r;
-				}
-				case 5:{//Check opening destinations tag
-					if(temp.length()>13){
-						if(temp.substring(0, 13).equalsIgnoreCase("<destinations")){
-							dest = true;
-							break;
-						}
-						else
-							return r;
-					}
-					else
-						return r;
-				}
-				default:{//Handle id and closing destinations/selection tag
-					if(dest){
-						if(temp.length()>3){
-							if(temp.substring(0, 3).equalsIgnoreCase("<id")){
-								temp = temp.substring(temp.indexOf('>')+1);
-								temp = temp.substring(0, temp.indexOf('<'));
-								subs.add(temp);
-							}
-						}
-					}
-					if(temp.length()>14){
-						if(temp.substring(0, 14).equalsIgnoreCase("</destinations")){
-							dest = false;
-							break;
-						}
-					}
-					if(temp.length()>11){
-						if(temp.substring(0, 11).equalsIgnoreCase("</selection")){
-							cont = false;
-							break;
-						}
-					}
-				}
-			}
-			count++;
-		}
-		scan.close();
-		if(subs.size()>0){
-			subs.trimToSize();
-			r.setSubset((String[])subs.toArray());
-		}
-		
-		return r;
-	}
+	protected void writeResults() throws Exception{
+	    try{
+		    PrintWriter writer = new PrintWriter("GUI_OUTPUT.txt", "UTF-8");
+		    writer.println(csvFile.getAbsolutePath());
+		    writer.println(xmlFile);
+		    writer.println(svgFile);
+		    writer.println(options[0]);
+		    writer.println(options[1]);
+		    writer.println(options[2]);
+		    writer.println(options[3]);
+		    writer.println(options[4]);
+		    writer.close();
+		} catch (IOException e) {
+		   // do something
+		}       
+    }
 	
 	@Override
 	public void start(Stage prim) throws Exception {

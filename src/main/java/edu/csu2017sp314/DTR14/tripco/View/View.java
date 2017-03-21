@@ -7,18 +7,23 @@ package edu.csu2017sp314.DTR14.tripco.View;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 import edu.csu2017sp314.DTR14.tripco.Presenter.Presenter;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.stage.Stage;
 
-public class View extends Application implements Runnable{
+public class View extends Application {
 
     // Name of the CSV input file, sans the .csv extension 
     public String rootName;
+    private String xmlFile;
+    private String svgFile;
+    private boolean[] options;
+    private boolean[] opts;
+    private String[] subSet;
     // Optionally display labels on the SVG
     public boolean mileage, names, ids;
     // ItineraryWriter and SVGWriter:
@@ -28,39 +33,27 @@ public class View extends Application implements Runnable{
     public int legCount;
     //Input
     public InputGUI ig;
-    private Selection slct;
-    //For Notify
-    private Presenter present;
+    private Stage stg;
+    private Presenter pres;
     
-    //GUI Constructor
-    public View(Presenter pres){
-    	present = pres;
-    	svgWrite=null;
-    	itinWrite = new ItineraryWriter();
-        legCount = 0;
-        //stg = new Stage();
-        ig = new InputGUI(this);
-        slct=null;
-        rootName="";
-        ids=false;
-        mileage=false;
-        names=false;
-    }
     //Empty constructor, for javafx Application compliance
-    public View(){
-    	present = null;
+    public View(Presenter pres){
+        this.pres = pres;
     	svgWrite=null;
     	itinWrite = new ItineraryWriter();
         legCount = 0;
         //stg = new Stage();
         ig = new InputGUI(this);
-        slct=null;
         rootName="";
         ids=false;
         mileage=false;
         names=false;
     }
     
+    public View(){
+        ig = new InputGUI(this);
+    }
+
     /*
     View Command Line constructor
     args:
@@ -72,13 +65,11 @@ public class View extends Application implements Runnable{
     ids - Whether or not the SVG should have labels showing the id assigned to each location of a trip
     */
     
-    public View(Presenter pres, String rootName, String SVGFile, int totalMileage, boolean mileage, boolean names, boolean ids) {
-    	present = pres;
+    public View(String rootName, String SVGFile, int totalMileage, boolean mileage, boolean names, boolean ids){
     	itinWrite = new ItineraryWriter();
         svgWrite = new SVGWriter(SVGFile);
         legCount = 0;
         ig = null;
-        slct=null;
         // For now, automatically pad the SVG with whitespace
         //svgWrite.padSVG();
         // Store the root of the CSV file name
@@ -96,119 +87,22 @@ public class View extends Application implements Runnable{
         this.names = names;
         this.ids = ids;
     }
-    
-    public View(String rootName, String SVGFile, int totalMileage, boolean mileage, boolean names, boolean ids) {
-    	present = null;
-    	itinWrite = new ItineraryWriter();
-        svgWrite = new SVGWriter(SVGFile);
-        legCount = 0;
-        ig = null;
-        slct=null;
-        // For now, automatically pad the SVG with whitespace
-        //svgWrite.padSVG();
-        // Store the root of the CSV file name
-        if (rootName.substring(rootName.length()-4, rootName.length()).equals(".csv")) {
-            this.rootName = rootName.substring(0, rootName.length() - 4);
-        } else {
-            this.rootName = rootName;
-        }
-
-        // For now, automatically title and foot the SVG 
-        svgWrite.addTitle("Colorado - " + this.rootName, "maptitle");
-        svgWrite.addFooter(totalMileage + " miles", "mapfooter");
-
-        this.mileage = mileage;
-        this.names = names;
-        this.ids = ids;
-    }
-    
     
     //Util methods
     public void run(){
-    	try {
-			this.start(new Stage());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+    	this.launch(View.class, new String[0]);
     }
     @Override
 	public void start(Stage primaryStage) throws Exception {
 		ig.start(primaryStage);
 	}
+
     public String getRootName() {
     	return rootName;
     }
     
     //Called by Input gui, sets options from gui, starts svgwriter, wakes up Presenter thread
-    protected void Notify(){
-    	slct=ig.select;
-    	//Set options for svg writer
-    	ids=slct.getOptions()[0];
-    	mileage=slct.getOptions()[1];
-    	names=slct.getOptions()[2];
-    	String temp=slct.getCSVName();
-    	if(temp.length()>4){
-	        if (temp.substring(temp.length()-4, temp.length()).equals(".csv")) {
-	            rootName = temp.substring(0, temp.length() - 4);
-	        } else {
-	            rootName = temp;
-	        }
-    	}
-    	else
-    		rootName=temp;
-        //System.out.println(ig.select.getBackSVGName());
-        svgWrite = new SVGWriter(slct.getBackSVGName());
-        svgWrite.padSVG();
-        svgWrite.addTitle("Colorado - " + this.rootName, "maptitle");
-        if(present!=null)
-        	present.notify();
-    }
     
-    //Getter methods to pull from selection
-    public Selection getSelect(){
-    	if(slct!=null)
-    		return slct;
-    	else
-    		return new Selection("empty");
-    }
-    public File getCSV(){
-		return slct.getCSV();
-	}
-	public String getCSVName(){
-		return slct.getCSVName();
-	}
-	public String getSelectFilename(){
-		return slct.getFilename();
-	}
-	public String getSelectTitle(){
-		return slct.getTitle();
-	}
-	public String getBackSVGName(){
-		return slct.getBackSVGName();
-	}
-	public boolean[] getOptions(){
-		return slct.getOptions();
-	}
-	public boolean[] getOpts(){
-		return slct.getOpts();
-	}
-	public String[] getSubset(){
-		return slct.getSubset();
-	}
-	
-    //SVG Methods
-    
-    //Set Total Mileage for gui view
-    public void setTotal(int totalMileage){
-    	if(svgWrite==null){
-    		svgWrite = new SVGWriter(slct.getBackSVGName());
-            svgWrite.padSVG();
-            svgWrite.addTitle("Colorado - " + this.rootName, "maptitle");
-    	}
-    	
-    	svgWrite.addFooter(totalMileage + " miles", "mapfooter");
-    }
     /*
      * Add a line to the SVG and a leg to the XML. Automatically converts from geographic coordinates.
      * If any of the command line flags are true, labels will automatically be generated as well
@@ -253,131 +147,6 @@ public class View extends Application implements Runnable{
         svgWrite.writeSVG(rootName + ".svg");
         itinWrite.writeXML(rootName + ".xml");
     }
-    
-    public void setSelection(Selection select){
-    	this.slct=select;
-    	//Set options for svg writer
-    	ids=slct.getOptions()[0];
-    	mileage=slct.getOptions()[1];
-    	names=slct.getOptions()[2];
-    	String temp=slct.getCSVName();
-    	if(temp.length()>4){
-	        if (temp.substring(temp.length()-4, temp.length()).equals(".csv")) {
-	            rootName = temp.substring(0, temp.length() - 4);
-	        } else {
-	            rootName = temp;
-	        }
-    	}
-    	else
-    		rootName=temp;
-    }
-    
-    public Selection readSelectionXML(File selection) throws FileNotFoundException{
-    	Selection r = new Selection(selection.getName());
-		Scanner scan = new Scanner(selection);
-		int count = 1;
-		boolean dest = false;
-		boolean cont = scan.hasNextLine();
-		ArrayList<String> subs = new ArrayList<String>();
-		while(cont){
-			String temp = scan.nextLine().trim();
-			cont = scan.hasNextLine();
-			switch(count){
-				case 1:{//Check opening XML tag
-					if(temp.length()>4){
-						if(temp.substring(0, 4).equalsIgnoreCase("<xml")){
-							break;
-						}
-						else
-							return r;
-					}
-					else
-						return r;
-				}
-				case 2:{//Check opening selection tag
-					if(temp.length()>10){
-						if(temp.substring(0, 10).equalsIgnoreCase("<selection")){
-							break;
-						}
-						else
-							return r;
-					}
-					else
-						return r;
-				}
-				case 3:{//Check title tag
-					if(temp.length()>6){
-						if(temp.substring(0, 6).equalsIgnoreCase("<title")){
-							temp = temp.substring(temp.indexOf('>')+1);
-							temp = temp.substring(0, temp.indexOf('<'));
-							r.setTitle(temp);
-							break;
-						}
-						else
-							return r;
-					}
-					else
-						return r;
-				}
-				case 4:{//Check opening filename tag
-					if(temp.length()>9){
-						if(temp.substring(0, 9).equalsIgnoreCase("<filename")){
-							temp = temp.substring(temp.indexOf('>')+1);
-							temp = temp.substring(0, temp.indexOf('<'));
-							r.setCSV(new File(temp));;
-							break;
-						}
-						else
-							return r;
-					}
-					else
-						return r;
-				}
-				case 5:{//Check opening destinations tag
-					if(temp.length()>13){
-						if(temp.substring(0, 13).equalsIgnoreCase("<destinations")){
-							dest = true;
-							break;
-						}
-						else
-							return r;
-					}
-					else
-						return r;
-				}
-				default:{//Handle id and closing destinations/selection tag
-					if(dest){
-						if(temp.length()>3){
-							if(temp.substring(0, 3).equalsIgnoreCase("<id")){
-								temp = temp.substring(temp.indexOf('>')+1);
-								temp = temp.substring(0, temp.indexOf('<'));
-								subs.add(temp);
-							}
-						}
-					}
-					if(temp.length()>14){
-						if(temp.substring(0, 14).equalsIgnoreCase("</destinations")){
-							dest = false;
-							break;
-						}
-					}
-					if(temp.length()>11){
-						if(temp.substring(0, 11).equalsIgnoreCase("</selection")){
-							cont = false;
-							break;
-						}
-					}
-				}
-			}
-			count++;
-		}
-		scan.close();
-		if(subs.size()>0){
-			subs.trimToSize();
-			r.setSubset((String[])subs.toArray());
-		}
-		return r;
-    }
 
     /*
     === Likely to be removed ===
@@ -391,27 +160,10 @@ public class View extends Application implements Runnable{
         return text;
     }
     
-    public static void main(String[] args) {
-    	//Presenter prez = new Presenter(new ArrayList<File>());
-    	View vw = new View();
-    	Platform.runLater(new Runnable(){
-
-			@Override
-			public void run() {
-				try {
-					vw.start(new Stage());
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				
-			}
-    		
-    	});
-    	
-    	//System.out.println(vw.getSelectFilename());
-    	
+    public static void main(String[] args) throws Exception {
+    	Presenter prez = new Presenter(new ArrayList<File>());
+    	View vw = new View(prez);
+    	vw.run();
 //    	View v = new View("hello.csv", "coloradoMap.svg", 300, false, false, true);
 //    	v.addLeg(40, -108, "Not Denver", "id1", 39, -107, "Not CO Springs", "id2", 50);
 //    	v.addLeg(39, -107, "Not CO Springs", "id2", 40.5, -108, "Not Fort Collins", "id3", 60);

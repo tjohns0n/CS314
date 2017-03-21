@@ -42,8 +42,6 @@ public class SVGWriter {
 		originalContent = new ArrayList<String>();
 
 		// Init string	
-		String loc = System.getProperty("user.dir");
-                System.out.println(loc);
     	try {
 			// Create buffered reader to read an SVG
     		//String loc = System.getProperty("user.dir");
@@ -361,9 +359,11 @@ public class SVGWriter {
     	}
     	testData.addAll(content);
     	testData.addAll(footer);
+		String loc = System.getProperty("user.dir");
+		loc+="/main/resources/";
     	try {
 			// New BufferedWriter with filename of original input file
-    		BufferedWriter write = new BufferedWriter(new FileWriter(filename));
+    		BufferedWriter write = new BufferedWriter(new FileWriter(loc + filename));
 			// Write the contents of the original SVG, as well as whatever header elements added
 			for (String s: header) {
 				write.write(s + "\n");
