@@ -33,9 +33,6 @@ public class ItineraryWriter {
         XMLElement xml = new XMLElement("xml", "version=\"1.0\" encoding=\"UTF-8\"");
         header.add(xml.getStart());
         header.add("\n");
-        XMLElement xsl = new XMLElement("xml-stylesheet", "type=\"text/xsl\" href=\"stylesheet.xsl\"");
-        header.add(xsl.getStart());
-        header.add("\n");
         XMLElement trip = new XMLElement("trip", "");
         header.add(trip.getStart());
         header.add("\n");
@@ -97,7 +94,7 @@ public class ItineraryWriter {
      	data.addAll(legs);
      	data.addAll(footer);
      	String loc = System.getProperty("user.dir");
-		loc+="/src/main/resources/";
+		loc+="/main/resources/";
       	try {
             // New BufferedWriter with filename of original input file
       		BufferedWriter write = new BufferedWriter(new FileWriter(loc+filename));
