@@ -119,7 +119,7 @@ public class Presenter {
         new GenerateJavascript(view.getRootName());
 
         URI webpage = null;
-        String dir = System.getProperty("user.dir") + "main/resources/View.html";
+        String dir = System.getProperty("user.dir") + "/main/resources/View.html";
 
         System.out.println("Ready to show the webpage = " + dir);
         File webFile = new File(dir);
