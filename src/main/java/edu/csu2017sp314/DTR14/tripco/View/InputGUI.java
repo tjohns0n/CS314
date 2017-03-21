@@ -413,7 +413,7 @@ public class InputGUI extends Application{
 		Text subText = new Text("Select a subset of locations from the datafile. Seperate ID values of desired locations with a comma");
 		subText.setWrappingWidth(150);
 		TextField subset = new TextField();
-		if(sub!=null){
+		if(SUBSET!=null){
 			subset.setText(Arrays.toString(SUBSET).substring(1, Arrays.toString(SUBSET).length()-1));
 		}
 		VBox subBox = new VBox();
