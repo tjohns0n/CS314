@@ -48,24 +48,25 @@ public class Presenter {
     }
 
     public void run() throws IOException {
+    	if(_xml.equals("null") || _xml.equals("")) subSet = new String[0];
+        else subSet = xmlReader.readSelectFile(_xml, files);
         if (options[5] == true) {
             // if GUI
             Application.launch(View.class, new String[0]);
             gui_FileHandler();
+            if (subSet.length == 0) subSet = xmlReader.readSelectFile(_xml, files);
         }
-        if(_xml == null) subSet = new String[0];
-        else subSet = xmlReader.readSelectFile(_xml);
         
-        // System.out.println("csv File = " + files.get(0).getName());
-        // System.out.println("svg File = " + _svg);
-        // System.out.println("xml File = " + _xml);
-        // System.out.println("_i = " + options[0]);
-        // System.out.println("_m = " + options[1]);
-        // System.out.println("_n = " + options[2]);
-        // System.out.println("_2 = " + options[3]);
-        // System.out.println("_3 = " + options[4]);
-        // for(int i = 0; i < subSet.length; i++)
-        //     System.out.println("subSet = " + subSet[i]);
+//         System.out.println("csv File = " + files.get(0).getName());
+//         System.out.println("svg File = " + _svg);
+//         System.out.println("xml File = " + _xml);
+//         System.out.println("_i = " + options[0]);
+//         System.out.println("_m = " + options[1]);
+//         System.out.println("_n = " + options[2]);
+//         System.out.println("_2 = " + options[3]);
+//         System.out.println("_3 = " + options[4]);
+//         for(int i = 0; i < subSet.length; i++)
+//             System.out.println("subSet = " + subSet[i]);
         
         model = new Model(files.get(0).getAbsolutePath());
         model.planTrip(options[4], options[5], subSet);
@@ -140,8 +141,11 @@ public class Presenter {
         BufferedReader br = new BufferedReader(new FileReader("GUI_OUTPUT.txt"));
         try {
             if(files.isEmpty()) files.add(new File(br.readLine()));
+            else br.readLine();
             if(_xml.equals("")) _xml = br.readLine();
+            else br.readLine();
             if(_svg.equals("")) _svg = br.readLine();
+            else br.readLine();
             options[0] = br.readLine().equals("true");
             options[1] = br.readLine().equals("true");
             options[2] = br.readLine().equals("true");

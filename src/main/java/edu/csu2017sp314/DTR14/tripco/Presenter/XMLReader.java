@@ -12,7 +12,7 @@ import java.util.Scanner;
 
 public class XMLReader {
 
-    public String[] readSelectFile(String filename) throws FileNotFoundException{
+    public String[] readSelectFile(String filename, ArrayList<File> files) throws FileNotFoundException{
 		Scanner scan = new Scanner(new File(filename));
 		int count = 1;
 		boolean dest = false;
@@ -62,6 +62,7 @@ public class XMLReader {
 						if(temp.substring(0, 9).equalsIgnoreCase("<filename")){
 							temp = temp.substring(temp.indexOf('>')+1);
 							temp = temp.substring(0, temp.indexOf('<'));
+							if(files.isEmpty()) files.add(new File(temp));
 							break;
 						}
 						else
