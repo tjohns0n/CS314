@@ -48,7 +48,7 @@ public class Presenter {
     }
 
     public void run() throws IOException {
-    	if(_xml.equals("null") || _xml.equals("")) subSet = new String[0];
+    	if(_xml == null ||_xml.equals("null") || _xml.equals("")) subSet = new String[0];
         else subSet = xmlReader.readSelectFile(_xml, files);
         if (options[5] == true) {
             // if GUI
@@ -120,7 +120,7 @@ public class Presenter {
         new GenerateJavascript(view.getRootName());
 
         URI webpage = null;
-        String dir = System.getProperty("user.dir") + "/main/resources/View.html";
+        String dir = this.getClass().getClassLoader().getResource("View.html").toString().substring(5);
 
         System.out.println("Ready to show the webpage = " + dir);
         File webFile = new File(dir);

@@ -19,10 +19,10 @@ public class PresenterTest {
     @Before
     public void initObjects() {
         files = new ArrayList<File>();
-        files.add(new File("Colorado14ers.csv"));
+        files.add(new File(this.getClass().getClassLoader().getResource("test.csv").toString().substring(5)));
         options = new boolean[6];
         Arrays.fill(options, false);
-        prez = new Presenter(files, null, "coloradoMap.svg", options);
+        prez = new Presenter(files, null, this.getClass().getClassLoader().getResource("coloradoMap.svg").toString().substring(5), options);
     }
 
 	@Test
@@ -31,7 +31,7 @@ public class PresenterTest {
 		new Presenter(files);
         
         // test full constructor
-		new Presenter(files, null, "coloradoMap.svg", options);
+		new Presenter(files, null, this.getClass().getClassLoader().getResource("coloradoMap.svg").toString().substring(5), options);
 		
 	}
 	
