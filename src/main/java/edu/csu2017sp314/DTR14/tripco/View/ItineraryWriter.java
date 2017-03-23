@@ -94,7 +94,13 @@ public class ItineraryWriter {
      	data.addAll(legs);
      	data.addAll(footer);
      	String loc = System.getProperty("user.dir");
-		loc+="/main/resources/";
+     	if (loc.contains("src")) {
+     		loc += "/main/resources/";
+     	} else {
+     		loc += "/src/main/resources/";
+     	}
+     
+		
       	try {
             // New BufferedWriter with filename of original input file
       		BufferedWriter write = new BufferedWriter(new FileWriter(loc+filename));
@@ -105,7 +111,7 @@ public class ItineraryWriter {
             // Close the BufferedWriter
             write.close();
       	} catch (IOException e) {
-      		
+      		System.out.println("location does not exist");
       	}
         // Return the ArrayList data
      	return data;
