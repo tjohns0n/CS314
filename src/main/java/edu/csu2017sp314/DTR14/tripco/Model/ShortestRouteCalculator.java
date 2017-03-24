@@ -203,7 +203,6 @@ public class ShortestRouteCalculator{
 				double swapDistance = find2OptSwapDistance(i, j);
 				// if the 2-opt gives a shorter distance:
 				if ((int)Math.ceil(swapDistance) < originalDistance) {
-					System.out.println(swapDistance);
 					// reinit opt_route
 					opt_route = new int[final_route.length][final_route[0].length];
 					// reverse i to j - 1

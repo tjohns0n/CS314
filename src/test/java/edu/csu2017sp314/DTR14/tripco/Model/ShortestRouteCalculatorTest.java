@@ -90,9 +90,7 @@ public class ShortestRouteCalculatorTest{
 		ShortestRouteCalculator src = new ShortestRouteCalculator(locList, 0);
 		
 		src.findBestNearestNeighbor(false, false);
-		for (int i = 0; i < src.final_route.length; i++) {
-			System.out.println(Arrays.toString(src.final_route[i]));
-		}
+		
 		src.copyRoute(src.final_route, src.test_route);
 		double dis = src.find2OptSwapDistance(1, 3);
 		double correctDis = 0;
@@ -104,6 +102,60 @@ public class ShortestRouteCalculatorTest{
 		correctDis += src.dis_matrix[3][0];
 
 		assertTrue(dis - correctDis < 0.01 && dis - correctDis > -0.01);
+	}
+	
+	@Test
+	public void testDo2OptSwap() {
+		locList = new LocationList();
+		locList.addLocation(new Location("A", "39.1177", "-106.4453"));
+		locList.addLocation(new Location("B", "39.1875", "-106.4756"));
+		locList.addLocation(new Location("C", "38.9243","-106.3208"));
+		locList.addLocation(new Location("D", "37.5774", "-105.4857"));
+		locList.addLocation(new Location("E", "39.0294", "-106.4729"));
+		ShortestRouteCalculator src = new ShortestRouteCalculator(locList, 0);
+		
+		src.opt_route = new int[6][2];
+		src.test_route = new int[6][2];
+		
+		for (int i = 0; i < 5; i++) {
+			src.test_route[i][0] = i;
+		}
+		src.test_route[5][0] = 0;
+		
+		src.do2OptSwap(1, 5);
+		assertTrue(src.opt_route[0][0] == 0);
+		assertTrue(src.opt_route[1][0] == 4);
+		assertTrue(src.opt_route[2][0] == 3);
+		assertTrue(src.opt_route[3][0] == 2);
+		assertTrue(src.opt_route[4][0] == 1);
+		assertTrue(src.opt_route[5][0] == 0);
+	}
+	
+	@Test
+	public void testRebuildDistances() {
+		locList = new LocationList();
+		locList.addLocation(new Location("A", "39.1177", "-106.4453"));
+		locList.addLocation(new Location("B", "39.1875", "-106.4756"));
+		locList.addLocation(new Location("C", "38.9243","-106.3208"));
+		locList.addLocation(new Location("D", "37.5774", "-105.4857"));
+		locList.addLocation(new Location("E", "39.0294", "-106.4729"));
+		ShortestRouteCalculator src = new ShortestRouteCalculator(locList, 0);
+		
+		src.opt_route = new int[6][2];
+		
+		for (int i = 0; i < 5; i++) {
+			src.opt_route[i][0] = i;
+		}
+		src.opt_route[5][0] = 0;
+		src.rebuildDistances();
+		for (int i = 0; i < 6; i++) {
+			System.out.println(src.opt_route[i][1]);
+		}
+		double distance = 0;
+		for (int i = 0; i < 4; i++) {
+			distance += src.dis_matrix[i][i + 1];
+			assertTrue(Math.abs(distance - src.opt_route[i + 1][1]) < i + 1);
+		}
 	}
 }
 
