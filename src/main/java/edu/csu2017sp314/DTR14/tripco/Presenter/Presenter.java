@@ -69,7 +69,7 @@ public class Presenter {
 //             System.out.println("subSet = " + subSet[i]);
         
         model = new Model(files.get(0).getAbsolutePath());
-        model.planTrip(options[4], options[5], subSet);
+        model.planTrip(options[3], options[4], subSet);
         String[][] route = model.reteriveTrip();
         String[] total = route[route.length - 1][0].split(",");
         int totalMileage = Integer.parseInt(total[0]);
