@@ -16,6 +16,7 @@ public class LocationListTest{
 	
 	@Test
 	public void testLineHandler() {
+		// Test without selection
 		loclist = new LocationList();
 		String[] title = {"name", "latitude", "longitude", "zipcode"};
 		loclist.lineHandler("ft collins, 2391.2, 9312.3, 80525" , title, new String[0]);
@@ -24,6 +25,20 @@ public class LocationListTest{
 		assertTrue("wrong Handler" , loclist.get(0).getLongitude() == 9312.3);
 		assertTrue("wrong Handler" , loclist.get(0).getExtras().equals("80525"));
 		assertTrue("wrong Handler" , loclist.get(0).getTemplate().equals("zipcode"));
+		// Test duplicate is not added
+		loclist.lineHandler("ft collins, 2391.2, 9312.3, 80525" , title, new String[0]);
+		assertTrue(loclist.getsize() == 1);
+		// Test add second location
+		loclist.lineHandler("ft morgan, 300, 300, 80521" , title, new String[0]);
+		assertTrue(loclist.getsize() == 2);
+		assertTrue(loclist.get(1).getName().equals("ft morgan"));
+		
+		// Test with selection
+		String[] titleid = {"name", "id", "latitude", "longitude", "other"};
+		loclist = new LocationList();
+		loclist.lineHandler("A, 0, 30, 30, cool", titleid, new String[]{"1"});
+		loclist.lineHandler("B, 1, 40, 40, nice", titleid, new String[]{"1"});
+		assertTrue(loclist.get(0).getName().equals("B"));
 	}
 	
 	

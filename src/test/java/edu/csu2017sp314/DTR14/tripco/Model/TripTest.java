@@ -27,7 +27,7 @@ public class TripTest{
 		locList.addLocation(l1);
 		locList.addLocation(l2);
 		src = new ShortestRouteCalculator(locList, 0);
-		src.findBestNearestNeighbor();
+		src.findBestNearestNeighbor(false, false);
 		Trip trip = new Trip(locList, src.getFinalRoute());
 		String tests[][] = trip.createTrip();
 		assertTrue("wrong trip", tests[0][0].equals("0,Mount Elbert,39.1177,-106.4453"));

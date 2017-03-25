@@ -27,14 +27,15 @@ public class Model{
 	public boolean planTrip(boolean run2Opt, boolean run3Opt, String[] selection){
 		cvsr.initiate(selection);
 		src = new ShortestRouteCalculator(locList, 0);
-		src.findBestNearestNeighbor();
-		if (run2Opt) {
-			src.findBestOpt(false);
-		}
+		
 		if (run3Opt) {
-			src.findBestOpt(true);
+			src.findBestNearestNeighbor(true, true);
+		} else if (run2Opt) {
+			src.findBestNearestNeighbor(true, false);
+		} else {
+			src.findBestNearestNeighbor(false, false);
 		}
-                return true;
+        return true;
 	}
 
 	public String[][] reteriveTrip(){

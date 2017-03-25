@@ -360,7 +360,12 @@ public class SVGWriter {
     	testData.addAll(content);
     	testData.addAll(footer);
 		String loc = System.getProperty("user.dir");
-		loc+="/main/resources/";
+		if (loc.contains("src")) {
+			loc += "/main/resources/";
+		} else {
+			loc += "/src/main/resources/";
+		}
+		
     	try {
 			// New BufferedWriter with filename of original input file
     		BufferedWriter write = new BufferedWriter(new FileWriter(loc + filename));

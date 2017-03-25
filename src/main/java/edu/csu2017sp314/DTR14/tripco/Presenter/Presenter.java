@@ -48,7 +48,7 @@ public class Presenter {
     }
 
     public void run() throws IOException {
-    	if(_xml.equals("null") || _xml.equals("")) subSet = new String[0];
+    	if(_xml == null ||_xml.equals("null") || _xml.equals("")) subSet = new String[0];
         else subSet = xmlReader.readSelectFile(_xml, files);
         if (options[5] == true) {
             // if GUI
@@ -69,7 +69,7 @@ public class Presenter {
 //             System.out.println("subSet = " + subSet[i]);
         
         model = new Model(files.get(0).getAbsolutePath());
-        model.planTrip(options[4], options[5], subSet);
+        model.planTrip(options[3], options[4], subSet);
         String[][] route = model.reteriveTrip();
         String[] total = route[route.length - 1][0].split(",");
         int totalMileage = Integer.parseInt(total[0]);
@@ -120,7 +120,13 @@ public class Presenter {
         new GenerateJavascript(view.getRootName());
 
         URI webpage = null;
-        String dir = System.getProperty("user.dir") + "/main/resources/View.html";
+        String dir = System.getProperty("user.dir");
+        if (dir.contains("src")) {
+        	dir += "/main/resources/View.html";
+        } else {
+        	dir += "/src/main/resources/View.html";
+        }
+        
 
         System.out.println("Ready to show the webpage = " + dir);
         File webFile = new File(dir);
