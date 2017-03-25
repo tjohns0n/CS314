@@ -48,7 +48,7 @@ public class Presenter {
     }
 
     public void run() throws IOException {
-    	if(_xml.equals("null") || _xml.equals("")) subSet = new String[0];
+    	if(_xml.equals("null") || _xml.equals("") || _xml == null) subSet = new String[0];
         else subSet = xmlReader.readSelectFile(_xml, files);
         if (options[5] == true) {
             // if GUI
@@ -57,84 +57,30 @@ public class Presenter {
             if (subSet.length == 0) subSet = xmlReader.readSelectFile(_xml, files);
         }
         
-//         System.out.println("csv File = " + files.get(0).getName());
-//         System.out.println("svg File = " + _svg);
-//         System.out.println("xml File = " + _xml);
-//         System.out.println("_i = " + options[0]);
-//         System.out.println("_m = " + options[1]);
-//         System.out.println("_n = " + options[2]);
-//         System.out.println("_2 = " + options[3]);
-//         System.out.println("_3 = " + options[4]);
-//         for(int i = 0; i < subSet.length; i++)
-//             System.out.println("subSet = " + subSet[i]);
+        // Test Line
+        // printlines();
         
-        model = new Model(files.get(0).getAbsolutePath());
-        model.planTrip(options[4], options[5], subSet);
-        String[][] route = model.reteriveTrip();
+        viewHandler(modelHandler());
+        
+        webPageViewer();
+    }
+    
+    private String[][] modelHandler(){
+    	model = new Model(files.get(0).getAbsolutePath());
+        model.planTrip(options[3], options[4], subSet);
+        return model.reteriveTrip();
+    }
+    
+    
+    private void viewHandler(String[][] s){
+    	String[][] route = s;
         String[] total = route[route.length - 1][0].split(",");
         int totalMileage = Integer.parseInt(total[0]);
+        
         view = new View(files.get(0).getName(), _svg, totalMileage, options[1], options[2], options[0]);
         
-        //Find if ID is an actual value or should just be value
-        int idIndex = -1;
-        boolean idPresent = false;
-        String[] labels = route[0][2].split(",");
-        //TODO
-        //Add into larger loop to handle routes with multiple formats i.e. multiple extras/template formats
-        for (int i = 0; i < labels.length; i++) {
-            if (labels[i].equalsIgnoreCase("ID")) {
-                idPresent = true;
-                idIndex = i;
-                break;
-            }
-        }
-        //Feed View info to draw lines of trip
-        int idCount = 1;
-        //TODO
-        //Make more robust loop for added options
-        for (int i = 0; i < route.length - 1; i++) {
-            //Essentials string splitarg0
-            //[0]=Accumulated Dist, [1]=name, [2]=lat, [3]=long
-            String[] essentials1 = route[i][0].split(",");
-            String[] essentials2 = route[i + 1][0].split(",");
-            //Leg Distance calculated by difference between accumulated miles
-            //First locations should have "0" as accumulated distance
-            int mile = Integer.parseInt(essentials2[0]) - Integer.parseInt(essentials1[0]);
-            if (idPresent) {
-                //Split to grab id
-                String[] extras1 = route[i][1].split(",");
-                String[] extras2 = route[i + 1][1].split(",");
-                view.addLeg(Double.parseDouble(essentials1[2]), Double.parseDouble(essentials1[3]), essentials1[1], extras1[idIndex],
-                        Double.parseDouble(essentials2[2]), Double.parseDouble(essentials2[3]), essentials2[1], extras2[idIndex], mile);
-            } else {
-                //Vanilla draw
-                //ID is order they are entered
-                view.addLeg(Double.parseDouble(essentials1[2]), Double.parseDouble(essentials1[3]), essentials1[1], Integer.toString(idCount),
-                        Double.parseDouble(essentials2[2]), Double.parseDouble(essentials2[3]), essentials2[1], Integer.toString(idCount + 1), mile);
-                idCount += 2;
-            }
-        }
-        //Write the files
-        view.writeFiles();
-        //Bandaid fix for js since server still not working
-        new GenerateJavascript(view.getRootName());
-
-        URI webpage = null;
-        String dir = System.getProperty("user.dir") + "/main/resources/View.html";
-
-        System.out.println("Ready to show the webpage = " + dir);
-        File webFile = new File(dir);
-        webpage = webFile.toURI();
-        //Launch webpage
-        try {
-            java.awt.Desktop.getDesktop().browse(webpage);
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("We tried to get the webpage to launch without the server");
-            System.out.println("A bandaid yes, but we tried, and it looks like it didn't work");
-            System.out.println("But the XML and svg files should be in the directory with the proper names/data");
-        }
-
+        viewWriter(route);
+        
     }
     
     private void gui_FileHandler() throws IOException{
@@ -157,5 +103,65 @@ public class Presenter {
         File f = new File("GUI_OUTPUT.txt");
         f.delete();
     }
+    
+    private void viewWriter(String[][] route){
+    	String[] labels = route[0][2].split(",");
+    	int idIndex = 0;
+    	for (int i = 0; i < labels.length; i++) {
+            if (labels[i].equalsIgnoreCase("ID")) {
+                idIndex = i;
+                break;
+            }
+        }
+    	
+    	for (int i = 0; i < route.length - 1; i++) {
+            //Essentials string splitarg0
+            //[0]=Accumulated Dist, [1]=name, [2]=lat, [3]=long
+            String[] essentials1 = route[i][0].split(",");
+            String[] essentials2 = route[i + 1][0].split(",");
+            //Leg Distance calculated by difference between accumulated miles
+            //First locations should have "0" as accumulated distance
+            int mile = Integer.parseInt(essentials2[0]) - Integer.parseInt(essentials1[0]);
+               
+            String[] extras1 = route[i][1].split(",");
+            String[] extras2 = route[i + 1][1].split(",");
+            view.addLeg(Double.parseDouble(essentials1[2]), Double.parseDouble(essentials1[3]), essentials1[1], extras1[idIndex],
+            		Double.parseDouble(essentials2[2]), Double.parseDouble(essentials2[3]), essentials2[1], extras2[idIndex], mile);
+            
+        }
+        //Write the files
+        view.writeFiles();
+        new GenerateJavascript(view.getRootName());
+    }
+    
+    private void webPageViewer(){
+    	URI webpage = null;
+        String dir = System.getProperty("user.dir") + "/main/resources/View.html";
 
+        System.out.println("Ready to show the webpage = " + dir);
+        File webFile = new File(dir);
+        webpage = webFile.toURI();
+        //Launch webpage
+        try {
+            java.awt.Desktop.getDesktop().browse(webpage);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("We tried to get the webpage to launch without the server");
+            System.out.println("A bandaid yes, but we tried, and it looks like it didn't work");
+            System.out.println("But the XML and svg files should be in the directory with the proper names/data");
+        }
+        
+    }
+    private void printlines(){
+      System.out.println("csv File = " + files.get(0).getName());
+      System.out.println("svg File = " + _svg);
+      System.out.println("xml File = " + _xml);
+      System.out.println("_i = " + options[0]);
+      System.out.println("_m = " + options[1]);
+      System.out.println("_n = " + options[2]);
+      System.out.println("_2 = " + options[3]);
+      System.out.println("_3 = " + options[4]);
+      for(int i = 0; i < subSet.length; i++)
+          System.out.println("subSet = " + subSet[i]);
+    }
 }
