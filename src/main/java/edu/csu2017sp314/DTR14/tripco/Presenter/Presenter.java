@@ -120,7 +120,13 @@ public class Presenter {
         new GenerateJavascript(view.getRootName());
 
         URI webpage = null;
-        String dir = this.getClass().getClassLoader().getResource("View.html").toString().substring(5);
+        String dir = System.getProperty("user.dir");
+        if (dir.contains("src")) {
+        	dir += "/main/resources/View.html";
+        } else {
+        	dir += "/src/main/resources/View.html";
+        }
+        
 
         System.out.println("Ready to show the webpage = " + dir);
         File webFile = new File(dir);

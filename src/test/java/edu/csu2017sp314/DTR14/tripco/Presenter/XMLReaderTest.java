@@ -24,7 +24,7 @@ public class XMLReaderTest {
 		files = new ArrayList <File>();
 	}
 	
-	@SuppressWarnings("deprecation")
+	// TODO: fix files
 	@Test
 	public void TestConStructor() throws FileNotFoundException{
 		String[] file = new String[2];
