@@ -22,7 +22,7 @@ public class PresenterTest {
         files.add(new File("Colorado14ers.csv"));
         options = new boolean[6];
         Arrays.fill(options, false);
-        prez = new Presenter(files, null, this.getClass().getClassLoader().getResource("coloradoMap.svg").toString().substring(5), options);
+        prez = new Presenter(files, null, "coloradoMap.svg", options);
     }
 
 	@Test
