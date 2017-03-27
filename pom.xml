@@ -25,4 +25,12 @@ URL - change team number which i already did in this file
       <scope>test</scope>
     </dependency>
   </dependencies> 
+        <plugin>
+        <groupId>org.eluder.coveralls</groupId>
+        <artifactId>coveralls-maven-plugin</artifactId>
+        <version>4.3.0</version>
+        <configuration>
+          <repoToken>hR5xWCdHKbW6Hf7uTLjv3OUnTB1KhDXs9</repoToken>
+        </configuration>
+      </plugin>
 </project>
