@@ -25,7 +25,7 @@ URL - change team number which i already did in this file
         <artifactId>coveralls-maven-plugin</artifactId>
         <version>4.3.0</version>
         <configuration>
-          <repoToken></repoToken>
+          <repoToken>hR5xWCdHKbW6Hf7uTLjv3OUnTB1KhDXs9</repoToken>
         </configuration>
       </plugin>
       <plugin>
