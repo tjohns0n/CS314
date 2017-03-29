@@ -8,4 +8,4 @@ ratings:
   - "**.java"
   
 exclude_paths:
-  - "src/tests/"
+  - "src/test/"
