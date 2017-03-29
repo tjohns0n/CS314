@@ -5,12 +5,12 @@
     <meta charset="UTF-8">
     <title>TripCo</title>
     <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400italic,400,700' rel='stylesheet' type='text/css'>
-    <link href='http://grommet.io/assets/latest/css/grommet.min.css' rel='stylesheet' type='text/css'>
+    <link href='grommet/css/grommet.min.css' rel='stylesheet' type='text/css'>
     <script src="../../../src/main/resources/View.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.1/react-with-addons.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.1/react-dom.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
-    <script src="http://grommet.io/assets/latest/grommet.min.js"></script>
+    <script src="react/react-with-addons.min.js"></script>
+    <script src="react/react-dom.min.js"></script>
+    <script src="babel/browser.min.js"></script>
+    <script src="grommet/grommet.min.js"></script>
 </head>
 <body>
     <div id="content"></div>
@@ -31,29 +31,90 @@
         return <img id='map' width="100%" src={props.location}></img>;
     }
 
+    var Accordion = Grommet.Accordion;
+    var AccordionPanel = Grommet.AccordionPanel;
+    var App = Grommet.App;
+    var Box = Grommet.Box;
+    var Button = Grommet.Button;
+    var Heading = Grommet.Heading;
+    var Paragraph = Grommet.Paragraph;
+    var Tab = Grommet.Tab;
+    var Tabs = Grommet.Tabs;
+    var Topology = Grommet.Topology;
+
     const element = (
         
-        <Grommet.App><Grommet.Box pad='medium'>
-        <Grommet.Heading align="center">TripCo - Test Build #1</Grommet.Heading>
-        <Grommet.Heading align="center" tag="h2">Here is your trip</Grommet.Heading>
-        <Grommet.Tabs>
-            <Grommet.Tab title="Map">
-                <Grommet.Box id="mapBox">
+        <App><Box pad='medium'>
+        <Heading align="center">TripCo - Test Build #1</Heading>
+        <Heading align="center" tag="h2">Here is your trip</Heading>
+        <Tabs>
+            <Tab title="Map">
+                <Box id="mapBox">
                 <SVG location={getData()} />
-                </Grommet.Box>
-            </Grommet.Tab>
-            <Grommet.Tab title="Itinerary">
-                <Grommet.Box>
-                <iframe src={getXMLTitle()}></iframe>
-                </Grommet.Box>
-            </Grommet.Tab>
-            <Grommet.Tab title="XML">
-                <Grommet.Heading tag="h3">Click below for a raw XML itinerary</Grommet.Heading>
-                <Grommet.Button label='View XML' href={getXMLTitle()}></Grommet.Button>
-            </Grommet.Tab>
-        </Grommet.Tabs>
+                </Box>
+            </Tab>
+            <Tab title="Itinerary">
+                <Box>
+                <Topology links={
+                    [{colorIndex: 'graph-1', ids: ['leg1', 'leg2']}]}>
+                <Topology.Parts direction="row">
+                    <Topology.Part id='leg1' status='ok' label='1' align='center' />
+                    <Topology.Parts direction="column">
+                        <Topology.Part id="leg1loc" status="unknown" justify="start"
+                            align="center">
+                            <Paragraph size="large">
+                                <b>Airport:</b> Denver International Airport
+                            </Paragraph>
+                        </Topology.Part>
+                        <Topology.Part id="leg1lat" status="unknown" justify="start"
+                            align="center">
+                            <Paragraph size="large">
+                                <b>Latitude:</b> 39.8561° N
+                            </Paragraph>
+                        </Topology.Part>
+                        <Topology.Part id="leg1lon" status="unknown" justify="start"
+                            align="center">
+                            <Paragraph size="large">
+                                <b>Longitude:</b> 104.6737° W
+                            </Paragraph>
+                        </Topology.Part>
+                    </Topology.Parts>
+                </Topology.Parts>
+                <br />
+                <br />
+                <Topology.Parts direction="row">
+                    <Topology.Part id='leg2' status='ok' label='2' align='center' />
+                    <Topology.Parts direction="column">
+                        <Topology.Part id="leg2loc" status="unknown" justify="start"
+                            align="center">
+                            <Paragraph size="large">
+                                <b>Airport:</b> Salt Lake City International Airport
+                            </Paragraph>
+                        </Topology.Part>
+                        <Topology.Part id="leg2lat" status="unknown" justify="start"
+                            align="center">
+                            <Paragraph size="large">
+                                <b>Latitude:</b> 40.7899° N
+                            </Paragraph>
+                        </Topology.Part>
+                        <Topology.Part id="leg2lon" status="unknown" justify="start"
+                            align="center">
+                            <Paragraph size="large">
+                                <b>Longitude:</b> 111.9791° W
+                            </Paragraph>
+                        </Topology.Part>
+                    </Topology.Parts>
+                </Topology.Parts>
+            </Topology>
+                </Box>
+            </Tab>
+            <Tab title="XML">
+                <Heading tag="h3">Click below for a raw XML itinerary</Heading>
+                <Button label='View XML' href={getXMLTitle()}></Button>
+            </Tab>
+        </Tabs>
         
-        </Grommet.Box></Grommet.App>
+        </Box></App>
     );
 
     ReactDOM.render(
