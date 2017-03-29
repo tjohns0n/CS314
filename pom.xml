@@ -9,6 +9,7 @@ URL - change team number which i already did in this file
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.csu2017sp314.dtr14</groupId>
@@ -25,12 +26,31 @@ URL - change team number which i already did in this file
       <scope>test</scope>
     </dependency>
   </dependencies> 
-        <plugin>
+  <build>
+    <plugins>
+      <plugin>
         <groupId>org.eluder.coveralls</groupId>
         <artifactId>coveralls-maven-plugin</artifactId>
         <version>4.3.0</version>
         <configuration>
-          <repoToken>hR5xWCdHKbW6Hf7uTLjv3OUnTB1KhDXs9</repoToken>
+          <repoToken><strong>hR5xWCdHKbW6Hf7uTLjv3OUnTB1KhDXs9</strong></repoToken>
+          <serviceName>travis-pro</serviceName>
         </configuration>
       </plugin>
+    
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.7.6.201602180812</version>
+        <executions>
+          <execution>
+            <id>prepare-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>           
+    </plugins>
+</build>      
 </project>
