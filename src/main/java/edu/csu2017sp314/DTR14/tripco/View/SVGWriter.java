@@ -40,23 +40,17 @@ public class SVGWriter {
     	content = new ArrayList<String>();
     	footer = new ArrayList<String>();
 		originalContent = new ArrayList<String>();
-
-		// Init string	
+    	this.filename = filename;
+    	readFile(filename);
+    }
+    
+    private void readFile(String filename){
+    	// Init string	
     	try {
-			// Create buffered reader to read an SVG
-    		//String loc = System.getProperty("user.dir");
-			BufferedReader readSVG;
-                        readSVG = new BufferedReader(new FileReader(filename));
-			//if (loc.contains("src")) {
-			//	readSVG = new BufferedReader(new FileReader("Web Pages/coloradoMap.svg"));
-			//} else {
-			//	readSVG = new BufferedReader(new FileReader("src/Web Pages/coloradoMap.svg"));
-			//}
-			
-			String line;
+			BufferedReader readSVG = new BufferedReader(new FileReader(filename));
 			
 			// Read in a line from the SVG and trim the whitespace (may remove trimming later)
-			line = readSVG.readLine().trim();
+			String line = readSVG.readLine().trim();
 			// svg: true if the <svg> element is currently being read
 			boolean svg = false;
 			// Read from the SVG until the file ends or the SVG element ends
@@ -68,9 +62,8 @@ public class SVGWriter {
 					continue;
 				}
 				// mark svg to true now that svg tag has started
-				if (line.contains("<svg")) {
+				if (line.contains("<svg"))
 					svg = true;
-				}
 				// if in svg tag
 				if (svg) {
 					// split on quotes to isolate values of attributes
@@ -78,17 +71,14 @@ public class SVGWriter {
 					// loop through the svg tag
 					for (int i = 0; i < strings.length; i++) {
 						// extract the width from the svg
-						if (strings[i].contains("width")) {
+						if (strings[i].contains("width"))
 							width = Double.parseDouble(strings[i + 1]);
-						}
 						// extract the height from the svg
-						if (strings[i].contains("height")) {
+						if (strings[i].contains("height")) 
 							height = Double.parseDouble(strings[i + 1]);
-						}
 						// if the svg tag is over, stop searching for height and width
-						if (strings[i].contains(">")) {
+						if (strings[i].contains(">")) 
 							svg = false;
-						}
 					}
 				}
 				// add each element of the SVG to the start of the write queue
@@ -96,24 +86,20 @@ public class SVGWriter {
 				// read the next line
 				line = readSVG.readLine().trim();
 			}
+
 			// if end of document reached without seeing "</svg>, svg is invalid"
-			if (line == null) {
-				readSVG.close();
-				throw new IOException();
+			// else add </svg> to the end of the write queue
+			if (!line.contains("svg") ) throw new IOException();
+			else footer.add("</svg>");
 				
-			} else {
-				// add </svg> to the end of the write queue
-				footer.add("</svg>");
-			}
 			// close the buffered writer
 			readSVG.close();
 
 		} catch (IOException e) {
 			System.out.println("SVG not formatted properly");
 		}
-    	this.filename = filename;
     }
-
+    
 	public SVGWriter(int width, int height) {
 		header = new ArrayList<String>();
 		footer = new ArrayList<String>();
@@ -155,7 +141,7 @@ public class SVGWriter {
 		mapping[1] = (int)y;
 		return mapping;
 	}
-
+	
 	/*
 	 * addLine - add a line to the SVG write queue
 	 * args:
@@ -163,48 +149,13 @@ public class SVGWriter {
 	 * color - the color of the line (accepts SVG color names or hex values with #)
 	 * width - the width of the line 
 	 * map - whether or not the points need to be mapped to the SVG coordinates
-	 * flags - the command line flags as follows:	
 	 */
+	
     public void addLine(int x1, int y1, int x2, int y2, String color, int width, boolean map) {
-		// Change mapping of the coordinates from geographic to SVG:
-    	if (map) {
-    		int[] point1 = mapPoints((double)x1, (double)y1);
-    		x1 = point1[0];
-    		y1 = point1[1];
+		addLine((double)x1, (double)y1, (double)x2, (double)y2, color, width, map);
+    }
 
-    		int[] point2 = mapPoints((double)x2, (double)y2);
-    		x2 = point2[0];
-    		y2 = point2[1];
-    	}
-    		
-		// Construct attribute list for the line
-    	ArrayList<String> attributes = new ArrayList<String>();
-    	attributes.add("x1");
-    	attributes.add(Integer.toString(x1));
-    	attributes.add("y1");
-    	attributes.add(Integer.toString(y1));
-    	attributes.add("x2");
-    	attributes.add(Integer.toString(x2));
-    	attributes.add("y2");
-    	attributes.add(Integer.toString(y2));
-    	attributes.add("stroke");
-    	attributes.add(color);
-    	attributes.add("stroke-width");
-    	attributes.add(Integer.toString(width));
-
-		// Create the line and add it to the write queue 
-    	XMLElement line = new XMLElement("line", attributes);
-    	content.add(line.getStart());
-    }		/*
-
-	/*
-	 * addLine - add a line to the SVG write queue
-	 * args:
-	 * x1, y1, x2, y2 - the x and y coordinates of each point 
-	 * color - the color of the line (accepts SVG color names or hex values with #)
-	 * width - the width of the line 
-	 * map - whether or not the points need to be mapped to the SVG coordinates
-	 */
+	
 	public void addLine(double x1, double y1, double x2, double y2, String color, int width, boolean map) {
 		if (map) {
 			int[] point1 = mapPoints((double)x1, (double)y1);
@@ -354,39 +305,37 @@ public class SVGWriter {
     public ArrayList<String> writeSVG(String filename) {
     	ArrayList<String> testData = new ArrayList<String>();
     	testData.addAll(header);
-    	if (originalContent != null) {
+    	if (originalContent != null)
     		testData.addAll(originalContent);
-    	}
     	testData.addAll(content);
     	testData.addAll(footer);
 		String loc = System.getProperty("user.dir");
-		loc+="/main/resources/";
+		if (loc.contains("src")) {
+			loc += "/main/resources/";
+		} else {
+			loc += "/src/main/resources/";
+		}
+		
     	try {
 			// New BufferedWriter with filename of original input file
     		BufferedWriter write = new BufferedWriter(new FileWriter(loc + filename));
 			// Write the contents of the original SVG, as well as whatever header elements added
-			for (String s: header) {
+			for (String s: header) 
 				write.write(s + "\n");
-			}
 
 			// Write the old SVG if it exists
-			if (originalContent != null) {
-				for (String s: originalContent) {
+			if (originalContent != null)
+				for (String s: originalContent)
 					write.write(s + "\n");
-				}
-			}
     		
 			// Write the newly added SVG content
-    		for (String s : content) {
-    			write.write(s);
-    			write.write("\n");
-    		}
+    		for (String s : content)
+    			write.write(s + "\n");
 
 			// Close the content of the original SVG
-    		for (String s: footer) {
-    			write.write(s);
-    			write.write("\n");
-    		}
+    		for (String s: footer) 
+    			write.write(s + "\n");
+    		
     		write.close();
     		
     	} catch (IOException e) {

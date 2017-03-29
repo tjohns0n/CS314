@@ -11,9 +11,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import javafx.application.Application;
-
 import edu.csu2017sp314.DTR14.tripco.Model.Model;
-import edu.csu2017sp314.DTR14.tripco.View.GenerateJavascript;
 import edu.csu2017sp314.DTR14.tripco.View.View;
 
 public class Presenter {
@@ -30,43 +28,44 @@ public class Presenter {
     private String _svg;
     private String _xml;
     private String[] subSet;
-    private XMLReader xmlReader;
 
     public Presenter(ArrayList<File> files, String _xml, String _svg, boolean[] options) {
         this.files = files;
         this.options = options;
         this._svg = _svg;
         this._xml = _xml;
-        this.xmlReader = new XMLReader();
     }
 
     public Presenter(ArrayList<File> files) {
         this.files = files;
         options = new boolean[6];
         Arrays.fill(options, false);
-        this.xmlReader = new XMLReader();
     }
 
     public void run() throws IOException {
-    	if(_xml.equals("null") || _xml.equals("") || _xml == null) subSet = new String[0];
-        else subSet = xmlReader.readSelectFile(_xml, files);
+    	
+        xmlHandler();
+        printlines();
+        viewHandler(modelHandler());
+        
+        //webPageViewer();
+    }
+
+    private void xmlHandler() throws IOException{
+        StringBuilder csvFileName = new StringBuilder();
+        if(_xml.equals("null") || _xml.equals("") || _xml == null) subSet = new String[0];
+        else subSet = new XMLReader().readSelectFile(_xml, csvFileName);
         if (options[5] == true) {
             // if GUI
             Application.launch(View.class, new String[0]);
             gui_FileHandler();
-            if (subSet.length == 0) subSet = xmlReader.readSelectFile(_xml, files);
+            if (subSet.length == 0) subSet = new XMLReader().readSelectFile(_xml, csvFileName);
         }
-        
-        // Test Line
-        // printlines();
-        
-        viewHandler(modelHandler());
-        
-        webPageViewer();
+        if(csvFileName.length() != 0) files.add(new File(csvFileName.toString()));
     }
-    
+
     private String[][] modelHandler(){
-    	model = new Model(files.get(0).getAbsolutePath());
+    	model = new Model(files.get(0).getName());
         model.planTrip(options[3], options[4], subSet);
         return model.reteriveTrip();
     }
@@ -97,41 +96,30 @@ public class Presenter {
             options[2] = br.readLine().equals("true");
             options[3] = br.readLine().equals("true");
             options[4] = br.readLine().equals("true");
+            subSet = br.readLine().split(",");
         } finally {
             br.close();
         }   
-        File f = new File("GUI_OUTPUT.txt");
-        f.delete();
+        new File("GUI_OUTPUT.txt").delete();
     }
     
     private void viewWriter(String[][] route){
-    	String[] labels = route[0][2].split(",");
-    	int idIndex = 0;
-    	for (int i = 0; i < labels.length; i++) {
-            if (labels[i].equalsIgnoreCase("ID")) {
-                idIndex = i;
-                break;
-            }
-        }
     	
     	for (int i = 0; i < route.length - 1; i++) {
             //Essentials string splitarg0
-            //[0]=Accumulated Dist, [1]=name, [2]=lat, [3]=long
+            //[0]=Accumulated Dist, [1]=name, [2]=lat, [3]=long [4]=id;
             String[] essentials1 = route[i][0].split(",");
             String[] essentials2 = route[i + 1][0].split(",");
             //Leg Distance calculated by difference between accumulated miles
             //First locations should have "0" as accumulated distance
             int mile = Integer.parseInt(essentials2[0]) - Integer.parseInt(essentials1[0]);
-               
-            String[] extras1 = route[i][1].split(",");
-            String[] extras2 = route[i + 1][1].split(",");
-            view.addLeg(Double.parseDouble(essentials1[2]), Double.parseDouble(essentials1[3]), essentials1[1], extras1[idIndex],
-            		Double.parseDouble(essentials2[2]), Double.parseDouble(essentials2[3]), essentials2[1], extras2[idIndex], mile);
+
+            view.addLeg(Double.parseDouble(essentials1[2]), Double.parseDouble(essentials1[3]), essentials1[1], essentials1[4],
+            		Double.parseDouble(essentials2[2]), Double.parseDouble(essentials2[3]), essentials2[1], essentials2[4],  mile);
             
         }
         //Write the files
         view.writeFiles();
-        new GenerateJavascript(view.getRootName());
     }
     
     private void webPageViewer(){
@@ -152,6 +140,7 @@ public class Presenter {
         }
         
     }
+    
     private void printlines(){
       System.out.println("csv File = " + files.get(0).getName());
       System.out.println("svg File = " + _svg);

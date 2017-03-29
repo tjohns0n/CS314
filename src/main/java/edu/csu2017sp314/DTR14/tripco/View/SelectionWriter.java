@@ -10,18 +10,20 @@ import java.util.ArrayList;
 
 public class SelectionWriter {
 	//Header for <XML> and <selection>
-	protected ArrayList<String> header;
+	private ArrayList<String> header;
 	//Holds selection elements
-	protected ArrayList<String> body;
+	private ArrayList<String> body;
     // Contains </selection>
-    protected ArrayList<String> footer;
-    // The number of legs of the trip
+	private ArrayList<String> footer;
+
+	private String xmlFile;
 	
-	public SelectionWriter(String subSet, String xmlFile, String csvFile){
+	protected SelectionWriter(String[] subSet, String xmlFile, String csvFile){
 		header = new ArrayList<String>();
 		body = new ArrayList<String>();
-        footer = new ArrayList<String>();
-        XMLElement xml = new XMLElement("xml", "version=\"1.0\" encoding=\"UTF-8\"");
+		footer = new ArrayList<String>();
+		this.xmlFile = xmlFile;
+    	XMLElement xml = new XMLElement("xml", "version=\"1.0\" encoding=\"UTF-8\"");
         header.add(xml.getStart());
         header.add("\n");
         XMLElement slct = new XMLElement("selection", "");
@@ -31,23 +33,9 @@ public class SelectionWriter {
         footer.add("\n");
         writeBody(subSet, xmlFile, csvFile);
 	}
-	public SelectionWriter(String subSet, String xmlFile, String csvFile, boolean go){
-		header = new ArrayList<String>();
-		body = new ArrayList<String>();
-        footer = new ArrayList<String>();
-        XMLElement xml = new XMLElement("xml", "version=\"1.0\" encoding=\"UTF-8\"");
-        header.add(xml.getStart());
-        header.add("\n");
-        XMLElement slct = new XMLElement("selection", "");
-        header.add(slct.getStart());
-        header.add("\n");
-        footer.add(slct.getEnd());
-        footer.add("\n");
-        if(go)
-        	writeBody(subSet, xmlFile, csvFile);
-	}
+	
 	//Writes body of Selection XML
-	private void writeBody(String subSet, String xmlFile, String csvFile){
+	private void writeBody(String[] subSet, String xmlFile, String csvFile){
 		//Add title
 		XMLElement title = new XMLElement("title", "");
 		body.add("\t");
@@ -62,8 +50,7 @@ public class SelectionWriter {
 		body.add(csvFile);
 		body.add(filename.getEnd());
 		body.add("\n");
-		String[] subs = subSet.split(",");
-		if(subs.length>1){
+		if(subSet.length>1){
 			//Add subset of destinations
 			XMLElement dest = new XMLElement("destinations", "");
 			XMLElement id = new XMLElement("id", "");
@@ -71,11 +58,11 @@ public class SelectionWriter {
 			body.add(dest.getStart());
 			body.add("\n");
 			//Add individual ids of subset
-			for(int i=0;i<subs.length;i++){
+			for(int i=0;i<subSet.length;i++){
 				body.add("\t");
 				body.add("\t");
 				body.add(id.getStart());
-				body.add(subs[i]);
+				body.add(subSet[i]);
 				body.add(id.getEnd());
 				body.add("\n");
 			}
@@ -85,9 +72,9 @@ public class SelectionWriter {
 			body.add("\n");
 		}
 	}
-	protected boolean writeXML(String name) {
+	protected boolean writeXML() {
     	//Return value, assume bad return
-    	boolean r = false;
+    	boolean flag = false;
     	// Add all elements together
         ArrayList<String> data = new ArrayList<String>();
      	data.addAll(header);
@@ -96,7 +83,7 @@ public class SelectionWriter {
      	
       	try {
             //New writer with filename of selection
-      		BufferedWriter write = new BufferedWriter(new FileWriter(name));
+      		BufferedWriter write = new BufferedWriter(new FileWriter(xmlFile));
             //Write each element
             for(String s : data) {
                 write.write(s);
@@ -104,11 +91,11 @@ public class SelectionWriter {
             //Close writer
             write.close();
             //We made it, return good
-            r = true;
+            flag = true;
       	} catch (IOException e) {
       		//Failed to write XML, return bad
-      		r = false;
+      		flag = false;
       	}
-        return r;
+        return flag;
     }
 }

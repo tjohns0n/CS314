@@ -16,9 +16,17 @@ public class GenerateJavascript {
      *            should not have any file extension
      */
     public GenerateJavascript(String rootname) {
-        filename = rootname;
         lines = new ArrayList<String>();
 
+        String loc = System.getProperty("user.dir");
+        
+        if (loc.contains("src")) {
+        	filename = loc.concat("/main/resources/" + rootname);
+        } else {
+        	filename = loc.concat("/src/main/resources/" + rootname);
+        }
+        
+        
         lines.add("function nameSVG() {");
         lines.add("\treturn '" + filename + ".svg';");
         lines.add("}");
@@ -29,7 +37,14 @@ public class GenerateJavascript {
 
         try {
         	String dir = System.getProperty("user.dir");
-        	BufferedWriter write = new BufferedWriter(new FileWriter(dir + "/main/resources/View.js"));
+        	System.out.println(dir);
+        	BufferedWriter write;
+        	if (dir.contains("src")) {
+        		write = new BufferedWriter(new FileWriter(dir + "/main/resources/View.js"));
+        	} else {
+        		write = new BufferedWriter(new FileWriter(dir + "/src/main/resources/View.js"));
+        	}
+        	
         	for (String s : lines) {
         		write.write(s + "\n");
         	}
@@ -40,6 +55,6 @@ public class GenerateJavascript {
     }
     
     public static void main(String[] args) {
-    	GenerateJavascript j = new GenerateJavascript("hello");
+    	new GenerateJavascript("hello");
     }
 }
