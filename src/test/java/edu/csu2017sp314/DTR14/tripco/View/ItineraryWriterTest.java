@@ -54,8 +54,12 @@ public class ItineraryWriterTest {
 		assertTrue(testData.contains("<trip >"));
 		assertTrue(testData.contains("</trip>"));
 		String loc = System.getProperty("user.dir");
-		System.out.println(loc);
-		loc+="/main/resources/";
+		if (loc.contains("src")) {
+			loc += "/main/resources/";
+		} else {
+			loc += "/src/main/resources/";
+		}
+		
 		File f = new File(loc+"test0.xml");
 		f.delete();
 	}
