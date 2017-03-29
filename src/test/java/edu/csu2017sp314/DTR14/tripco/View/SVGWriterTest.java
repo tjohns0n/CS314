@@ -134,7 +134,12 @@ public class SVGWriterTest {
 		assertTrue(testData.get(1).contains("<svg"));
 		assertTrue(testData.get(2).equals("</svg>"));
 		String loc = System.getProperty("user.dir");
-		loc+="/main/resources/";
+		if (loc.contains("src")) {
+			loc += "/main/resources/";
+		} else {
+			loc += "/src/main/resources/";
+		}
+		
 		File f = new File(loc+"test0.svg");
 		f.delete();
 	}
