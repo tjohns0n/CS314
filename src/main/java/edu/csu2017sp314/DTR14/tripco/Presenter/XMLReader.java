@@ -16,25 +16,25 @@ public class XMLReader {
     	if(!new File(filename).exists()) return new String[0];
 		Scanner scan = new Scanner(new File(filename));
 		ArrayList<String> subs = new ArrayList<String>();
-		String temp;
-		while(true){
+		String temp = null;
+		while(scan.hasNextLine()){
 			if(!checkValid(scan.nextLine().trim(), "<?xml")) break;
-			if(!checkValid(scan.nextLine().trim(), "<selection")) break;
-			if(!checkValid(scan.nextLine().trim(), "<title")) break;
-			if(checkValid(temp = scan.nextLine().trim(), "<filename")){
+			if(scan.hasNextLine() && !checkValid(scan.nextLine().trim(), "<selection")) break;
+			if(scan.hasNextLine() && !checkValid(scan.nextLine().trim(), "<title")) break;
+			if(scan.hasNextLine() && checkValid(temp = scan.nextLine().trim(), "<filename")){
 				temp = temp.substring(temp.indexOf('>')+1);
 				temp = temp.substring(0, temp.indexOf('<'));
 				csvName.append(temp);
 			}
-			if(!checkValid(scan.nextLine().trim(), "<destinations")) break;
-			while(checkValid(temp = scan.nextLine().trim(), "<id")){
+			if(scan.hasNextLine() && !checkValid(scan.nextLine().trim(), "<destinations")) break;
+			while(scan.hasNextLine() && checkValid(temp = scan.nextLine().trim(), "<id")){
 
 				temp = temp.substring(temp.indexOf('>')+1);
 				temp = temp.substring(0, temp.indexOf('<'));
 				subs.add(temp.trim());
 			} 
-			if(!checkValid(temp, "</destinations")) break;
-			if(checkValid(scan.nextLine().trim(), "</selection")){
+			if(scan.hasNextLine() && !checkValid(temp, "</destinations")) break;
+			if(scan.hasNextLine() && checkValid(scan.nextLine().trim(), "</selection")){
 				scan.close();
 				return subs.toArray(new String[0]);
 			}
@@ -43,7 +43,8 @@ public class XMLReader {
     }
 
 	private boolean checkValid(String checks, String compareTo){
-		if (checks.length() > compareTo.length() &&
+		if (checks == null) return false;
+		else if (checks.length() > compareTo.length() &&
 				checks.substring(0, compareTo.length()).equalsIgnoreCase(compareTo)){
 			return true;
 		}

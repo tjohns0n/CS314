@@ -98,6 +98,7 @@ public class LocationList{
 		if(checkValid(loc) == true && (!useSelection || Arrays.asList(selection).contains(id))){
 			locList.add(loc);
 		}
+		
 	}
 
 	// checkValid - private function
@@ -106,8 +107,14 @@ public class LocationList{
 	// # accomplished by comparing key value
 	// Enhancement: -- may ues object.contain();
 	private boolean checkValid(Location loc){
-		if(locList.contains(loc)) return false;
-		else return true;
+		boolean flag = true;
+		for(int i = 0; i < locList.size(); i++){
+			if (locList.get(i).getName().equals(loc.getName()))
+				if (locList.get(i).getLatitude() == loc.getLatitude())
+					if (locList.get(i).getLongitude() == loc.getLongitude())
+						flag = false;
+		}
+		return flag;
 	}
 
 	public void addLocation(Location l1) {

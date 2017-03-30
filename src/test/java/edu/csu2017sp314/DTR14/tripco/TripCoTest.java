@@ -14,12 +14,14 @@ public class TripCoTest {
 	
 	private ArrayList<File> files;
     private TripCo tc;
-        
+	private boolean[] opts;
+
     @Before
     public void initObjects() {
         files = new ArrayList<File>();
         files.add(new File("Colorado14ers.csv"));
         tc = new TripCo();
+        opts = new boolean[]{false, true, false, false, true, true};
     }
 
 	@Test
@@ -28,8 +30,7 @@ public class TripCoTest {
         new TripCo();
         
         // test full constructor
-        new TripCo(null, "coloradoMap.svg",
-                            false, true, false, false, true, true, files);
+		new TripCo(null, "coloradoMap.svg", opts, files);
 	}
         
         @Test

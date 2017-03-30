@@ -19,7 +19,7 @@ public class View extends Application {
     // ItineraryWriter and SVGWriter:
     private ItineraryWriter itinWrite;
     private SVGWriter svgWrite;
-    
+
     //Empty constructor, for javafx Application compliance
     public View(){
 

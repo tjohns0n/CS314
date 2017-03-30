@@ -10,11 +10,11 @@ import java.util.ArrayList;
 
 public class SelectionWriter {
 	//Header for <XML> and <selection>
-	private ArrayList<String> header;
+	ArrayList<String> header;
 	//Holds selection elements
-	private ArrayList<String> body;
+	ArrayList<String> body;
     // Contains </selection>
-	private ArrayList<String> footer;
+	ArrayList<String> footer;
 
 	private String xmlFile;
 	
