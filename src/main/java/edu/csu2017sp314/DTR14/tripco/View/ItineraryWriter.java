@@ -88,7 +88,6 @@ public class ItineraryWriter {
     public ArrayList<String> writeXML(String filename) {
         // Add all of the XML to a single ArrayList:
         ArrayList<String> data = new ArrayList<String>();
-<<<<<<< HEAD
     	data.addAll(header);
     	data.addAll(legs);
     	data.addAll(footer);
@@ -98,17 +97,6 @@ public class ItineraryWriter {
     	} else {
     		loc += "/src/main/resources/";
     	}
-=======
-     	data.addAll(header);
-     	data.addAll(legs);
-     	data.addAll(footer);
-     	String loc = System.getProperty("user.dir");
-     	if (loc.contains("src")) {
-     		loc += "/main/resources/";
-     	} else {
-     		loc += "/src/main/resources/";
-     	}
->>>>>>> master
      
 		
       	try {

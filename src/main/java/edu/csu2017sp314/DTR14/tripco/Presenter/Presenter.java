@@ -43,7 +43,6 @@ public class Presenter {
     }
 
     public void run() throws IOException {
-<<<<<<< HEAD
     	
         xmlHandler();
         printlines();
@@ -56,17 +55,12 @@ public class Presenter {
         StringBuilder csvFileName = new StringBuilder();
         if(_xml.equals("null") || _xml.equals("") || _xml == null) subSet = new String[0];
         else subSet = new XMLReader().readSelectFile(_xml, csvFileName);
-=======
-    	if(_xml == null ||_xml.equals("null") || _xml.equals("")) subSet = new String[0];
-        else subSet = xmlReader.readSelectFile(_xml, files);
->>>>>>> master
         if (options[5] == true) {
             // if GUI
             Application.launch(View.class, new String[0]);
             gui_FileHandler();
             if (subSet.length == 0) subSet = new XMLReader().readSelectFile(_xml, csvFileName);
         }
-<<<<<<< HEAD
         if(csvFileName.length() != 0) files.add(new File(csvFileName.toString()));
     }
 
@@ -79,23 +73,6 @@ public class Presenter {
     
     private void viewHandler(String[][] s){
     	String[][] route = s;
-=======
-        
-//         System.out.println("csv File = " + files.get(0).getName());
-//         System.out.println("svg File = " + _svg);
-//         System.out.println("xml File = " + _xml);
-//         System.out.println("_i = " + options[0]);
-//         System.out.println("_m = " + options[1]);
-//         System.out.println("_n = " + options[2]);
-//         System.out.println("_2 = " + options[3]);
-//         System.out.println("_3 = " + options[4]);
-//         for(int i = 0; i < subSet.length; i++)
-//             System.out.println("subSet = " + subSet[i]);
-        
-        model = new Model(files.get(0).getAbsolutePath());
-        model.planTrip(options[3], options[4], subSet);
-        String[][] route = model.reteriveTrip();
->>>>>>> master
         String[] total = route[route.length - 1][0].split(",");
         int totalMileage = Integer.parseInt(total[0]);
         
@@ -143,25 +120,11 @@ public class Presenter {
         }
         //Write the files
         view.writeFiles();
-<<<<<<< HEAD
     }
     
     private void webPageViewer(){
     	URI webpage = null;
         String dir = System.getProperty("user.dir") + "/main/resources/View.html";
-=======
-        //Bandaid fix for js since server still not working
-        new GenerateJavascript(view.getRootName());
-
-        URI webpage = null;
-        String dir = System.getProperty("user.dir");
-        if (dir.contains("src")) {
-        	dir += "/main/resources/View.html";
-        } else {
-        	dir += "/src/main/resources/View.html";
-        }
-        
->>>>>>> master
 
         System.out.println("Ready to show the webpage = " + dir);
         File webFile = new File(dir);

@@ -14,10 +14,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import org.junit.AfterClass;
-<<<<<<< HEAD
-=======
-import org.junit.Assert;
->>>>>>> master
 
 import edu.csu2017sp314.DTR14.tripco.Presenter.XMLReader;
 
@@ -27,11 +23,7 @@ public class XMLReaderTest {
 	private ArrayList<File> files;
 	
 	@BeforeClass
-<<<<<<< HEAD
 	public static void writeTestFile() throws IOException {
-=======
-	public static void writeTestFile() {
->>>>>>> master
 		String testfile = "test.xml";
 		try {
 			BufferedWriter w = new BufferedWriter(new FileWriter(testfile));
@@ -56,11 +48,8 @@ public class XMLReaderTest {
 			System.err.println("Failed to open new file for writing - XMLReaderTest");
 			e.printStackTrace();
 		}
-<<<<<<< HEAD
 		testfile = "testBadXML.xml";
 		new FileWriter(testfile);
-=======
->>>>>>> master
 	}
 	
 	@Before
@@ -73,7 +62,6 @@ public class XMLReaderTest {
 	@Test
 	public void TestConStructor() throws FileNotFoundException{
 		String[] file = new String[2];
-<<<<<<< HEAD
 		file[0] = "testBadXML.xml";
 		file[1] = "test.xml";
 		String testArr[] = xmlr.readSelectFile(file[0], new StringBuilder());
@@ -85,18 +73,6 @@ public class XMLReaderTest {
 		assertTrue(testArr[0].equals(indexArr[0]));
 		assertTrue(testArr[1].equals(indexArr[1]));
 		assertTrue(sb.toString().equals("test.csv"));
-=======
-		file[0] = this.getClass().getClassLoader().getResource("testBadXML.xml").toString().substring(5);
-		file[1] = this.getClass().getClassLoader().getResource("test.xml").toString().substring(5);
-		String testArr[] = xmlr.readSelectFile(file[0], files);
-		assertTrue(testArr.length == 0);
-		String indexArr[] = {"2", "5"};
-		testArr = xmlr.readSelectFile(file[1], files);
-		assertTrue(testArr.length == indexArr.length);
-		assertTrue(testArr[0].equals(indexArr[0]));
-		assertTrue(testArr[1].equals(indexArr[1]));
-		assertTrue("test.csv".equals(files.get(0).getName()));
->>>>>>> master
 	}
 
 	@AfterClass
