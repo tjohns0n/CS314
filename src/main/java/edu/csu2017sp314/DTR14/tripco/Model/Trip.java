@@ -31,11 +31,6 @@ public class Trip{
 			news[2] += locList.get(route[i][0]).getTemplate();
 			strings[cnt++] = news;
 		}
-//		 for(int i = 0; i < strings.length; i++){
-//		 	for(int j = 0; j < 3; j++)
-//		 		System.out.println(strings[i][j].toString());
-//		 	System.out.println("-------");
-//		 }
 		return strings;
 	}
 
