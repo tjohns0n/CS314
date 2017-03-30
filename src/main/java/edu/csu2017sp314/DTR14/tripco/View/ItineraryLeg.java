@@ -9,7 +9,7 @@ public class ItineraryLeg {
 	private String[] head = {
 		"id", "name", "latitude", "longitude", "elevation",
 		"municipality", "region", "country", "continent",
-		"airportURL", "regionalURL", "countryURL"
+		"airportURL", "regionURL", "countryURL"
 	};
 	private String[] loc1;
 	private String[] loc2;
@@ -19,6 +19,7 @@ public class ItineraryLeg {
 	private ArrayList<XMLElement> leg;
 	
 	private String xml;
+	private String units;
 	
 	/*
 	 * ItineraryLeg - Represents a leg of a trip
@@ -31,11 +32,12 @@ public class ItineraryLeg {
 	 * ID, name, lat, long, elevation, municipality, region, country,
 	 * continent, airport URL, region URL, country URL
 	 */
-	public ItineraryLeg(String[] location1, String[] location2, int mileage, int sequence) {
+	public ItineraryLeg(String[] location1, String[] location2, int mileage, int sequence, String units) {
 		this.mileage = mileage;
 		this.loc1 = location1;
 		this.loc2 = location2;
 		this.sequence = sequence;
+		this.units = units;
 		
 		location = new ArrayList<XMLElement>();
 		leg = new ArrayList<XMLElement>();
@@ -66,6 +68,8 @@ public class ItineraryLeg {
 		leg.add(new XMLElement("sequence", ""));
 		leg.add(new XMLElement("start", ""));
 		leg.add(new XMLElement("finish", ""));
+		leg.add(new XMLElement("distance", ""));
+		leg.add(new XMLElement("units", ""));
 	}
 	
 	private void createString() {
@@ -108,12 +112,25 @@ public class ItineraryLeg {
 	}
 	
 	private void addEndOfLeg() {
+		xml += "\t" + leg.get(4).getStart() + mileage;
+		xml += leg.get(4).getEnd() + "\n";
+		xml += "\t" + leg.get(5).getStart() + units;
+		xml += leg.get(5).getEnd() + "\n";
 		xml += leg.get(0).getEnd() + "\n";
 	}
 	
 	@Override
 	public String toString() {
 		return xml;
+	}
+	
+	protected void reset(String[] location1, String[] location2, int mileage, int sequence) {
+		loc1 = location1;
+		loc2 = location2;
+		this.mileage = mileage;
+		this.sequence = sequence;
+		
+		createString();
 	}
 	
 	public static void main(String[] args) {
@@ -126,7 +143,10 @@ public class ItineraryLeg {
 			"http://en.wikipedia.org/wiki/Colorado",
 			"http://en.wikipedia.org/wiki/United_States"
 		};
-		ItineraryLeg il = new ItineraryLeg(location, location, 0, 1);
+		ItineraryLeg il = new ItineraryLeg(location, location, 0, 1, "miles");
+		System.out.println(il);
+		location[11] = "hello0";
+		il.reset(location, location, 0, 1);
 		System.out.println(il);
 	}
 }
