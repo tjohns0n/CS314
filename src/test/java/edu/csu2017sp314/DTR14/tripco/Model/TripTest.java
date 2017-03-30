@@ -22,14 +22,14 @@ public class TripTest{
 
 	@Test
 	public void testCreateTrip() {
-		Location l1 = new Location("Mount Elbert", "39.1177", "-106.4453", "Hello", "");
-		Location l2 = new Location("Mount Cool", "39", "-106", "Cool", "");
+		Location l1 = new Location("Mount Elbert", "39.1177", "-106.4453", "1","Hello", "");
+		Location l2 = new Location("Mount Cool", "39", "-106", "1", "Cool", "");
 		locList.addLocation(l1);
 		locList.addLocation(l2);
 		src = new ShortestRouteCalculator(locList, 0);
 		src.findBestNearestNeighbor(false, false);
 		Trip trip = new Trip(locList, src.getFinalRoute());
 		String tests[][] = trip.createTrip();
-		assertTrue("wrong trip", tests[0][0].equals("0,Mount Elbert,39.1177,-106.4453"));
+		assertTrue("wrong trip", tests[0][0].equals("0,Mount Elbert,39.1177,-106.4453,1"));
 	}
 }

@@ -19,9 +19,9 @@ public class ShortestRouteCalculatorTest{
 	@Test
 	public void testFindBestNNTour() {
 		locList = new LocationList();
-		locList.addLocation(new Location("A", "20", "20", "Hello", ""));
-		locList.addLocation(new Location("B", "30", "31", "", ""));
-		locList.addLocation(new Location("C", "20", "30", "", ""));
+		locList.addLocation(new Location("A", "20", "20", "1", "Hello", ""));
+		locList.addLocation(new Location("B", "30", "31", "2", "", ""));
+		locList.addLocation(new Location("C", "20", "30", "3","", ""));
 		
 		ShortestRouteCalculator src = new ShortestRouteCalculator(locList, 0);
 		src.findBestNearestNeighbor(false, false);
@@ -36,9 +36,9 @@ public class ShortestRouteCalculatorTest{
 	@Test
 	public void testGetFinalRoute() {
 		locList = new LocationList();
-		locList.addLocation(new Location("A", "20", "20", "Hello", ""));
-		locList.addLocation(new Location("B", "30", "31", "", ""));
-		locList.addLocation(new Location("C", "20", "30", "", ""));	
+		locList.addLocation(new Location("A", "20", "20", "1","Hello", ""));
+		locList.addLocation(new Location("B", "30", "31", "2","", ""));
+		locList.addLocation(new Location("C", "20", "30", "3","", ""));
 
 		ShortestRouteCalculator src = new ShortestRouteCalculator(locList, 0);
 		src.findBestNearestNeighbor(false, false);
@@ -50,9 +50,9 @@ public class ShortestRouteCalculatorTest{
 	@Test
 	public void testGetFinalDis() {
 		locList = new LocationList();
-		locList.addLocation(new Location("A", "20", "20", "Hello", ""));
-		locList.addLocation(new Location("B", "30", "31", "", ""));
-		locList.addLocation(new Location("C", "20", "30", "", ""));	
+		locList.addLocation(new Location("A", "20", "20", "1","Hello", ""));
+		locList.addLocation(new Location("B", "30", "31", "2","", ""));
+		locList.addLocation(new Location("C", "20", "30", "3", "", ""));
 
 		ShortestRouteCalculator src = new ShortestRouteCalculator(locList, 0);
 		src.findBestNearestNeighbor(false, false);
@@ -63,10 +63,10 @@ public class ShortestRouteCalculatorTest{
 	@Test
 	public void testFindBest2Opt() {
 		locList = new LocationList();
-		locList.addLocation(new Location("A", "10", "10", "Hello", ""));
-		locList.addLocation(new Location("B", "20.1", "20", "", ""));
-		locList.addLocation(new Location("C", "19.9", "20", "", ""));	
-		locList.addLocation(new Location("D", "30", "30", "", ""));
+		locList.addLocation(new Location("A", "10", "10", "1","Hello", ""));
+		locList.addLocation(new Location("B", "20.1", "20", "1","", ""));
+		locList.addLocation(new Location("C", "19.9", "20", "1","", ""));
+		locList.addLocation(new Location("D", "30", "30", "1","", ""));
 		ShortestRouteCalculator src = new ShortestRouteCalculator(locList, 0);
 		src.findBestNearestNeighbor(false, false);
 		int[][] test1 = src.getFinalRoute();

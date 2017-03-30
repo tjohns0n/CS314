@@ -9,7 +9,7 @@ public class LocationTest{
 	@Test
 	public void testConstructor1() {
 		
-		Location loc = new Location("name1", "134.23", "-424.32", "denver,4231", "city,altitude");
+		Location loc = new Location("name1", "134.23", "-424.32", "id1","denver,4231", "city,altitude");
 
 		assertTrue("name not read correctly", loc.getName().equals("name1"));
 		assertTrue("latitude not read correctly", loc.getLatitude() == 134.23);
@@ -33,7 +33,7 @@ public class LocationTest{
 	@Test
 	public void testGetName() {
 		
-		Location loc = new Location("name1", "134.23", "-424.32", "denver,4231", "city,altitude");
+		Location loc = new Location("name1", "134.23", "-424.32", "id1","denver,4231", "city,altitude");
 
 		assertTrue("name not read correctly", loc.getName().equals("name1"));
 	}
@@ -41,7 +41,7 @@ public class LocationTest{
 	@Test
 	public void testGetLatitude() {
 		
-		Location loc = new Location("name1", "134.23", "-424.32", "denver,4231", "city,altitude");
+		Location loc = new Location("name1", "134.23", "-424.32", "id2","denver,4231", "city,altitude");
 
 		assertTrue("latitude not read correctly", loc.getLatitude() == 134.23);
 	}
@@ -49,7 +49,7 @@ public class LocationTest{
 	@Test
 	public void testGetLongitude() {
 		
-		Location loc = new Location("name1", "134.23", "-424.32", "denver,4231", "city,altitude");
+		Location loc = new Location("name1", "134.23", "-424.32", "id1","denver,4231", "city,altitude");
 
 		assertTrue("longitude not read correctly", loc.getLongitude() == -424.32);
 	}
@@ -57,7 +57,7 @@ public class LocationTest{
 	@Test
 	public void testGetInfo() {
 		
-		Location loc = new Location("name1", "134.23", "-424.32", "denver,4231", "city,altitude");
+		Location loc = new Location("name1", "134.23", "-424.32", "id2","denver,4231", "city,altitude");
 
 		assertTrue("info not read correctly", loc.getExtras().equals("denver,4231"));
 	}
@@ -65,7 +65,7 @@ public class LocationTest{
 	@Test
 	public void testGetTemplate() {
 		
-		Location loc = new Location("name1", "134.23", "-424.32", "denver,4231", "city,altitude");
+		Location loc = new Location("name1", "134.23", "-424.32", "id3","denver,4231", "city,altitude");
 
 		assertTrue("info not read correctly", loc.getTemplate().equals("city,altitude"));
 	}

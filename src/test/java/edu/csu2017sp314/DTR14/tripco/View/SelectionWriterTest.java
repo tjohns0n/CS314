@@ -7,10 +7,10 @@ public class SelectionWriterTest {
 	
 	@Test
 	public void testConstructor(){
-		SelectionWriter sw = new SelectionWriter("1,2,3,4", "test.xml", "test.svg", false);
+		SelectionWriter sw = new SelectionWriter(new String[]{"1","2","3","4"}, "test.xml", "test.svg");
 		assertFalse(sw.header.isEmpty());
 		assertFalse(sw.footer.isEmpty());
-		assertTrue(sw.body.isEmpty());
+		assertFalse(sw.body.isEmpty());
 	}
 
 }

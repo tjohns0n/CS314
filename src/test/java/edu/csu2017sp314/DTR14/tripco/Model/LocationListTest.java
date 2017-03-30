@@ -47,19 +47,18 @@ public class LocationListTest{
 		
 		// change the constance before you test the getsize()!
 		loclist = new LocationList();
-		loclist.addLocation(new Location("A", "1", "2", "A B", "id"));
-		System.out.println(loclist.getsize());
+		loclist.addLocation(new Location("A", "1", "2", "id1", "A B", "name"));
 		assertTrue("wrong size", loclist.getsize() == 1);
 	}
 
 	@Test
 	public void testGet() {
 		loclist = new LocationList();
-		loclist.addLocation(new Location("A", "1", "2", "A B C D E F", "id,lat,lon"));
+		loclist.addLocation(new Location("A", "1", "2", "A","B C D E F", "id,lat,lon"));
 		assertTrue("wrong get", loclist.get(0).getName().equals("A"));
 		assertTrue("wrong get", loclist.get(0).getLatitude() == 1);
 		assertTrue("wrong get", loclist.get(0).getLongitude() == 2);
-		assertTrue("wrong get", loclist.get(0).getExtras().equals("A B C D E F"));
+		assertTrue("wrong get", loclist.get(0).getExtras().equals("B C D E F"));
 		assertTrue("wrong get", loclist.get(0).getTemplate().equals("id,lat,lon"));
 	}
 

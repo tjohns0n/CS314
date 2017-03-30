@@ -55,6 +55,6 @@ public class GenerateJavascript {
     }
     
     public static void main(String[] args) {
-    	GenerateJavascript j = new GenerateJavascript("hello");
+    	new GenerateJavascript("hello");
     }
 }

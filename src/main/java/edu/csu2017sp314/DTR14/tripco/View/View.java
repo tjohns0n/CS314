@@ -5,53 +5,24 @@ Creates and displays viewable files and pages from data provided by the Presente
 
 package edu.csu2017sp314.DTR14.tripco.View;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-
-import edu.csu2017sp314.DTR14.tripco.Presenter.Presenter;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
 public class View extends Application {
 
     // Name of the CSV input file, sans the .csv extension 
-    public String rootName;
-    private String xmlFile;
-    private String svgFile;
-    private boolean[] options;
-    private boolean[] opts;
-    private String[] subSet;
+	private String rootName;
     // Optionally display labels on the SVG
-    public boolean mileage, names, ids;
+    private boolean mileage;
+    private boolean names;
+    private boolean ids;
     // ItineraryWriter and SVGWriter:
     private ItineraryWriter itinWrite;
     private SVGWriter svgWrite;
-    // Number of legs:
-    public int legCount;
-    //Input
-    public InputGUI ig;
-    private Stage stg;
-    private Presenter pres;
-    
+
     //Empty constructor, for javafx Application compliance
-    public View(Presenter pres){
-        this.pres = pres;
-    	svgWrite=null;
-    	itinWrite = new ItineraryWriter();
-        legCount = 0;
-        //stg = new Stage();
-        ig = new InputGUI(this);
-        rootName="";
-        ids=false;
-        mileage=false;
-        names=false;
-    }
-    
     public View(){
-        ig = new InputGUI(this);
+
     }
 
     /*
@@ -71,8 +42,6 @@ public class View extends Application {
     		svgWrite = new SVGWriter(1067, 783);
     	else
     		svgWrite = new SVGWriter(SVGFile);
-        legCount = 0;
-        ig = null;
         // For now, automatically pad the SVG with whitespace
         //svgWrite.padSVG();
         // Store the root of the CSV file name
@@ -93,11 +62,12 @@ public class View extends Application {
     
     //Util methods
     public void run(){
-    	this.launch(View.class, new String[0]);
+    	Application.launch(View.class, new String[0]);
     }
+    
     @Override
 	public void start(Stage primaryStage) throws Exception {
-		ig.start(primaryStage);
+    	new FileChooserGUI().start(primaryStage);
 	}
 
     public String getRootName() {
@@ -118,7 +88,7 @@ public class View extends Application {
      */
     public String addLeg(double startLocationLat, double startLocationLong, String startLocationName, String startLocationID,
                         double endLocationLat, double endLocationLong, String endLocationName, String endLocationID, int mileage) {
-
+    	int legCount = 0;
     	String testString = "";
     	svgWrite.newGroup("leg" + ++legCount);
         svgWrite.addLine(startLocationLong, startLocationLat, endLocationLong, endLocationLat, "blue", 3, true);
@@ -149,6 +119,7 @@ public class View extends Application {
     public void writeFiles() {
         svgWrite.writeSVG(rootName + ".svg");
         itinWrite.writeXML(rootName + ".xml");
+        new GenerateJavascript(getRootName());
     }
 
     /*
@@ -164,8 +135,7 @@ public class View extends Application {
     }
     
     public static void main(String[] args) throws Exception {
-    	Presenter prez = new Presenter(new ArrayList<File>());
-    	View vw = new View(prez);
+    	View vw = new View();
     	vw.run();
 //    	View v = new View("hello.csv", "coloradoMap.svg", 300, false, false, true);
 //    	v.addLeg(40, -108, "Not Denver", "id1", 39, -107, "Not CO Springs", "id2", 50);

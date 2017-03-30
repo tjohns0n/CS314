@@ -1,4 +1,4 @@
-package edu.csu2017sp314.DTR14.tripco.Model;
+ package edu.csu2017sp314.DTR14.tripco.Model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,70 +52,53 @@ public class LocationList{
 	// # accept a string array, which is the template to correspond the information
 	// # auto-added the location information read from the line to location list
 	// Enhancement: -- the title information may have more want to store in location
-	protected void lineHandler(String line, String[] title, String[] selection){
-		boolean useSelection;
-		if (selection.length == 0) {
-			useSelection = false;
-		} else {
-			useSelection = true;
-		}
+	protected void lineHandler(String line, String[] titles, String[] selection){
+		boolean useSelection = true;
+		if (selection.length == 0) useSelection = false;
 		String name 	= "";
 		String latitude = "";
 		String longitude= "";
 		String extras 	= "";
 		String template = "";
-		String valid 	= "";
 		String id 		= "";
-		boolean flag = false;
-		int j = 0;
 		String parts[] = line.split(cvsSplitRegex);
 		for(int i = 0; i < parts.length; i++){
-			parts[i] = parts[i].trim();
-			title[j] = title[j].trim();
-			valid += parts[i];
-			// If value starts with a quote, mark that the element may contain commas:
-			if (parts[i].indexOf("\"") == 0 && flag == false) {
-				flag = true; valid += ", "; continue;
-			} 
-			// If the element started with a quote, mark that the element has finished handling: 
-			if (parts[i].indexOf("\"") == parts[i].length()-1 && flag == true) {
-				flag = false;
-			} 
-			if (flag == true) {
-				valid += ", "; continue; 
-			}
+			
+			String valid = parts[i].trim();
+			String title = titles[i].trim();
+
 			// If column on csv corresponds to name, assign this element as name:
-			if (title[j].toUpperCase().equals("NAME")) 
+			if (title.toUpperCase().equals("NAME")) 
 				name = valid;
 			// If column on csv corresponds to latitude, assign this element as latitude:
-			else if (title[j].toUpperCase().equals("LATITUDE"))
+			else if (title.toUpperCase().equals("LATITUDE"))
 				latitude = valid;
 			// If column on csv corresponds to longitude, assign this element as longitude:
-			else if (title[j].toUpperCase().equals("LONGITUDE"))
+			else if (title.toUpperCase().equals("LONGITUDE"))
 				longitude = valid;
 			// If column does not correspond to name, lat, or long:
 			else {
 				// Grab name of ID:
-				if (title[j].toUpperCase().equals("ID")) {
+				if (title.toUpperCase().equals("ID"))
 					id = valid;
-				}
 				// If not first element of template, add a comma:
 				if(template != "") template += ",";
 				// If not first element of extras, add a comma:
 				if(extras != "") extras += ",";
 				// Add element name to title and element contents to extras:
-				template += title[j];
+				template += title;
 				extras += valid;
 			}
-			valid = "";
-			j++;
 		}
 
-		Location loc = new Location(name, latitude, longitude, extras, template);
+		Location loc = new Location(name, latitude, longitude, id, extras, template);
+		
 		// Add the location if it's valid AND 
 		// the location is either in the selection or a selection is not being used
-		if(checkValid(loc) == true && (!useSelection || Arrays.asList(selection).contains(id)))
+		if(checkValid(loc) == true && (!useSelection || Arrays.asList(selection).contains(id))){
 			locList.add(loc);
+		}
+		
 	}
 
 	// checkValid - private function

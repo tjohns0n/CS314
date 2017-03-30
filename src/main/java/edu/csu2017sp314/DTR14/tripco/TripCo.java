@@ -17,7 +17,7 @@ public class TripCo{
 	private String _xml;			//.xml
 	private String _svg;			//.svg
 	private boolean _gui;		//-g
-	private boolean _id;			//-i
+	private boolean _id;		//-i
 	private boolean _mileage;	//-m
 	private boolean _name;		//-n
 	private boolean _2opt;		//-2
@@ -46,17 +46,18 @@ public class TripCo{
 		files = new ArrayList<File>();
 	}
 	
-	public TripCo(String _xml, String _svg,
-					boolean _gui, boolean _id, boolean _mileage, boolean _name, 
-						boolean _2opt, boolean _3opt, ArrayList<File> files){
+	//	boolean 
+	//	[1] = _gui, [2] = _id, [3] = _mileage, 
+	//	[4] = _name, [5] =  _2opt, [6] = boolean _3opt,
+	public TripCo(String _xml, String _svg, boolean[] opts, ArrayList<File> files){
 		this._xml = _xml;
 		this._svg = _svg;
-		this._gui = _gui;
-		this._id = _id;
-		this._mileage = _mileage;
-		this._name = _name;
-		this._2opt = _2opt;
-		this._3opt = _3opt;
+		this._gui = opts[0];
+		this._id = opts[1];
+		this._mileage = opts[2];
+		this._name = opts[3];
+		this._2opt = opts[4];
+		this._3opt = opts[5];
 		this.files = files;
 	}
 
@@ -91,18 +92,12 @@ public class TripCo{
 
 		String _xml = "";
 		String _svg = "";
-		boolean _gui = false;
-		boolean _id = false;
-		boolean _mileage = false;
-		boolean _name = false;
-		boolean _2opt = false;
-		boolean _3opt = false;
+		boolean[] opts = new boolean[6];
 		ArrayList<File> files = new ArrayList<File>();
 
 		//Need at least one input file
 		if(args.length < 1){
-			usage();
-			return;
+			usage(); return;
 		}
 		//Parse args
 		for(int h = 0; h < args.length; h++){
@@ -110,58 +105,40 @@ public class TripCo{
 			String arg = args[h];
 			
 			if(arg.length()>=5){
-				if(arg.substring(arg.length()-4, arg.length()).equalsIgnoreCase(".csv")){
+				if(arg.substring(arg.length()-4, arg.length()).equalsIgnoreCase(".csv"))
 					files.add(new File(arg));
-					continue;
-				} else if(arg.substring(arg.length()-4, arg.length()).equalsIgnoreCase(".xml")){
+				else if(arg.substring(arg.length()-4, arg.length()).equalsIgnoreCase(".xml"))
 					_xml += arg;
-					continue;
-				} else if(arg.substring(arg.length()-4, arg.length()).equalsIgnoreCase(".svg")){
+				else if(arg.substring(arg.length()-4, arg.length()).equalsIgnoreCase(".svg"))
 					_svg += arg;
-					continue;
-				}
-
-			}
-			//Switch for optional flags, so order don't matter
-			if(arg.charAt(0) == '-'){
-				if(arg.length() > 1){
-					int ind = 1;
-					while(ind < arg.length()){
-						char next = arg.charAt(ind);
-						switch(next){
-							case 'g': _gui = true; break;
-							case 'i': _id = true; break;
-							case 'm': _mileage= true; break;
-							case 'n': _name = true; break;
-							case '2': _2opt = true; break;
-							case '3': _3opt = true; break;
-							default:{
-								System.out.println("Argument: '" +arg+"' not a recognized argument");
-								System.out.println("Argument: '" +arg+"' will be ignored");
-								break;
-							}
-						}
-						ind++;
+			} else if(arg.length() == 2 && arg.charAt(0) == '-'){
+				//Switch for optional flags, so order don't matter
+				switch(arg.charAt(1)){
+					case 'g': opts[0] = true; break;
+					case 'i': opts[1] = true; break;
+					case 'm': opts[2] = true; break;
+					case 'n': opts[3] = true; break;
+					case '2': opts[4] = true; break;
+					case '3': opts[5] = true; break;
+					default:{
+						System.out.println("Argument: '" +arg+"' not a recognized argument");
+						System.out.println("Argument: '" +arg+"' will be ignored");
+						break;
 					}
 				}
-				else{
-					System.out.println("Argument: '" +arg+"' not a recognized argument");
-					System.out.println("Argument: '" +arg+"' will be ignored");
-				}
-			}
-			else{
+			}else {
 				System.out.println("Argument: '" +arg+"' not a recognized argument");
 				System.out.println("Argument: '" +arg+"' will be ignored");
 			}
 		}
-		if(_id && _name){
+		if(opts[1] && opts[3]){
 			System.out.println("Cannot display both ID's and names of locations");
 			System.out.println("Pick one options -i or -n (default)");
 			usage();
 			return;
 		}
 		
-		TripCo tc = new TripCo(_xml, _svg, _gui, _id, _mileage, _name, _2opt, _3opt, files);
+		TripCo tc = new TripCo(_xml, _svg, opts, files);
 		tc.initiate();
 	}
 }

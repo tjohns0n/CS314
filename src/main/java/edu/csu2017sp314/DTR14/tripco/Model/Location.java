@@ -14,10 +14,7 @@ public class Location{
 	// # location longitude
 	private String longitude;
 	
-	// args: altitude 		
-	// # location altitude (height)
-	// still not used yet
-	private String altitude;
+	private String idt;
 	
 	// args: info 			
 	// # location other extras
@@ -39,10 +36,11 @@ public class Location{
 	// args: name / args: latitude / args: longitude / args: info
 	// # add a location with all needed infomation
 	// Enhancement: -- altitude may be added in constructor
-	protected Location(String name, String latitude, String longitude, String extras, String template){
+	public Location(String name, String latitude, String longitude, String idt, String extras, String template){
 		this.name = name;
 		this.latitude = latitude;
 		this.longitude = longitude;
+		this.idt = idt;
 		this.extras = extras;
 		this.template = template;
 	}
@@ -55,6 +53,7 @@ public class Location{
 		this.name = name;
 		this.latitude = latitude;
 		this.longitude = longitude;
+		this.idt = "";
 		this.extras = "";
 		this.template = "";
 	}
@@ -85,7 +84,10 @@ public class Location{
 		return converter(longitude);
 		//return  Double.parseDouble(longitude);
 	}
-
+	
+	protected String getIdt(){
+		return idt;
+	}
 	// getInfo - External interface function
 	// # return args:info
 	protected String getExtras(){

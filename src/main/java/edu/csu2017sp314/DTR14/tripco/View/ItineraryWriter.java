@@ -23,8 +23,6 @@ public class ItineraryWriter {
      * ItineraryWriter constructor - initialize the XML structure
      */
     public ItineraryWriter() {
-        // init variables
-    	int numLegs = 0;
         header = new ArrayList<String>();
         legs = new ArrayList<String>();
         footer = new ArrayList<String>();
@@ -49,7 +47,7 @@ public class ItineraryWriter {
      */
     public ArrayList<String> addLeg(String startLocation, String endLocation, int mileage) {
         // Store the leg
-    	ArrayList<String> leg = new ArrayList<String>();
+        ArrayList<String> leg = new ArrayList<String>();
     	
         // Create XMLElement objects for each element of a leg
         XMLElement l = new XMLElement("leg", "");
@@ -90,15 +88,15 @@ public class ItineraryWriter {
     public ArrayList<String> writeXML(String filename) {
         // Add all of the XML to a single ArrayList:
         ArrayList<String> data = new ArrayList<String>();
-     	data.addAll(header);
-     	data.addAll(legs);
-     	data.addAll(footer);
-     	String loc = System.getProperty("user.dir");
-     	if (loc.contains("src")) {
-     		loc += "/main/resources/";
-     	} else {
-     		loc += "/src/main/resources/";
-     	}
+    	data.addAll(header);
+    	data.addAll(legs);
+    	data.addAll(footer);
+    	String loc = System.getProperty("user.dir");
+    	if (loc.contains("src")) {
+    		loc += "/main/resources/";
+    	} else {
+    		loc += "/src/main/resources/";
+    	}
      
 		
       	try {
