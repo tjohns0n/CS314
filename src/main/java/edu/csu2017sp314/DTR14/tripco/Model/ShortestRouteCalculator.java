@@ -154,6 +154,10 @@ public class ShortestRouteCalculator{
 		test_route[cnt][0] = startIndex;
 		final_dis += dis_matrix[test_route[cnt-1][0]][startIndex];
 		test_route[cnt][1] = (int)Math.ceil(final_dis);
+<<<<<<< HEAD
+=======
+		//System.out.println(final_dis);
+>>>>>>> master
 		if (do2opt) {
 			final_dis = findBestOpt(do3opt, final_dis);
 		}
