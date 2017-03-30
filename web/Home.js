@@ -14,8 +14,8 @@
             new_uri = "ws:";
         }
         new_uri += "//" + document.location.host + document.location.pathname;
-        new_uri += "Server";
-        writeResponse(new_uri + ' ');
+        new_uri += "WebServer";
+        writeResponse("Connecting with " + new_uri );
         // end of uri dymatic process
         
         webSocket = new WebSocket(new_uri);
@@ -96,7 +96,7 @@
         obj._3 = _3opt;
         var jsonString= JSON.stringify(obj);
         webSocket.send(jsonString);
-        writeResponse("It's still not available yet");
+        writeResponse("Your TripCo Will Show Sooner");
     }
     
     function ListFile(){
@@ -131,6 +131,7 @@
     }
     
     function showResult(Root, Name){
-        window.open("http://localhost:8080/TripCoOnline/View.html?" + Root + "&" + Name);
+        window.open("http://129.82.44.131:8080/WebTripCo/View.html?" + Root + "&" + Name);
     }
+     
      

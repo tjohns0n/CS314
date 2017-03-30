@@ -16,16 +16,15 @@
     
     <script type="text/babel">
     var extracts = window.location.toString(); 
-    var fileRoot = extracts.substring(extracts.indexOf("?")+1, extracts.indexOf("&")) + "/";
+    var fileRoot = extracts.substring(extracts.indexOf("?")+1, extracts.indexOf("&"));
     var fileName = extracts.substring(extracts.indexOf("&")+1);
-    var filePath = "./webTemFile/";
     function getData() {
-        var svgname = filePath+fileRoot+fileName+".svg";
+        var svgname = fileRoot+"-"+fileName+".svg";
         return svgname;
     }
 
     function getXMLTitle() {
-        var xmlname = filePath+fileRoot+fileName+".xml";
+        var xmlname = fileRoot+"-"+fileName+".xml";
         return xmlname;
     }
 
@@ -63,6 +62,5 @@
         document.getElementById('content')
     );
     </script>
-    
 </body>
 </html>
