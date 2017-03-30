@@ -30,8 +30,12 @@ public class XMLElement {
      * type = "comment" - constructs an XML comment. Add comment text in attributes field
      */
     public XMLElement(String type, String attributes) {
-    	this.type = type.toLowerCase();
-    	this.attributes = attributes;
+    	this.type = type;
+    	if (attributes.length() != 0) {
+    		this.attributes = " ".concat(attributes);
+    	} else {
+    		this.attributes = attributes;
+    	}
     	if (buildStart())
     		buildEnd();
     	else
@@ -73,11 +77,11 @@ public class XMLElement {
     		return false;
     	// Special case: elements with no end tag
     	case "path": case "defs": case "rect": case "polyline": case "line": 
-    		start = "<" + type + " " + attributes + " />";
+    		start = "<" + type + "" + attributes + " />";
     		return false;
     	// Default: create the start tag, mark that an end tag should be created
     	default:
-    		start = "<" + type + " " + attributes + ">";
+    		start = "<" + type + "" + attributes + ">";
     		return true;
     	}
     }
