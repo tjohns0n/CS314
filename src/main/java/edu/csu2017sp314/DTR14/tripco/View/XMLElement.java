@@ -12,6 +12,7 @@ public class XMLElement {
 	String type;
 	// The attributes of the element
 	String attributes;
+	ArrayList<String> attributesList;
     // The opening tag of an element (e.g. <text font-size="12">)
     String start;
     // The ending tag of an element (e.g. </text>). Will equal "" if element has no ending tag
@@ -53,6 +54,7 @@ public class XMLElement {
      */
     public XMLElement(String type, ArrayList<String> attributes) {
     	this.type = type;
+    	attributesList = attributes;
     	this.attributes = buildAttributeString(attributes);
     	if (buildStart())
     		buildEnd();
@@ -110,4 +112,12 @@ public class XMLElement {
     public String getStart() {return start;}
     // Return the end tag
     public String getEnd() {return end;}
+
+	public void updateAttributes(ArrayList<String> newAttributes) {
+		for (int i = 1; i < attributesList.size(); i += 2) {
+			attributesList.set(i, newAttributes.get(i / 2));
+		}
+		this.attributes = buildAttributeString(attributesList);
+		buildStart();
+	}
 }
