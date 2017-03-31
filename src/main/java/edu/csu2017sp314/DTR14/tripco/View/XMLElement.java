@@ -96,6 +96,9 @@ public class XMLElement {
     public String buildAttributeString(ArrayList<String> attributes) {
     	String attributeList = "";
     	for (int i = 0; i < attributes.size(); i += 2) {
+    		if (i == 0) {
+    			attributeList += " ";
+    		}
     		attributeList += attributes.get(i) + "=\"" + attributes.get(i + 1) + "\"";
     		if (i != attributes.size() - 2)
     			attributeList += " ";

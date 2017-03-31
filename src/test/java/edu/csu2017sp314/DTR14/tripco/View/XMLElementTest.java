@@ -30,7 +30,7 @@ public class XMLElementTest {
 		s.add("height");
 		s.add("300");
 		XMLElement svg = new XMLElement("svg", s);
-		assertTrue(svg.attributes.equals("width=\"300\" height=\"300\""));
+		assertTrue(svg.attributes.equals(" width=\"300\" height=\"300\""));
 	}
 	
 	@Test

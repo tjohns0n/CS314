@@ -161,8 +161,8 @@ public class SVGWriterTest {
 	public void testNewGroup() {
 		SVGWriter s = new SVGWriter(100, 100);
 		s.newGroup("Test group");
-		assertTrue(s.content.get(0).equals("<g >"));
-		assertTrue(s.content.get(1).equals("<title >Test group</title>"));
+		assertTrue(s.content.get(0).equals("<g>"));
+		assertTrue(s.content.get(1).equals("<title>Test group</title>"));
 	}
 
 	@Test
