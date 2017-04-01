@@ -58,14 +58,15 @@ public class XMLReaderTest {
 		files = new ArrayList <File>();
 	}
 	
-	// TODO: fix files
 	@Test
 	public void TestConStructor() throws FileNotFoundException{
 		String[] file = new String[2];
 		file[0] = "testBadXML.xml";
 		file[1] = "test.xml";
+		// test bad xml
 		String testArr[] = xmlr.readSelectFile(file[0], new StringBuilder());
 		assertTrue(testArr.length == 0);
+		// test correct xml
 		String indexArr[] = {"2", "5"};
 		StringBuilder sb = new StringBuilder();
 		testArr = xmlr.readSelectFile(file[1], sb);

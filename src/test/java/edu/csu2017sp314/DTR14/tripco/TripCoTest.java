@@ -30,12 +30,19 @@ public class TripCoTest {
         new TripCo();
         
         // test full constructor
+        new TripCo("test.xml", null, opts, files);
 		new TripCo(null, "coloradoMap.svg", opts, files);
+		new TripCo(null, null, opts, files);
 	}
         
-        @Test
+    @Test
 	public void testAddFile(){
+    	// test correct file
         Assert.assertTrue(tc.addFile(new File("ColoradoCountySeats.csv")));
+        // test wrong file - not csv
+        Assert.assertFalse(tc.addFile(new File("coloradoMap.svg")));
+        // test wrong file - not exist
+        Assert.assertFalse(tc.addFile(new File("coloradoMap.csv")));
 	}
 	
 	@Test
@@ -50,17 +57,12 @@ public class TripCoTest {
 	        fail("Expected an FileNotFoundException to be thrown");
 	        fail("Expected an Exception to be thrown");
 	    } catch (FileNotFoundException anFileNotFoundException) {
-	        
+	        System.out.println("Throwing anFileNotFoundException" );
+	        anFileNotFoundException.getStackTrace();
 	    } catch (Exception anException){
-            
+	    	System.out.println("Throwing anException" );
+	    	anException.getStackTrace();
         } 
         
 	}
-
-
-	//public static void main(String[] args) {
-	//	testToString();
-	//	System.out.println("here");
-//		return;
-//	}
 }

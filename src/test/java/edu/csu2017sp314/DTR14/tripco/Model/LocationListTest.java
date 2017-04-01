@@ -8,12 +8,16 @@ public class LocationListTest{
 
 	private LocationList loclist;
 
+	@Before
+	public void init(){
+		loclist = new LocationList();
+	}
+	
 	@Test
 	public void testConstructor() {
-		LocationList loc = new LocationList();
+		new LocationList();
 	}
 
-	
 	@Test
 	public void testLineHandler() {
 		// Test without selection
@@ -41,6 +45,24 @@ public class LocationListTest{
 		assertTrue(loclist.get(0).getName().equals("B"));
 	}
 	
+	@Test
+	public void testAddLocation(){
+		loclist = new LocationList();
+		loclist.addLocation(new Location("A", "1", "2", "id1", "A B", "name"));
+		assertTrue("wrong add function", loclist.getsize() == 1);
+		// Test duplicate is not added
+		loclist.addLocation(new Location("A", "1", "2", "id1", "A B", "name"));
+		assertTrue("wrong add function", loclist.getsize() == 1);
+		loclist.addLocation(new Location("A", "1", "2"));
+		assertTrue("wrong add function", loclist.getsize() == 1);
+		// Test add another
+		loclist.addLocation(new Location("A", "1", "3"));
+		assertTrue("wrong add function", loclist.getsize() == 2);
+		loclist.addLocation(new Location("A", "2", "2"));
+		assertTrue("wrong add function", loclist.getsize() == 3);
+		loclist.addLocation(new Location("B", "1", "2"));
+		assertTrue("wrong add function", loclist.getsize() == 4);
+	}
 	
 	@Test
 	public void testGetsize() {

@@ -67,13 +67,13 @@ public class TripCo{
 		return "TripCo is an interactive Colorado trip planning application";
 	}
 
-	public synchronized boolean addFile(File filename){
-		return files.add(filename);
+	public synchronized boolean addFile(File file){
+		if(file.exists() && file.getName().contains("csv")) return files.add(file);
+		else return false;
 	}
 
 	public void initiate() throws FileNotFoundException, Exception{
 		boolean[] opt = {_id, _mileage, _name, _2opt, _3opt, _gui};
-		//System.out.println(Arrays.toString(opt));
 		//Instantiate Presenter, put in running loop to check for needed updates
 		Presenter present = new Presenter(files, _xml, _svg, opt);
         
@@ -87,7 +87,7 @@ public class TripCo{
 		 * Loop for rest/interactions
 		 */
 	}
-
+	
 	public static void main(String[] args) throws FileNotFoundException, InterruptedException, Exception{
 
 		String _xml = "";

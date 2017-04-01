@@ -72,6 +72,7 @@ public class SelectionWriter {
 			body.add("\n");
 		}
 	}
+	
 	protected boolean writeXML() {
     	//Return value, assume bad return
     	boolean flag = false;

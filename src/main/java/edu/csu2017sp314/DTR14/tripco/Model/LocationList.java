@@ -117,8 +117,9 @@ public class LocationList{
 		return flag;
 	}
 
-	public void addLocation(Location l1) {
-		locList.add(l1);
+	public boolean addLocation(Location loc) {
+		if (checkValid(loc)) return locList.add(loc);
+		else return false;
 	}
 
 }

@@ -62,11 +62,6 @@ public class View extends Application {
         this.ids = ids;
     }
     
-    //Util methods
-    public void run(){
-    	Application.launch(View.class, new String[0]);
-    }
-    
     @Override
 	public void start(Stage primaryStage) throws Exception {
     	new FileChooserGUI().start(primaryStage);
@@ -122,28 +117,4 @@ public class View extends Application {
         new GenerateJavascript(getRootName());
     }
 
-    /*
-    === Likely to be removed ===
-    display: output text to the console
-    args:
-    text - The text to be printed to the console
-    */
-    
-    public String display(String text) {
-        System.out.println(text);
-        return text;
-    }
-    
-    public static void main(String[] args) throws Exception {
-    	View vw = new View();
-    	vw.run();
-//    	View v = new View("hello.csv", "coloradoMap.svg", 300, false, false, true);
-//    	v.addLeg(40, -108, "Not Denver", "id1", 39, -107, "Not CO Springs", "id2", 50);
-//    	v.addLeg(39, -107, "Not CO Springs", "id2", 40.5, -108, "Not Fort Collins", "id3", 60);
-//    	v.addLeg(40.5, -108, "Not Fort Collins", "id3", 40, -108, "Not Denver", "id1", 100);
-//    	v.writeFiles();
-    }
-
-
-	
 }

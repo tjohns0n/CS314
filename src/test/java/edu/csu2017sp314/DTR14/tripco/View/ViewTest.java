@@ -2,7 +2,6 @@ package edu.csu2017sp314.DTR14.tripco.View;
 
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -12,12 +11,13 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import edu.csu2017sp314.DTR14.tripco.Presenter.Presenter;
+import javafx.application.Application;
 
 public class ViewTest {
 	
 	private View view;
 	private String test;
+	private static String dir;
 	
 	@BeforeClass
 	public static void createTestFile() throws IOException {
@@ -28,8 +28,24 @@ public class ViewTest {
 		bw.close();
 	}
 	
+	@BeforeClass
+	public static void initRoot(){
+		dir = System.getProperty("user.dir");
+    	if (dir.contains("src")) {
+    		dir = dir + "/main/resources/";
+    	} else {
+    		dir = dir + "/src/main/resources/";
+    	}
+	}
+	
+	
 	@Test
 	public void testConstructor() {
+		// test empty constructor
+		View v0 = new View();
+		assertTrue("rootName not read correctly", v0.getRootName() == null);
+		
+		// test full constructor
 		View v1 = new View("hello", "test.svg", 300, false, false, false);
 		assertTrue("rootName not read correctly", v1.getRootName().equals("hello"));
 
@@ -40,8 +56,8 @@ public class ViewTest {
 	
 	@Test
 	public void testGetRootName() {
-		View v1 = new View("helloWorld.csv", "test.svg", 300, false, false, false);
-		assertTrue("getRootName() method not returning correct root name", v1.getRootName().equals("helloWorld"));
+		View v3 = new View("helloWorld.csv", "test.svg", 300, false, false, false);
+		assertTrue("getRootName() method not returning correct root name", v3.getRootName().equals("helloWorld"));
 	}
 
 
@@ -55,10 +71,37 @@ public class ViewTest {
 		assertTrue(test.equals("mni"));
 	}
 	
+	@Test
+	public void testStart(){
+		try{
+			Thread thread = new Thread(new Runnable(){
+				@Override
+	            public void run(){
+					Application.launch(View.class, new String[0]);
+				}
+			});
+			thread.start();
+		} catch (Exception anException){
+			System.out.println("Throwing an unexpected Exception");
+			anException.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void testWriteFiles(){
+		View v4 = new View("helloWorld.csv", "test.svg", 300, false, false, false);
+		v4.writeFiles();
+		assertTrue(new File(dir + "View.js").exists());
+		assertTrue(new File(dir + "helloWorld.xml").exists());
+		assertTrue(new File(dir + "helloWorld.svg").exists());
+	}
+	
 	@AfterClass() 
 	public static void deleteTestFile() {
-		File f = new File("test.svg");
-		f.delete();
+		new File("test.svg").delete();
+		new File(dir + "View.js").delete();
+		new File(dir + "helloWorld.xml").delete();
+		new File(dir + "helloWorld.svg").delete();
 	}
 
 }

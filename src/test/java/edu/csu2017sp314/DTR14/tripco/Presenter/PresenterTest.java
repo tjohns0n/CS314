@@ -31,23 +31,24 @@ public class PresenterTest {
 		new Presenter(files);
         
         // test full constructor
+		new Presenter(files, "test.xml", "coloradoMap.svg", options);
 		new Presenter(files, null, "coloradoMap.svg", options);
+		new Presenter(files, null, null, options);
 		
 	}
 	
 	// TODO: Create a headless mode (i.e., don't launch a web browser) so Travis can run this test
-	/*@Test
+	@Test
 	public void testRun() {
 		try{
 			prez.run();
-			
 		} catch(IOException anIOException){
 			System.out.println("Error in generating an IOException");
 			System.out.println("We tried to get the webpage to launch without the server");
             System.out.println("A bandaid yes, but we tried, and it looks like it didn't work");
             System.out.println("But the XML and svg files should be in the directory with the proper names/data");
 		}
-	}*/
+	}
         
 	//TODO
 	//LOOK HERE
@@ -58,17 +59,5 @@ public class PresenterTest {
 	//It runs fine and nothings fails
 	//I'm not sure, and you may not care I understand that, 
 	//But just wanted to put it out there
-	
-	
-	
-	/*public static void main(String[] args){
-		PresenterTest tp = new PresenterTest();
-		tp.beforeAll();
-		tp.testFiles();
-		//tp.testPort();
-		tp.testRun();
-		System.out.println("here");
-		return;
-	}*/
-	
+
 }
