@@ -15,10 +15,11 @@ public class View extends Application {
     // Optionally display labels on the SVG
     private boolean mileage;
     private boolean names;
+    private int legCount;
     private boolean ids;
     // ItineraryWriter and SVGWriter:
     private ItineraryWriter itinWrite;
-    private SVGWriter svgWrite;
+    private ColoradoSVGWriter svgWrite;
 
     //Empty constructor, for javafx Application compliance
     public View(){
@@ -37,11 +38,12 @@ public class View extends Application {
     */
     
     public View(String rootName, String SVGFile, int totalMileage, boolean mileage, boolean names, boolean ids){
+    	legCount = 0;
     	itinWrite = new ItineraryWriter();
     	if(SVGFile == null || SVGFile.equals("null") || SVGFile.equals(""))
-    		svgWrite = new SVGWriter(1067, 783);
+    		svgWrite = new ColoradoSVGWriter();
     	else
-    		svgWrite = new SVGWriter(SVGFile);
+    		svgWrite = new ColoradoSVGWriter(SVGFile);
         // For now, automatically pad the SVG with whitespace
         //svgWrite.padSVG();
         // Store the root of the CSV file name
@@ -86,28 +88,26 @@ public class View extends Application {
      * endLocationName, endLocationID, name and Id of the second location of the leg
      * mileage - the mileage between the two locations
      */
-    public String addLeg(double startLocationLat, double startLocationLong, String startLocationName, String startLocationID,
-                        double endLocationLat, double endLocationLong, String endLocationName, String endLocationID, int mileage) {
-    	int legCount = 0;
+    public String addLeg(double[] coordinates, String startLocationName, String startLocationID,
+    						String endLocationName, String endLocationID, int mileage) {
     	String testString = "";
-    	svgWrite.newGroup("leg" + ++legCount);
-        svgWrite.addLine(startLocationLong, startLocationLat, endLocationLong, endLocationLat, "blue", 3, true);
+    	svgWrite.newGroup("leg" + Integer.toString(++legCount));
+        svgWrite.addLine(coordinates, "blue", 3, true);
         itinWrite.addLeg(startLocationName, endLocationName, mileage);
 
         if (this.mileage) {
         	testString += "m";
-            svgWrite.addLineLabel(Integer.toString(mileage), "leg" + Integer.toString(legCount), 
-                                    startLocationLong, startLocationLat, endLocationLong, endLocationLat);
+            svgWrite.addLineLabel(Integer.toString(mileage), "leg" + Integer.toString(legCount), coordinates);
         }
 
         if (this.names) {
         	testString += "n";
-            svgWrite.addLabel(startLocationName, "loc" + legCount, startLocationLong, startLocationLat);
+            svgWrite.addLabel(startLocationName, "loc" + legCount, coordinates);
         }
 
         if (this.ids) {
         	testString += "i";
-            svgWrite.addLabel(startLocationID, "loc" + legCount, startLocationLong, startLocationLat);
+            svgWrite.addLabel(startLocationID, "loc" + legCount, coordinates);
         }
         svgWrite.endGroup();
         return testString;

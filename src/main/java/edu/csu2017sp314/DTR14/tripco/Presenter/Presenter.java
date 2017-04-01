@@ -48,7 +48,7 @@ public class Presenter {
         printlines();
         viewHandler(modelHandler());
         
-        //webPageViewer();
+        webPageViewer();
     }
 
     private void xmlHandler() throws IOException{
@@ -112,10 +112,14 @@ public class Presenter {
             String[] essentials2 = route[i + 1][0].split(",");
             //Leg Distance calculated by difference between accumulated miles
             //First locations should have "0" as accumulated distance
+            System.out.println(Arrays.toString(essentials1));
             int mile = Integer.parseInt(essentials2[0]) - Integer.parseInt(essentials1[0]);
 
-            view.addLeg(Double.parseDouble(essentials1[2]), Double.parseDouble(essentials1[3]), essentials1[1], essentials1[4],
-            		Double.parseDouble(essentials2[2]), Double.parseDouble(essentials2[3]), essentials2[1], essentials2[4],  mile);
+            double[] coordinates = {Double.parseDouble(essentials1[3]), Double.parseDouble(essentials1[2]), 
+            		Double.parseDouble(essentials2[3]), Double.parseDouble(essentials2[2])};
+            
+            view.addLeg(coordinates, essentials1[1], essentials1[4],
+            		essentials2[1], essentials2[4],  mile);
             
         }
         //Write the files

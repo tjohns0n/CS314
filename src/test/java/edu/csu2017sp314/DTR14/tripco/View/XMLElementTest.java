@@ -12,7 +12,7 @@ public class XMLElementTest {
 	public void testXMLElementConstructor1() {
 		XMLElement svg = new XMLElement("svg", "width=\"300\" height=\"300\"");
 		assertTrue(svg.type.equals("svg"));
-		assertTrue(svg.attributes.equals("width=\"300\" height=\"300\""));
+		assertTrue(svg.attributes.equals(" width=\"300\" height=\"300\""));
 	}
 	
 	@Test
@@ -30,7 +30,7 @@ public class XMLElementTest {
 		s.add("height");
 		s.add("300");
 		XMLElement svg = new XMLElement("svg", s);
-		assertTrue(svg.attributes.equals("width=\"300\" height=\"300\""));
+		assertTrue(svg.attributes.equals(" width=\"300\" height=\"300\""));
 	}
 	
 	@Test
@@ -48,7 +48,7 @@ public class XMLElementTest {
 	@Test
 	public void testBuildStart3() {
 		XMLElement comment = new XMLElement("comment", "Here is a comment");
-		assertTrue(comment.start.equals("<!-- Here is a comment -->"));
+		assertTrue(comment.start.equals("<!--  Here is a comment -->"));
 	}
 	
 	@Test
