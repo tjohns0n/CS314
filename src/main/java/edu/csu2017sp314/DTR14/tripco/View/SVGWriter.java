@@ -1,114 +1,138 @@
-/*
-SVGWriter.java
-Draws a map of a trip
-*/
-
 package edu.csu2017sp314.DTR14.tripco.View;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class SVGWriter {
+abstract class SVGWriter {
 
-    // Width and height of the SVG.
+	// Width and height of the SVG.
     double width;
     double height;
-	// offsets once SVG is padded
-	int xOffset = 37;
-	int yOffset = 37;
-    // The SVG content to be written before whatever elements the user adds
-    ArrayList<String> header;
-	ArrayList<String> originalContent;
-    // Usually just </svg>
-    ArrayList<String> footer;
-    // What's been added to the SVG:
-    ArrayList<String> content;
-    // Name of file to write
-    String filename;
+    
+	// The SVG content to be written before whatever elements the user adds
+    protected ArrayList<String> header;
+	protected ArrayList<String> originalContent;
 
-    /*
-     * SVGWriter constructor 1:
-     * Read in an existing SVG so that additional elements can be added on
-     */
-    public SVGWriter(String filename) {
-		// Init arraylists
-    	header = new ArrayList<String>();
+    // Usually just </svg>
+    protected ArrayList<String> footer;
+    // What's been added to the SVG:
+    protected ArrayList<String> content;
+    // Name of file to write
+    protected String filename;
+
+    // File reader 
+    protected BufferedReader readSVG;
+    // Boolean used by file reader
+    protected boolean svgTagReached;
+
+    protected XMLElement lineElement;
+    protected XMLElement textElement;
+    protected XMLElement groupElement;
+    protected XMLElement titleElement;
+
+    // Don't use a base SVG
+    protected SVGWriter() {
+        // Init arraylists
+        header = new ArrayList<String>();
     	content = new ArrayList<String>();
     	footer = new ArrayList<String>();
+        createLineElement();
+        createTextElement();
+        createGroupElement();
+    }
+
+    // Use a base SVG
+    protected SVGWriter(String filename) {
+        // Init arraylists
+    	this();
 		originalContent = new ArrayList<String>();
     	this.filename = filename;
-    	readFile(filename);
+    	readFile();
     }
-    
-    private void readFile(String filename){
-    	// Init string	
-    	try {
-			BufferedReader readSVG = new BufferedReader(new FileReader(filename));
-			
-			// Read in a line from the SVG and trim the whitespace (may remove trimming later)
-			String line = readSVG.readLine().trim();
-			// svg: true if the <svg> element is currently being read
-			boolean svg = false;
-			// Read from the SVG until the file ends or the SVG element ends
-			while ((line != null) && !(line.equals("</svg>"))) {
-				// Add the XML header to the start of the write queue
-				if (line.contains("<?xml") && !svg) {
-					header.add(line + "\n");
-					line = readSVG.readLine().trim();
-					continue;
-				}
-				// mark svg to true now that svg tag has started
-				if (line.contains("<svg"))
-					svg = true;
-				// if in svg tag
-				if (svg) {
-					// split on quotes to isolate values of attributes
-					String[] strings = line.split("\"");
-					// loop through the svg tag
-					for (int i = 0; i < strings.length; i++) {
-						// extract the width from the svg
-						if (strings[i].contains("width"))
-							width = Double.parseDouble(strings[i + 1]);
-						// extract the height from the svg
-						if (strings[i].contains("height")) 
-							height = Double.parseDouble(strings[i + 1]);
-						// if the svg tag is over, stop searching for height and width
-						if (strings[i].contains(">")) 
-							svg = false;
-					}
-				}
-				// add each element of the SVG to the start of the write queue
-				originalContent.add(line);
-				// read the next line
-				line = readSVG.readLine().trim();
-			}
 
-			// if end of document reached without seeing "</svg>, svg is invalid"
-			// else add </svg> to the end of the write queue
-			if (!line.contains("svg") ) throw new IOException();
-			else footer.add("</svg>");
-				
-			// close the buffered writer
+    /*
+     * readFile() - read in a base SVG
+     * The contents of the SVG will be read into originalContent
+     */
+    protected void readFile() {
+        // Marks if <svg> has been read yet
+        svgTagReached = false;
+    	openFile();
+        String line;
+        // while not at the end of the file, continue reading
+        while ((line = readLine()) != null) {
+            if (!svgTagReached) {
+                // ignore content until <svg> is reached
+                if (!parseLine(line)) {
+                    continue;
+                }
+            }
+            // add the line to originalContent
+            originalContent.add(line);
+        }
+        try {
 			readSVG.close();
-
 		} catch (IOException e) {
-			System.out.println("SVG not formatted properly");
+			System.err.println("failed closing reader");
 		}
     }
+
+    /*
+     * openFile()
+     * Used by readFile() to open a base SVG
+     */
+    protected void openFile() {
+        try {
+        	File f = new File(filename);
+        	if (!f.exists()) {
+        		throw new FileNotFoundException();
+        	}
+            readSVG = new BufferedReader(new FileReader(f));
+            
+        } catch (FileNotFoundException e) {
+            System.err.println("Could not open source SVG");
+        }
+    }
+
+    /*
+     * readLine()
+     * Read a line of the base SVG
+     */
+    protected String readLine() {
+        try {
+            return readSVG.readLine();
+        } catch(IOException e) {
+            System.err.println("Could not read SVG file");
+            return null;
+        }
+    }
     
-	public SVGWriter(int width, int height) {
-		header = new ArrayList<String>();
-		footer = new ArrayList<String>();
-		content = new ArrayList<String>();
+    /*
+     * parseLine - checks to see if the base svg has started
+     * args:
+     * line - the line of the base svg
+     * returns false if the svg content hasn't started
+     * returns true and sets svgTagReached to true if it has
+     */
+    protected boolean parseLine(String line) {
+    	if (!line.contains("<svg")) {
+            return false;
+        }
+        svgTagReached = true;
+        return true;
+    }
 
-		this.width = (double)width;
-		this.height = (double)height;
-
-		XMLElement xml = new XMLElement("xml", "version=\"1.0\"");
+    /*
+     * initXml() - add XML declaration and SVG tag
+     */
+    protected void initXml() {
+        XMLElement xml = new XMLElement("xml", "version=\"1.0\"");
 		
 		XMLElement svg = new XMLElement("svg", "width=\"" + width + 
 										"\" height=\"" + height + 
@@ -117,116 +141,105 @@ public class SVGWriter {
 		header.add(xml.getStart());
 		header.add(svg.getStart());
 		footer.add(svg.getEnd());
-	}
-    
-	/*
-	 * mapPoints - take points from one coordinate system and put them in that of the SVG
-	 * Currently hardcoded to work with the colorado map
-	 * args:
-	 * x - the x coordinate of the point to map
-	 * y - the y coordinate of the point to map
-	 *
-	 * TODO: 
-	 * - change so that any coordinate system can be mapped
-	 */
-	public int[] mapPoints(double x, double y) {
-		int[] mapping = new int[2];
-		x += 109;//Left corner
-		y -= 41;
-		x *= ((992.6073) / 7);//Horizontal scalling
-		y *= ((709.0824) / -4);//Vertical scalling
-		x += 37;
-		y += 37;
-		mapping[0] = (int)x;
-		mapping[1] = (int)y;
-		return mapping;
-	}
-	
-	/*
+    }
+
+    /*
+     * mapPoints - convert geographic coordinates to SVG coordinates
+     * args:
+     * x - longitude
+     * y - latitude
+     * returns int array with SVG coordinates
+     */
+    abstract int[] mapPoints(double x, double y);
+
+    /*
 	 * addLine - add a line to the SVG write queue
 	 * args:
-	 * x1, y1, x2, y2 - the x and y coordinates of each point 
+     * coordinates: the x and y coordinates of each point 
+	 *  Order: x1, y1, x2, y2 
 	 * color - the color of the line (accepts SVG color names or hex values with #)
 	 * width - the width of the line 
 	 * map - whether or not the points need to be mapped to the SVG coordinates
 	 */
-	
-    public void addLine(int x1, int y1, int x2, int y2, String color, int width, boolean map) {
-		addLine((double)x1, (double)y1, (double)x2, (double)y2, color, width, map);
+    public void addLine(int[] coordinates, String color, int width, boolean map) {
+		addLine(new double[]{coordinates[0], coordinates[1],
+            coordinates[2], coordinates[3]}, color, width, map);
     }
 
 	
-	public void addLine(double x1, double y1, double x2, double y2, String color, int width, boolean map) {
-		if (map) {
-			int[] point1 = mapPoints((double)x1, (double)y1);
-			x1 = point1[0];
-			y1 = point1[1];
-
-			int[] point2 = mapPoints((double)x2, (double)y2);
-			x2 = point2[0];
-			y2 = point2[1];
-		}
-
+	public void addLine(double[] coordinates, String color, int width, boolean map) {
+		int[] point1;
+		int[] point2;
 		ArrayList<String> attributes = new ArrayList<String>();
-    	attributes.add("x1");
-    	attributes.add(Integer.toString((int)x1));
-    	attributes.add("y1");
-    	attributes.add(Integer.toString((int)y1));
-    	attributes.add("x2");
-    	attributes.add(Integer.toString((int)x2));
-    	attributes.add("y2");
-    	attributes.add(Integer.toString((int)y2));
-    	attributes.add("stroke");
-    	attributes.add(color);
-    	attributes.add("stroke-width");
-    	attributes.add(Integer.toString(width));
-    	XMLElement line = new XMLElement("line", attributes);
-    	content.add(line.getStart());
-	}
-    
-	/*
-	 * padSVG - add whitespace padding to the edges of an SVG. Uses xOffset and yOffset to pad.
-	 * Centers the original SVG in a new, larger SVG file. 
-	 * TODO:
-	 * Allow for custom padding rather than 50 pixels on each side
-	*/
-	public void padSVG() {
-		// Create a new SVG with height = original height + total horizontal paddding, width = orig width + total vertical padding
-		XMLElement svg = new XMLElement("svg", "width=\"" + (width) + 
-			"\" height=\"" + (height) + "\" " +
-			"xmlns:svg=\"http://www.w3.org/2000/svg\" xmlns=\"http://www.w3.org/2000/svg\"");
-		// Place the new SVG tag after the xml header but before the original SVG
-		header.add(1, svg.getStart());
-		
-		// Put the original SVG in a new group and transform that group to be moved by the padding offset
-		XMLElement g = new XMLElement("g", "");
-		header.add(2, g.getStart());
-		// Close the group
-		footer.add(0, g.getEnd());
-		// Close the new SVG
-		footer.add(0, svg.getEnd());
+		if (map) {
+			point1 = mapPoints(coordinates[0], coordinates[1]);
+			point2 = mapPoints(coordinates[2], coordinates[3]);
+			for (int i = 0; i < 2; i++) {
+            	attributes.add(Integer.toString(point1[i]));
+            }
+        	for (int i = 0; i < 2; i++) {
+        		attributes.add(Integer.toString(point2[i]));
+        	}
+		}
+        if (!map) {
+        	for (int i = 0; i < 4; i++) {
+        		attributes.add(Double.toString(coordinates[i]));
+        	}
+        }
+        
+        attributes.add(color);
+        attributes.add(Integer.toString(width));
+        
+		lineElement.updateAttributes(attributes);
+    	content.add(lineElement.getStart());
 	}
 
-	/*
+    private void createLineElement() {
+        ArrayList<String> attributes = new ArrayList<String>();
+        attributes.add("x1");
+        attributes.add("0");
+        attributes.add("y1");
+        attributes.add("0");
+        attributes.add("x2");
+        attributes.add("0");
+        attributes.add("y2");
+        attributes.add("0");
+        attributes.add("stroke");
+        attributes.add("#000000");
+        attributes.add("stroke-width");
+        attributes.add("0");
+        lineElement = new XMLElement("line", attributes);
+    }
+
+    /*
 	 * newGroup - Add a <g> tag to the SVG for grouping
 	 * args:
 	 * groupTitle - the name of the group, placed in the <title> section
 	 */
 	public void newGroup(String groupTitle) {
-		XMLElement g = new XMLElement("g", "");
-		XMLElement title = new XMLElement("title", "");
-		content.add(g.getStart());
-		content.add(title.getStart() + groupTitle + title.getEnd());
+		ArrayList<String> group = new ArrayList<String>();
+		group.add(groupTitle);
+		groupElement.updateAttributes(group);
+		content.add(groupElement.getStart());
+		content.add(titleElement.getStart() + groupTitle + titleElement.getEnd());
+	}
+	
+	private void createGroupElement() {
+		ArrayList<String> group = new ArrayList<String>();
+		group.add("id");
+		group.add("default");
+		groupElement = new XMLElement("g", group);
+		titleElement = new XMLElement("title", "");
 	}
 
 	/*
 	 * endGroup - close a group by adding the </g> tag to the content queue
 	 */
 	public void endGroup() {
-		content.add(new XMLElement("g", "").getEnd());
+		content.add(groupElement.getEnd());
 	}
 
-	/*
+    /*
 	 * === PRIVATE METHOD ===
 	 * To add text to your SVG, use a method like addTitle, addLabel, or addFooter (not yet implemented)
 	 *
@@ -240,47 +253,53 @@ public class SVGWriter {
 	 * center - center text on x, y if true
 	 * map - whether or not the points need to be mapped to the SVG coordinates
 	 */
-	private XMLElement addText(String text, double x, double y, int size, String id, boolean center, boolean map) {
+	protected XMLElement addText(String text, double[] coordinates, int size, String id, boolean center, boolean map) {
 		if (map) {
-			int[] point = mapPoints(x, y);
-			x = (double)point[0];
-			y = (double)point[1];
+			int[] point = mapPoints(coordinates[0], coordinates[1]);
+			coordinates[0] = (double)point[0];
+			coordinates[1] = (double)point[1];
 		}
 
 		ArrayList<String> attributes = new ArrayList<String>();
-		attributes.add("x");
-		attributes.add(Integer.toString((int)x));
-		attributes.add("y");
-		attributes.add(Integer.toString((int)y));
-		attributes.add("font-size");
-		attributes.add(Integer.toString(size));
-		attributes.add("id");
-		attributes.add(id);
-		attributes.add("font-family");
-		attributes.add("Sans-serif");
-		if (center) {
-			attributes.add("text-anchor");
+		
+        attributes.add(Integer.toString((int)coordinates[0]));
+		attributes.add(Integer.toString((int)coordinates[1]));
+        attributes.add(Integer.toString(size));
+        attributes.add(id);
+        attributes.add("Sans-serif");
+        if (center) {
 			attributes.add("middle");
-		}
-		return new XMLElement("text", attributes);
+		} else {
+            attributes.add("start");
+        }
+        textElement.updateAttributes(attributes);
+		return textElement;
 	}
 
-	/*
+	private void createTextElement() {
+        ArrayList<String> attributes = new ArrayList<String>();
+        attributes.add("x");
+		attributes.add("0");
+		attributes.add("y");
+		attributes.add("0");
+		attributes.add("font-size");
+		attributes.add("0");
+		attributes.add("id");
+		attributes.add("0");
+		attributes.add("font-family");
+		attributes.add("Sans-serif");
+        attributes.add("text-anchor");
+        attributes.add("start");
+        textElement = new XMLElement("text", attributes);
+    }
+
+    	/*
 	 * addTitle - add a title to an SVG. The title will be centered in the upper padding of the SVG
 	 * text - the title text
 	 * id - the SVG id of the text element
 	 */
-	public void addTitle(String text, String id) {
-		// Create text element centered on the horizontal axis, 4/5 of the way down the padding on the vertical axis
-		XMLElement txt = addText(text, (width + 2 * xOffset)/ 2, yOffset * 4 / 5, 24, id, true, false);
-		// Add to the header so it's not transformed with the original SVG:
-		footer.add(0, txt.getStart() + text + txt.getEnd());
-	}
-
-	public void addFooter(String text, String id) {
-		XMLElement txt = addText(text, (width + 2 * xOffset) / 2, -yOffset + (3 * yOffset / 5) + height, 24, id, true, false);
-		footer.add(1, txt.getStart() + text + txt.getEnd());
-	}
+    abstract void addTitle(String text, String id);
+    abstract void addFooter(String text, String id);
 
 	/*
 	 * addLineLabel - add a text label in the middle of two x,y coordinates
@@ -288,13 +307,17 @@ public class SVGWriter {
 	 * id - the id attribute of the text (e.g. "leg1")
 	 * x1, y1, x2, y2 - the coordinates of a line 
 	 */
-	public void addLineLabel(String text, String id, double x1, double y1, double x2, double y2) {
-		XMLElement txt = addText(text, x1 + (x2 - x1) / 2, y1 + (y2 - y1) / 2, 16, id, false, true);
+	public void addLineLabel(String text, String id, double[] coordinates) {
+		double x1 = coordinates[0];
+		double y1 = coordinates[1];
+		double x2 = coordinates[2];
+		double y2 = coordinates[3];
+		XMLElement txt = addText(text, new double[]{x1 + (x2 - x1) / 2, y1 + (y2 - y1) / 2}, 16, id, false, true);
 		content.add(txt.getStart() + text + txt.getEnd());
 	}
 
-	public void addLabel(String text, String id, double x, double y) {
-		XMLElement txt = addText(text, x, y, 16, id, false, true);
+	public void addLabel(String text, String id, double[] coordinates) {
+		XMLElement txt = addText(text, coordinates, 16, id, false, true);
 		content.add(txt.getStart() + text + txt.getEnd());
 	}
 
@@ -343,19 +366,4 @@ public class SVGWriter {
     	}
     	return testData;
     }
-    
-    public static void main(String[] args) {
-		SVGWriter s = new SVGWriter("coloradoMap.svg");
-		s.padSVG();
-		s.addTitle("Colorado", "state");
-		s.addFooter("infinite miles", "footer");
-		// 37. 37, 1029, 746
-		s.addLine(-105.5, 39, -102, 41, "#999999", 3, true);
-		s.addLineLabel("test", "test", -105.5, 39, -102, 41);
-		s.addLabel("test label", "id3", -105.5, 39);
-		//s.addLine(s.mapPoints(-102,41)[0], s.mapPoints(-102, 41)[1], s.mapPoints(-109, 37)[0], s.mapPoints(-109, 37)[1], "black", 3);
-		//s.addLine(37, 37, 1029, 746, "black", 3);
-		s.writeSVG("coloradoMapCopy.svg");
-    }
-    
 }
