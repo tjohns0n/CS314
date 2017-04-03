@@ -5,6 +5,8 @@ engines:
     checks:
       com.puppycrawl.tools.checkstyle.checks.naming.PackageNameCheck:
         enabled: false
+      com.puppycrawl.tools.checkstyle.checks.blocks.NeedBracesCheck:
+        enabled: false
 
 ratings:
   paths:
