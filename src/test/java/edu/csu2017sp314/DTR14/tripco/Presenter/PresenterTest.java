@@ -74,7 +74,7 @@ public class PresenterTest {
 	@Test
 	public void testRun() {
 		try{
-			prez.run();
+			prez.run(false);
 		} catch(IOException anIOException){
 			System.out.println("Error in generating an IOException");
 			System.out.println("We tried to get the webpage to launch without the server");

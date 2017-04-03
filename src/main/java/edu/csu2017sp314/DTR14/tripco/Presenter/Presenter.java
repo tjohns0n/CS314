@@ -43,12 +43,15 @@ public class Presenter {
     }
 
     public void run() throws IOException {
-    	
-        xmlHandler();
+    	this.run(true);
+    }
+    
+    public void run(boolean flag) throws IOException {
+    	xmlHandler();
         printlines();
         viewHandler(modelHandler());
         
-        webPageViewer();
+        if(flag) webPageViewer();
     }
 
     private void xmlHandler() throws IOException{
