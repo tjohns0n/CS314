@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.sql.ResultSet;
+import edu.csu2017sp314.DTR14.tripco.Presenter.Msg;
 
 public class Query {
 
@@ -218,6 +219,10 @@ public class Query {
         //mod.sendToView
 	}
 	
+	private void sendMsg(String[] cont, String code){
+		Msg m = new Msg(cont, code);
+		//mod.sendToView(m);
+	}
 	
 	
 	
