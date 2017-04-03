@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import org.junit.AfterClass;
 
@@ -20,7 +19,6 @@ import edu.csu2017sp314.DTR14.tripco.Presenter.XMLReader;
 public class XMLReaderTest {
 	
 	private XMLReader xmlr;
-	private ArrayList<File> files;
 	
 	@BeforeClass
 	public static void writeTestFile() throws IOException {
@@ -55,7 +53,6 @@ public class XMLReaderTest {
 	@Before
 	public void initiate(){
 		xmlr = new XMLReader();
-		files = new ArrayList <File>();
 	}
 	
 	@Test

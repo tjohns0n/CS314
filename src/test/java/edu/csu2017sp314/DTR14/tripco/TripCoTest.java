@@ -1,11 +1,17 @@
 package edu.csu2017sp314.DTR14.tripco;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+
+import org.junit.AfterClass;
 import org.junit.Assert;
 import static org.junit.Assert.fail;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import edu.csu2017sp314.DTR14.tripco.TripCo;
@@ -16,6 +22,35 @@ public class TripCoTest {
     private TripCo tc;
 	private boolean[] opts;
 
+    @BeforeClass
+    public static void writeTestFile() {
+		String testfile = "test.csv";
+		try {
+			BufferedWriter w = new BufferedWriter(new FileWriter(testfile));
+			w.write("name,id,Elevation,Estimated Prominence," 
+					+ "latitude,longitude,Quadrangle,Range" 
+					+ "\nMount Elbert,1,14433,9093,39.1177,"
+					+ "-106.4453,Mount Elbert,Sawatch"
+					+ "\nMount Massive,2,14421,1961,39.1875,"
+					+ "-106.4756,Mount Massive,Sawatch"
+					+ "\nMount Harvard,3,14420,2360,38.9243,"
+					+ "-106.3208,Mount Harvard,Sawatch"
+					+ "\nBlanca Peak,4,14345,5325,37.5774,"
+					+ "-105.4857,Blanca Peak,Sangre de Cristo)");
+			w.close();
+		} catch (IOException e) {
+			System.err.println("Failed to open new file for writing - CSVReaderTest");
+			e.printStackTrace();
+		}
+		try {
+			new File("test.svg").createNewFile();
+			new File("test.xml").createNewFile();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
     @Before
     public void initObjects() {
         files = new ArrayList<File>();
@@ -64,5 +99,12 @@ public class TripCoTest {
 	    	anException.getStackTrace();
         } 
         
+	}
+    
+    @AfterClass() 
+	public static void deleteTestFile() {
+		new File("test.svg").delete();
+		new File("test.csv").delete();
+		new File("test.xml").delete();
 	}
 }
