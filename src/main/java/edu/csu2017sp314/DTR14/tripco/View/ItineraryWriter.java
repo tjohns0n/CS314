@@ -123,6 +123,15 @@ public class ItineraryWriter {
     	return  temp;
     }
     
+    public void addDetailedLeg(ItineraryLeg newLeg) {
+    	legs.add(newLeg.toString());
+    }
+    
+    @Override
+    public String toString() {
+    	return legs.toString();
+    }
+    
     public static void main(String[] args) {
     	ItineraryWriter w = new ItineraryWriter();
     	
