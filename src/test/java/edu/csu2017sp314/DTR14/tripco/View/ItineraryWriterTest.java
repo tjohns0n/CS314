@@ -89,8 +89,6 @@ public class ItineraryWriterTest {
 		};
 		ItineraryLeg il = new ItineraryLeg(location, location, 0, 1, "miles");
 		w.addDetailedLeg(il);
-		System.out.println(w);
-		System.out.println(testString);
 		assertTrue(w.toString().substring(1, w.toString().length() - 1).equals(testString));
 	}
 	
