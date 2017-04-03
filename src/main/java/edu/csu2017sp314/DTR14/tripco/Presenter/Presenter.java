@@ -43,17 +43,20 @@ public class Presenter {
     }
 
     public void run() throws IOException {
-    	
-        xmlHandler();
+    	this.run(true);
+    }
+    
+    public void run(boolean flag) throws IOException {
+    	xmlHandler();
         printlines();
         viewHandler(modelHandler());
         
-        webPageViewer();
+        if(flag) webPageViewer();
     }
 
     private void xmlHandler() throws IOException{
         StringBuilder csvFileName = new StringBuilder();
-        if(_xml.equals("null") || _xml.equals("") || _xml == null) subSet = new String[0];
+        if(_xml == null || _xml.equals("null") || _xml.equals("")) subSet = new String[0];
         else subSet = new XMLReader().readSelectFile(_xml, csvFileName);
         if (options[5] == true) {
             // if GUI

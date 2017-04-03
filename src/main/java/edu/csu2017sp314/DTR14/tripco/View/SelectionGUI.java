@@ -179,6 +179,7 @@ public class SelectionGUI extends Application{
     private String[] toStandardStringArray(String string){
     	return string.split(",");
     }
+
     public void start(Stage stage) throws Exception{
 		//Set Title
 		gui_FileReader();
@@ -189,7 +190,6 @@ public class SelectionGUI extends Application{
 		stage.show();
 	}
 
-	
 	public static void main(String[] args){
 		Application.launch(args);
 	}

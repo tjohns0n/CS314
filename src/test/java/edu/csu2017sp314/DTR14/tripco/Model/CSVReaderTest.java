@@ -38,7 +38,7 @@ public class CSVReaderTest{
 	
 	@Test
 	public void testConstructor() {
-		CSVReader cvsr = new CSVReader(fileName, loclist);
+		new CSVReader(fileName, loclist);
 	}
 
 	@Test
