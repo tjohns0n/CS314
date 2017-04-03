@@ -70,23 +70,7 @@ public class ViewTest {
 		test = view.addLeg(new double[]{40, -108, 39, -107}, "Denver", "id2", "CO Springs", "id3", 50);
 		assertTrue(test.equals("mni"));
 	}
-	
-	@Test
-	public void testStart(){
-		try{
-			Thread thread = new Thread(new Runnable(){
-				@Override
-	            public void run(){
-					Application.launch(View.class, new String[0]);
-				}
-			});
-			thread.start();
-		} catch (Exception anException){
-			System.out.println("Throwing an unexpected Exception");
-			anException.printStackTrace();
-		}
-	}
-	
+
 	@Test
 	public void testWriteFiles(){
 		View v4 = new View("helloWorld.csv", "test.svg", 300, false, false, false);
