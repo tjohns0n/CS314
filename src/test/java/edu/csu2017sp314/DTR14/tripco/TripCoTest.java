@@ -73,7 +73,7 @@ public class TripCoTest {
     @Test
 	public void testAddFile(){
     	// test correct file
-        Assert.assertTrue(tc.addFile(new File("test.csv")));
+        Assert.assertTrue(tc.addFile(new File("ColoradoCountySeats.csv")));
         // test wrong file - not csv
         Assert.assertFalse(tc.addFile(new File("coloradoMap.svg")));
         // test wrong file - not exist
