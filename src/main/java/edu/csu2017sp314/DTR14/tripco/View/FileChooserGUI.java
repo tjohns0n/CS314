@@ -156,12 +156,10 @@ public class FileChooserGUI extends Application{
 			String entered = newTextField.getText();
 			if(xmlFile == null){
 				if(entered.isEmpty()) xmlFile = "temp.xml";
-				else if(entered.length()>4){
-					if(!entered.substring(entered.length()-4, entered.length()).equalsIgnoreCase(".xml"))
-						xmlFile = entered.concat(".xml");
-					else
-						xmlFile = entered;
-				} else xmlFile = entered.concat(".xml");
+				else if(entered.length()>4 &&
+							!entered.substring(entered.length()-4, entered.length()).equalsIgnoreCase(".xml"))
+					xmlFile = entered.concat(".xml");
+				else xmlFile = entered;
 			}
 			if(csvFile == null || csvFile.equals("")){
 				String warns = "No Selection file or new csv file chosen";

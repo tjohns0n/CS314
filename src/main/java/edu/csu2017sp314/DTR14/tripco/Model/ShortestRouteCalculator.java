@@ -139,13 +139,11 @@ public class ShortestRouteCalculator{
 		// each time pick the nearest neighbor
 		for(int step = 0; step < locList.getsize() - 1; step++){
 			double mins = Double.MAX_VALUE;
-			for(int j = 0; j < locList.getsize(); j++){
-				if(vis[j] == true) continue;
-				if(mins > dis_matrix[i][j]){
+			for(int j = 0; j < locList.getsize(); j++)
+				if(vis[j] != true && mins > dis_matrix[i][j]){
 					mins = dis_matrix[i][j];
 					test_route[cnt][0] = j;
 				}
-			}
 			vis[test_route[cnt][0]] = true;
 			final_dis += dis_matrix[i][test_route[cnt][0]];
 			test_route[cnt][1] = (int)final_dis;
@@ -154,9 +152,7 @@ public class ShortestRouteCalculator{
 		test_route[cnt][0] = startIndex;
 		final_dis += dis_matrix[test_route[cnt-1][0]][startIndex];
 		test_route[cnt][1] = (int)Math.ceil(final_dis);
-		if (do2opt) {
-			final_dis = findBestOpt(do3opt, final_dis);
-		}
+		if (do2opt) final_dis = findBestOpt(do3opt, final_dis);
 		return (int)Math.ceil(final_dis);
 	}
 
