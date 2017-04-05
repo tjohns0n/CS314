@@ -30,27 +30,27 @@ public class ViewTest {
 	
 	@Test
 	public void testConstructor() {
-		View v1 = new View("hello", "test.svg", 300, false, false, false);
+		View v1 = new View("hello", "test.svg", 300, new boolean[] {false, false, false}, true);
 		assertTrue("rootName not read correctly", v1.getRootName().equals("hello"));
 
-		View v2 = new View("hello.csv", "test.svg", 300, true, true, true);
+		View v2 = new View("hello.csv", "test.svg", 300, new boolean[] {true, true, true}, false);
 		assertTrue(".csv extension not properly removed from rootName", v2.getRootName().equals("hello"));
 
 	}
 	
 	@Test
 	public void testGetRootName() {
-		View v1 = new View("helloWorld.csv", "test.svg", 300, false, false, false);
+		View v1 = new View("helloWorld.csv", "test.svg", 300, new boolean[] {false, false, false}, true);
 		assertTrue("getRootName() method not returning correct root name", v1.getRootName().equals("helloWorld"));
 	}
 
 
 	@Test
 	public void testAddLeg() {
-		view = new View("helloWorld.csv", "test.svg", 300, true, false, false);
+		view = new View("helloWorld.csv", "test.svg", 300, new boolean[] {false, true, false}, true);
 		test = view.addLeg(new double[]{40, -108, 39, -107}, "Not Denver", "id1", "Not CO Springs", "id2", 50);
 		assertTrue(test.equals("m"));
-		view = new View("helloWorld.csv", "test.svg", 300, true, true, true);
+		view = new View("helloWorld.csv", "test.svg", 300, new boolean[] {true, true, true}, true);
 		test = view.addLeg(new double[]{40, -108, 39, -107}, "Denver", "id2", "CO Springs", "id3", 50);
 		assertTrue(test.equals("mni"));
 	}

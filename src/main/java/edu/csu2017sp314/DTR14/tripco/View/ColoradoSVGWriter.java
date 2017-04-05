@@ -72,7 +72,7 @@ public class ColoradoSVGWriter extends SVGWriter {
 	public void addTitle(String text, String id) {
 		// Create text element centered on the horizontal axis, 
 		// 		4/5 of the way down the padding on the vertical axis
-		double[] coordinates = {(width + 2 * xOffset)/ 2, yOffset * 4 / 5}};
+		double[] coordinates = {(width + 2 * xOffset)/ 2, (yOffset * 4) / 5};
 		XMLElement txt = addText(text, coordinates, 24, id, true, false);
 		// Add to the header so it's not transformed with the original SVG:
 		footer.add(0, txt.getStart() + text + txt.getEnd());
