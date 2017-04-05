@@ -7,10 +7,24 @@ public class SelectionWriterTest {
 	
 	@Test
 	public void testConstructor(){
-		SelectionWriter sw = new SelectionWriter(new String[]{"1","2","3","4"}, "test.xml", "test.svg");
-		assertFalse(sw.header.isEmpty());
-		assertFalse(sw.footer.isEmpty());
-		assertFalse(sw.body.isEmpty());
+		SelectionWriter sw1 = new SelectionWriter(new String[]{"1","2","3","4"}, "test.xml", "test.svg");
+		assertFalse(sw1.header.isEmpty());
+		assertFalse(sw1.footer.isEmpty());
+		assertFalse(sw1.body.isEmpty());
+		
+		SelectionWriter sw2 = new SelectionWriter(new String[0], "test.xml", "test.svg");
+		assertFalse(sw2.header.isEmpty());
+		assertFalse(sw2.footer.isEmpty());
+		assertFalse(sw2.body.isEmpty());
+		for(String string: sw2.body){
+			assertTrue(!string.contains("destinations"));
+			assertTrue(!string.contains("id"));
+			assertTrue(!string.contains("1"));
+			assertTrue(!string.contains("2"));
+			assertTrue(!string.contains("3"));
+			assertTrue(!string.contains("4"));
+		}
 	}
 
 }
+	

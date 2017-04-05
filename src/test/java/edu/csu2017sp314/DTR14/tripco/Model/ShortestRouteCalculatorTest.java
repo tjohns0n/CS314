@@ -1,10 +1,8 @@
 package edu.csu2017sp314.DTR14.tripco.Model;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
-
-import org.junit.*;
+import org.junit.Test;
 
 public class ShortestRouteCalculatorTest{
 	
@@ -13,7 +11,7 @@ public class ShortestRouteCalculatorTest{
 	@Test
 	public void testConstructor() {
 		locList = new LocationList();
-		ShortestRouteCalculator src = new ShortestRouteCalculator(locList, 0);
+		new ShortestRouteCalculator(locList, 0);
 	}
 
 	@Test

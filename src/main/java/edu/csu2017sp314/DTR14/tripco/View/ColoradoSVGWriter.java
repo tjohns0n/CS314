@@ -6,13 +6,6 @@ Legacy class, use WorldSVGWriter from now on
 
 package edu.csu2017sp314.DTR14.tripco.View;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-
 public class ColoradoSVGWriter extends SVGWriter {
 	// offsets once SVG is padded
 	int xOffset = 37;
@@ -89,6 +82,8 @@ public class ColoradoSVGWriter extends SVGWriter {
 		XMLElement txt = addText(text, coordinates, 24, id, true, false);
 		footer.add(1, txt.getStart() + text + txt.getEnd());
 	}
+	
+	
 
     public static void main(String[] args) {
 		ColoradoSVGWriter s = new ColoradoSVGWriter("coloradoMap.svg");

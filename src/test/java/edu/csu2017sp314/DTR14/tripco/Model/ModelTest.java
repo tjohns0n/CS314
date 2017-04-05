@@ -1,23 +1,24 @@
 package edu.csu2017sp314.DTR14.tripco.Model;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import static org.junit.Assert.*;
 
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class ModelTest{
 
-	String filename = "test.csv";
+	private static final String filename = "test.csv";
 
 	@BeforeClass
 	public static void writeTestFile() {
-		String testfile = "test.csv";
 		try {
-			BufferedWriter w = new BufferedWriter(new FileWriter(testfile));
+			BufferedWriter w = new BufferedWriter(new FileWriter(filename));
 			w.write("name,id,Elevation,Estimated Prominence," 
 					+ "latitude,longitude,Quadrangle,Range" 
 					+ "\nMount Elbert,1,14433,9093,39.1177,"
@@ -37,7 +38,7 @@ public class ModelTest{
 	
 	@Test
 	public void testConstructor() {
-		Model model = new Model(filename);
+		new Model(filename);
 	}
 
 	@Test
@@ -53,8 +54,24 @@ public class ModelTest{
 		model.planTrip(false, false, new String[0]);
 		String tests[][] = model.reteriveTrip();
 		assertTrue("wrong trip", tests[0][0].equals("0,Mount Elbert,39.1177,-106.4453,1"));
+		assertTrue("wrong trip", tests[0][1].equals("1,14433,9093,Mount Elbert,Sawatch"));
+		assertTrue("wrong trip", tests[0][2].equals("id,Elevation,Estimated Prominence,Quadrangle,Range"));
+		
+		assertTrue("wrong trip", tests[1][0].equals("5,Mount Massive,39.1875,-106.4756,2"));
 		assertTrue("wrong trip", tests[1][1].equals("2,14421,1961,Mount Massive,Sawatch"));
+		assertTrue("wrong trip", tests[1][2].equals("id,Elevation,Estimated Prominence,Quadrangle,Range"));
+		
+		assertTrue("wrong trip", tests[2][0].equals("25,Mount Harvard,38.9243,-106.3208,3"));
+		assertTrue("wrong trip", tests[2][1].equals("3,14420,2360,Mount Harvard,Sawatch"));
 		assertTrue("wrong trip", tests[2][2].equals("id,Elevation,Estimated Prominence,Quadrangle,Range"));
+		
+		assertTrue("wrong trip", tests[3][0].equals("128,Blanca Peak,37.5774,-105.4857,4"));
+		assertTrue("wrong trip", tests[3][1].equals("4,14345,5325,Blanca Peak,Sangre de Cristo)"));
+		assertTrue("wrong trip", tests[3][2].equals("id,Elevation,Estimated Prominence,Quadrangle,Range"));
+		
+		assertTrue("wrong trip", tests[4][0].equals("248,Mount Elbert,39.1177,-106.4453,1"));
+		assertTrue("wrong trip", tests[4][1].equals("1,14433,9093,Mount Elbert,Sawatch"));
+		assertTrue("wrong trip", tests[4][2].equals("id,Elevation,Estimated Prominence,Quadrangle,Range"));
 	}
 	
 	@AfterClass
