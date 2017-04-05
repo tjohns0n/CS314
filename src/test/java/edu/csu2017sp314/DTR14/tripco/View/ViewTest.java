@@ -57,7 +57,7 @@ public class ViewTest {
 	@Test
 	public void testGetRootName() {
 		View v3 = new View("helloWorld.csv", "test.svg", 300, new boolean[] {false, false, false}, true);
-		assertTrue("getRootName() method not returning correct root name", v1.getRootName().equals("helloWorld"));
+		assertTrue("getRootName() method not returning correct root name", v3.getRootName().equals("helloWorld"));
 	}
 
 
