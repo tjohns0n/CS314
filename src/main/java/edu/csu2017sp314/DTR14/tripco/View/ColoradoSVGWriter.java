@@ -1,6 +1,7 @@
 /*
-SVGWriter.java
-Draws a map of a trip
+ColoradoSVGWriter.java
+Draws a trip to a Colorado map SVG 
+Legacy class, use WorldSVGWriter from now on
 */
 
 package edu.csu2017sp314.DTR14.tripco.View;
@@ -28,7 +29,10 @@ public class ColoradoSVGWriter extends SVGWriter {
 		initXml();
     }
     
-    
+    /*
+	 * SVGWriter constructor 2:
+	 * Write a blank SVG 
+	 */
 	public ColoradoSVGWriter() {
 		super();
 		width = 1066.6073;
@@ -59,15 +63,30 @@ public class ColoradoSVGWriter extends SVGWriter {
 		return mapping;
 	}
     
+	/*
+	 * addTitle - add a title text to the SVG 
+	 * args:
+	 * text - the title text 
+	 * id - the id of the text element
+	 */
 	public void addTitle(String text, String id) {
-		// Create text element centered on the horizontal axis, 4/5 of the way down the padding on the vertical axis
-		XMLElement txt = addText(text, new double[] {(width + 2 * xOffset)/ 2, yOffset * 4 / 5}, 24, id, true, false);
+		// Create text element centered on the horizontal axis, 
+		// 		4/5 of the way down the padding on the vertical axis
+		double[] coordinates = {(width + 2 * xOffset)/ 2, yOffset * 4 / 5}};
+		XMLElement txt = addText(text, coordinates, 24, id, true, false);
 		// Add to the header so it's not transformed with the original SVG:
 		footer.add(0, txt.getStart() + text + txt.getEnd());
 	}
 
+	/*
+	 * addFooter - add a footer to the SVG 
+	 * args:
+	 * text - the footer text 
+	 * id - the id of the text element 
+	 */
 	public void addFooter(String text, String id) {
-		XMLElement txt = addText(text, new double[] {(width + 2 * xOffset) / 2, -yOffset + (3 * yOffset / 5) + height}, 24, id, true, false);
+		double[] coordinates = {(width + 2 * xOffset) / 2, -yOffset + (3 * yOffset / 5) + height};
+		XMLElement txt = addText(text, coordinates, 24, id, true, false);
 		footer.add(1, txt.getStart() + text + txt.getEnd());
 	}
 
@@ -79,9 +98,6 @@ public class ColoradoSVGWriter extends SVGWriter {
 		s.addLine(new double[]{-105.5, 39, -102, 41}, "#999999", 3, true);
 		s.addLineLabel("test", "test", new double[] {-105.5, 39, -102, 41});
 		s.addLabel("test label", "id3", new double[] {-105.5, 39});
-		//s.addLine(s.mapPoints(-102,41)[0], s.mapPoints(-102, 41)[1], s.mapPoints(-109, 37)[0], s.mapPoints(-109, 37)[1], "black", 3);
-		//s.addLine(37, 37, 1029, 746, "black", 3);
 		s.writeSVG("coloradoMapCopy.svg");
     }
-    
 }

@@ -97,7 +97,7 @@ public class View extends Application {
 
         if (this.mileage) {
         	testString += "m";
-            svgWrite.addLineLabel(Integer.toString(mileage), "leg" + Integer.toString(legCount), coordinates);
+            svgWrite.addLineLabel(Integer.toString(mileage), "mileage" + Integer.toString(legCount), coordinates);
         }
 
         if (this.names) {
