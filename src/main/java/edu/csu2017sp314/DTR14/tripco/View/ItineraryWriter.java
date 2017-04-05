@@ -1,5 +1,5 @@
 /*
- * ItineraryWriter - Produce a trip itinerary in XML format
+ * ItineraryWriter - Produce a trip itinerary in XML & HTML/Grommet format
  */
 
 package edu.csu2017sp314.DTR14.tripco.View;
@@ -18,6 +18,17 @@ public class ItineraryWriter {
     ArrayList<String> footer;
     // The number of legs of the trip
     int numLegs;
+
+    // For HTML versions:
+    ArrayList<String> htmlHeader;
+    ArrayList<String> htmlLegs;
+    ArrayList<String> htmlFooter;
+    XMLElement html;
+    XMLElement head;
+    XMLElement meta;
+    XMLElement link;
+    XMLElement script;
+    XMLElement div;
 
     /*
      * ItineraryWriter constructor - initialize the XML structure
@@ -38,7 +49,14 @@ public class ItineraryWriter {
         footer.add(trip.getEnd());
     } 
 
+    public void addLeg(ItineraryLeg leg) {
+        String newLeg = leg.toString();
+        newLeg = replaceName(newLeg);
+        legs.add(newLeg);
+    }
+
     /*
+     * DEPRECATED METHOD, USE FOR COLORADO MAP ONLY 
      * addLeg - add a leg to the itinerary 
      * args:
      * startLocation - where the leg begins
@@ -120,6 +138,7 @@ public class ItineraryWriter {
     	temp = temp.replaceAll("&", "&amp;");
     	temp = temp.replaceAll("<", "&lt;");
     	temp = temp.replaceAll(">", "&gt;");
+        temp = temp.replaceAll("%", "&#37;");
     	return  temp;
     }
     

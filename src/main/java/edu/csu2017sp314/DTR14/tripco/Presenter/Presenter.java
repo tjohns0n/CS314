@@ -78,8 +78,8 @@ public class Presenter {
     	String[][] route = s;
         String[] total = route[route.length - 1][0].split(",");
         int totalMileage = Integer.parseInt(total[0]);
-        
-        view = new View(files.get(0).getName(), _svg, totalMileage, options[1], options[2], options[0]);
+        String title = files.get(0).getName();
+        view = new View(title, _svg, totalMileage, Arrays.copyOfRange(options, 0, 3), true);
         
         viewWriter(route);
         
@@ -118,8 +118,10 @@ public class Presenter {
             System.out.println(Arrays.toString(essentials1));
             int mile = Integer.parseInt(essentials2[0]) - Integer.parseInt(essentials1[0]);
 
-            double[] coordinates = {Double.parseDouble(essentials1[3]), Double.parseDouble(essentials1[2]), 
-            		Double.parseDouble(essentials2[3]), Double.parseDouble(essentials2[2])};
+            double[] coordinates = {Double.parseDouble(essentials1[3]), 
+            		Double.parseDouble(essentials1[2]), 
+            		Double.parseDouble(essentials2[3]), 
+            		Double.parseDouble(essentials2[2])};
             
             view.addLeg(coordinates, essentials1[1], essentials1[4],
             		essentials2[1], essentials2[4],  mile);
@@ -143,7 +145,8 @@ public class Presenter {
             e.printStackTrace();
             System.out.println("We tried to get the webpage to launch without the server");
             System.out.println("A bandaid yes, but we tried, and it looks like it didn't work");
-            System.out.println("But the XML and svg files should be in the directory with the proper names/data");
+            System.out.println("But the XML and svg files should be in the directory with the "
+            		+ "proper names/data");
         }
         
     }
