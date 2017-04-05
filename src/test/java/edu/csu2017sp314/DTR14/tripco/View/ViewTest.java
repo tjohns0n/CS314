@@ -73,7 +73,7 @@ public class ViewTest {
 
 	@Test
 	public void testWriteFiles(){
-		View v4 = new View("helloWorld.csv", "test.svg", 300, new booleans[] {false, false, false}, true);
+		View v4 = new View("helloWorld.csv", "test.svg", 300, new boolean[] {false, false, false}, true);
 		v4.writeFiles();
 		assertTrue(new File(dir + "View.js").exists());
 		assertTrue(new File(dir + "helloWorld.xml").exists());
