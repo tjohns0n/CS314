@@ -42,10 +42,44 @@ public class WorldMapWriter extends SVGWriter {
 		content.add(foot.getEnd());
 	}
 	
+	/*
+	 * addWorldLine - add lines to the world map 
+	 * if the distance is shorter when wrapping around the world,
+	 * two lines will be drawn to emulate the wrapping. Otherwise,
+	 * it will draw one line as normal 
+	 */
 	public void addWorldLine(double[] coordinates) {
-		
+		int[] loc1 = mapPoints(coordinates[0], coordinates[1]);
+		int[] loc2 = mapPoints(coordinates[2], coordinates[3]);
+		for (int i = 0; i < 2; i++) {
+			coordinates[i] = loc1[i];
+			coordinates[i + 2] = loc2[i];
+		}
+		int difference = loc1[0] - loc2[0];
+		if (difference > 720 || difference < -720) {
+			addWrappedLine(coordinates);
+		} else {
+			addLine(coordinates, "blue", 2, false);
+		}
 	}
 	
+	private void addWrappedLine(double[] coordinates) {
+		double tempCoordinate;
+		if (coordinates[0] > coordinates[2]) {
+			for (int i = 0; i < 2; i++) {
+				tempCoordinate = coordinates[i];
+				coordinates[i] = coordinates[i + 2];
+				coordinates[i + 2] = tempCoordinate;
+			}
+		}
+		tempCoordinate = -(1440 - coordinates[2]);
+		addLine(new double[] {coordinates[0], coordinates[1],
+				tempCoordinate, coordinates[3]}, "blue", 2, false);
+		tempCoordinate = 1440 + coordinates[0];
+		addLine(new double[] {tempCoordinate, coordinates[1],
+				coordinates[2], coordinates[3]}, "blue", 2, false);
+	}
+
 	private void scaleBase() {
 		originalContent.add(0, "<g transform=\"matrix(1.40625 0 0 1.40625 0 0)\">");
 		originalContent.add(originalContent.size(), "</g>");
@@ -55,7 +89,7 @@ public class WorldMapWriter extends SVGWriter {
 		WorldMapWriter wmw = new WorldMapWriter("World3.svg");
 		wmw.addTitle("Here is a test title", "title");
 		wmw.addFooter("Here is a test footer", "footer");
-		wmw.addLine(new double[] {-104.6737, 39.8561, 144.8410, -37.6690}, "blue", 2, true);
+		wmw.addWorldLine(new double[] {-104.6737, 39.8561, 144.8410, -37.6690});
 		wmw.writeSVG("cool.svg");
 	}
 }
