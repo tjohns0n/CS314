@@ -323,6 +323,10 @@ public class ShortestRouteCalculator{
 			for(int j = i; j < locList.getsize(); j++)
 				dis_matrix[i][j] = dis_matrix[j][i] = distanceCalculator(locList.get(i), locList.get(j));
 	}
+	
+	protected double getDistance(int loc1, int loc2) {
+		return dis_matrix[loc1][loc2];
+	}
 
 	// distanceCalculator - private function
 	// # calculate the distance between two locations

@@ -146,14 +146,22 @@ public class ShortestRouteCalculatorTest{
 		}
 		src.opt_route[5][0] = 0;
 		src.rebuildDistances();
-		for (int i = 0; i < 6; i++) {
-			System.out.println(src.opt_route[i][1]);
-		}
 		double distance = 0;
 		for (int i = 0; i < 4; i++) {
 			distance += src.dis_matrix[i][i + 1];
 			assertTrue(Math.abs(distance - src.opt_route[i + 1][1]) < i + 1);
 		}
+	}
+	
+	@Test
+	public void testWorldWrapping() {
+		locList = new LocationList();
+		locList.addLocation(new Location("A", "39.1177", "-180"));
+		locList.addLocation(new Location("B", "39.1177", "180"));
+		ShortestRouteCalculator src = new ShortestRouteCalculator(locList, 0);
+		
+		double dis = src.getDistance(0, 1);
+		assertTrue(dis < 0.0001 && dis > -0.0001);
 	}
 }
 

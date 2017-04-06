@@ -121,7 +121,6 @@ public class SVGWriterTest {
 	public void testWriteSVG() {
 		ColoradoSVGWriter s = new ColoradoSVGWriter();
 		ArrayList<String> testData = s.writeSVG("test0.svg");
-		System.out.println(testData);
 		assertTrue(testData.get(0).equals("<?xml version=\"1.0\"?>"));
 		assertTrue(testData.get(1).contains("<svg"));
 		assertTrue(testData.get(2).equals("</svg>"));
@@ -140,7 +139,6 @@ public class SVGWriterTest {
 	public void testNewGroup() {
 		ColoradoSVGWriter s = new ColoradoSVGWriter();
 		s.newGroup("Test group");
-		System.out.println(s.content);
 		assertTrue(s.content.get(0).equals("<g id=\"Test group\">"));
 		assertTrue(s.content.get(1).equals("<title>Test group</title>"));
 	}
@@ -150,6 +148,24 @@ public class SVGWriterTest {
 		ColoradoSVGWriter s = new ColoradoSVGWriter();
 		s.endGroup();
 		assertTrue(s.content.get(0).equals("</g>"));
+	}
+	
+	@Test
+	public void testAddWorldLine() {
+		WorldMapWriter w = new WorldMapWriter();
+		boolean wrap;
+		wrap = w.addWorldLine(new double[] {-179, 0, 179, 0});
+		assertTrue(wrap);
+		assertTrue(w.content.size() == 2);
+		wrap = w.addWorldLine(new double[] {-1, 0, 1, 0});
+		assertFalse(wrap);
+		assertTrue(w.content.size() == 3);
+		wrap = w.addWorldLine(new double[] {0, 0, 180.25, 0});
+		assertTrue(wrap);
+		wrap = w.addWorldLine(new double[] {-180.25, 0, 0, 0});
+		assertTrue(wrap);
+		wrap = w.addWorldLine(new double[] {-180, 0, 0, 0});
+		assertFalse(wrap);
 	}
 
 }

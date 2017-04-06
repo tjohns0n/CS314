@@ -19,8 +19,8 @@ public class WorldMapWriter extends SVGWriter {
 	@Override
 	int[] mapPoints(double x, double y) {
 		int[] mappedPoints = new int[2];
-		mappedPoints[0] = (int)(180 + x) * 4;
-		mappedPoints[1] = (int)(90 - y) * 4;
+		mappedPoints[0] = (int)Math.round((180 + x) * 4);
+		mappedPoints[1] = (int)Math.round((90 - y) * 4);
 		return mappedPoints;
 	}
 
@@ -48,7 +48,7 @@ public class WorldMapWriter extends SVGWriter {
 	 * two lines will be drawn to emulate the wrapping. Otherwise,
 	 * it will draw one line as normal 
 	 */
-	public void addWorldLine(double[] coordinates) {
+	public boolean addWorldLine(double[] coordinates) {
 		int[] loc1 = mapPoints(coordinates[0], coordinates[1]);
 		int[] loc2 = mapPoints(coordinates[2], coordinates[3]);
 		for (int i = 0; i < 2; i++) {
@@ -58,8 +58,10 @@ public class WorldMapWriter extends SVGWriter {
 		int difference = loc1[0] - loc2[0];
 		if (difference > 720 || difference < -720) {
 			addWrappedLine(coordinates);
+			return true;
 		} else {
 			addLine(coordinates, "blue", 2, false);
+			return false;
 		}
 	}
 	
