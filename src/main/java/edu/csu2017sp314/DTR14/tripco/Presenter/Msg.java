@@ -15,11 +15,13 @@ public class Msg {
 	//CY2RN = DB query to get list of RegioN for a specific CountrY
 	//RN2IL = DB query to get list of IndividuaL airports from a specific RegioN
 	//CT2CY = DB query to get list of CountrYs from a specific ContinenT
-	//Init = DB init query to get list of types, continents, and countries
+	//INIT = DB init query to get list of types, continents, and countries
 	//
 	//ITIN = DB PLAN query to grab necessary data for itinerary writing
 	//IL = Individual airports drop down in GUI
 	//CY = Country drop down in GUI
+	//RN = Region drop down in GUI
+	//
 	
 	
 	public Msg(String[] cont, String Code){

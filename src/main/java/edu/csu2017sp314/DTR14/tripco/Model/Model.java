@@ -35,7 +35,7 @@ public class Model{
 	}
 
 	public boolean planTrip(boolean run2Opt, boolean run3Opt, String[] selection){
-		cvsr.initiate(selection);
+		//cvsr.initiate(selection);
 		src = new ShortestRouteCalculator(locList, 0);
 		
 		if (run3Opt) {
@@ -54,7 +54,9 @@ public class Model{
 	}
 	
 	public void sendToPresenter(Msg msg){
-		//prez.sendToView;
+		if(prez!=null){
+			prez.sendMessage(msg);	
+		}
 	}
 	
 	public void sendToModel(Msg msg){
@@ -73,31 +75,21 @@ public class Model{
 				default: break;
 			}
 		}
-		else{
-			return;
-		}
-		
 	}
 	
 	public void sendQuery(Msg msg){
 		String[] codes = msg.code.split("-");
 		//Switch based on DB code
 		switch(codes[2]){
-			//M-DB-Init
-			case "Init":{
+			//M-DB-INIT
+			case "INIT":{
 				Query q = new Query(this);
 				break;
 			}
-			//M-DB-RN2IL
-			//content[] should have a single String with the name of the region
-			case "RN2IL":{
-				Query q = new Query(this, msg.content[0], false);
-				break;
-			}
 			//M-DB-CN2CY
-			//content[] should have a single String with name of continent
+			//content[] should have a single String with constraints
 			case "CT2CY":{
-				Query q = new Query(msg.content[0],this);
+				Query q = new Query(this, msg.content[0]);
 				break;
 			}
 			//M-DB-CY2RN
@@ -106,10 +98,18 @@ public class Model{
 				Query q = new Query(this, msg.content[0]);
 				break;
 			}
+			//M-DB-RN2IL
+			//content[] should have a single String with constraints
+			case "RN2IL":{
+				Query q = new Query(this, msg.content[0]);
+				break;
+			}
 			//M-DB-TRIP
 			//content[] should be array of selected airport ids (ident)
 			case "TRIP":{
-				Query q = new Query(this, msg.content, false);
+				Query q = new Query(this, msg.content);
+				//Start trip planning
+				//ITIN query and send to itin writer
 				break;
 			}
 			default: break;

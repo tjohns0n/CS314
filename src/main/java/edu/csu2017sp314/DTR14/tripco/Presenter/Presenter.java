@@ -41,7 +41,25 @@ public class Presenter {
         options = new boolean[6];
         Arrays.fill(options, false);
     }
-
+    
+    private void sendToModel(Msg msg){
+    	model.sendToModel(msg);
+    }
+    
+    private void sendToView(Msg msg){
+    	view.sendToView(msg);
+    }
+    
+    public void sendMessage(Msg msg){
+    	String[] codes = msg.code.split("-");
+    	if(codes[0].equalsIgnoreCase("M")){
+    		sendToModel(msg);
+    	}
+    	else if(codes[0].equalsIgnoreCase("V")){
+    		sendToView(msg);
+    	}
+    }
+    
     public void run() throws IOException {
     	this.run(true);
     }

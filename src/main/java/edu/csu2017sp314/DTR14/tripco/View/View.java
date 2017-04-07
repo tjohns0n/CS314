@@ -7,6 +7,7 @@ package edu.csu2017sp314.DTR14.tripco.View;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import edu.csu2017sp314.DTR14.tripco.Presenter.Msg;
 
 public class View extends Application {
 
@@ -82,6 +83,58 @@ public class View extends Application {
 
     public String getRootName() {
     	return title;
+    }
+    
+    public void sendToView(Msg msg){
+    	String[] codes = msg.code.split("-");
+    	if(codes.length<3){
+			return;
+		}
+    	if(codes[0].equalsIgnoreCase("V")){
+    		if(codes[1].equalsIgnoreCase("ST")){
+    			setMsg(msg);
+    		}
+    		else if(codes[1].equalsIgnoreCase("UP")){
+    			updateMsg(msg);
+    		}
+    	}
+    	else{
+    		return;
+    	}
+    }
+    
+    public void setMsg(Msg msg){
+    	String[] codes = msg.code.split("-");
+    	switch(codes[2]){
+	    	case "INIT":{
+	    		//Send to GUI
+	    		break;
+	    	}
+	    	case "ITIN":{
+	    		//Write itin
+	    		break;
+	    	}
+	    	default: break;
+    	}
+    }
+    
+    public void updateMsg(Msg msg){
+    	String[] codes = msg.code.split("-");
+    	switch(codes[2]){
+	    	case "CY":{
+	    		//Send to GUI
+	    		break;
+	    	}
+	    	case "RN":{
+	    		//Write itin
+	    		break;
+	    	}
+	    	case "IL":{
+	    		//
+	    		break;
+	    	}
+	    	default: break;
+    	}
     }
     
     //Called by Input gui, sets options from gui, starts svgwriter, wakes up Presenter thread

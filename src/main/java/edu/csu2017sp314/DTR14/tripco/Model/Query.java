@@ -3,7 +3,6 @@ package edu.csu2017sp314.DTR14.tripco.Model;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.sql.ResultSet;
@@ -15,25 +14,23 @@ public class Query {
 	private final String theURL = "jdbc:mysql://129.82.45.59:3306/cs314";
 	private final String user = "bcgood";
 	private final String pass = "830271534";
-	private final String itin = "SELECT airports.ident,airports.name,latitude,longitude,elevation_ft,"+
+	private final String itin = "SELECT airports.id,airports.name,latitude,longitude,elevation_ft,"+
 						"municipality,regions.name,countries.name,continents.name,airports.wikipedia_link,"+
 						"regions.wikipedia_link,countries.wikipedia_link FROM continents INNER JOIN"+
 						" countries ON countries.continent = continents.id INNER JOIN"+
 						" regions ON regions.iso_country = countries.code INNER JOIN" +
 						" airports ON airports.iso_region = regions.code ";
-	private final String types = "select distinct type from airports;";
-	private final String conts = "select name from continents;";
-	private final String counts = "select name from countries;";
-	private final String Wid = "WHERE airports.ident = ";
+	private final String types = "SELECT distinct type FROM airports;";
+	private final String conts = "SELECT name FROM continents;";
+	private final String counts = "SELECT name FROM countries;";
+	private final String Wid = "WHERE airports.id = ";
 	Model mod;
 	
 	
 	public Query(){
-        
         try	{ // connect to the database 
             Class.forName(driver); 
             Connection conn = DriverManager.getConnection(theURL, user, pass);	
-
 			try { // create a statement
 				Statement st = conn.createStatement();
 				
@@ -57,49 +54,21 @@ public class Query {
 		}
 	}
 	
-	//Init query
-	//Grab list of types, continents, and countries
-	//M-DB-Init
-	public Query(Model model){
-        mod = model;
-        ArrayList<String> ret = new ArrayList<String>();
-        try	{ // connect to the database 
+	//Return iso id for give continent name
+	private String continent2id(String cont){
+		String ret = "";
+		try	{//Connect to DB 
             Class.forName(driver); 
             Connection conn = DriverManager.getConnection(theURL, user, pass);	
-
-			try { // create a statement
+			try{
 				Statement st = conn.createStatement();
-				
-				try { // submit a queries
-					String query = "SELECT DISTINCT type FROM airports;";
+				try {//Grab code from name
+					String query = "SELECT id FROM continents where name like "+"'"+cont+"'"+";";
 					ResultSet rs = st.executeQuery(query);
-					try{ //Grab types
-						String types = "";
-						while(rs.next()){
-							types+=rs.getString(0)+",";
+					try{//Grab code from rs
+						if(rs.next()){
+							ret = rs.getString(1);
 						}
-						types = types.substring(0, types.length()-1);
-						ret.add(types);
-					}finally { rs.close(); }
-					query = "SELECT name FROM continents;";
-					rs = st.executeQuery(query);
-					try { //Grab continents
-						String cont = "";
-						while (rs.next()){
-							cont+=rs.getString(1)+",";
-						}
-						cont = cont.substring(0, cont.length()-1);
-						ret.add(cont);
-					} finally { rs.close(); }
-					query = "SELECT name FROM countries;";
-					rs = st.executeQuery(query);
-					try { //Grab countries
-						String count = "";
-						while (rs.next()){
-							count+=rs.getString(1)+",";
-						}
-						count = count.substring(0, count.length()-1);
-						ret.add(count);
 					} finally { rs.close(); }
 				} finally { st.close(); }
 			} finally { conn.close(); }
@@ -107,32 +76,135 @@ public class Query {
 			System.err.printf("Exception: ");
 			System.err.println(e.getMessage());
 		}
-        ret.trimToSize();
-        sendMsg((String[])ret.toArray(),"V-ST-Init");
+		return ret;
 	}
 	
-	//Grab airports for specific region
-	//M-DB-RN2IL
-	public Query(Model model, String region, boolean blah){
-        mod = model;
-        ArrayList<String> ret = new ArrayList<String>();
+	//Returns iso code for given country name
+	private String country2code(String count){
+		String ret = "";
+		try	{//Connect to DB 
+            Class.forName(driver); 
+            Connection conn = DriverManager.getConnection(theURL, user, pass);	
+			try{
+				Statement st = conn.createStatement();
+				try {//Grab code from name
+					String query = "SELECT code FROM countries where name = "+"'"+count+"'"+";";
+					ResultSet rs = st.executeQuery(query);
+					try{//Grab code from rs
+						if(rs.next()){
+							ret = rs.getString(1);
+						}
+					} finally { rs.close(); }
+				} finally { st.close(); }
+			} finally { conn.close(); }
+		} catch (Exception e) {
+			System.err.printf("Exception: ");
+			System.err.println(e.getMessage());
+		}
+		return ret;
+	}
+	
+	//Grab code from given region name and country code
+	private String region2code(String region, String country){
+		String ret = "";
+		try	{//Connect to DB 
+            Class.forName(driver); 
+            Connection conn = DriverManager.getConnection(theURL, user, pass);	
+			try{
+				Statement st = conn.createStatement();
+				try {//Grab code from name
+					String query = "SELECT code FROM regions where name = '"+region+"'";
+					//Additional condition to query if iso_country code is not blank
+					if(country.isEmpty()){
+						query+=";";
+					}
+					else{
+						query+=" and iso_country = '"+country+"';";
+					}
+					ResultSet rs = st.executeQuery(query);
+					try{//Grab code from rs
+						if(rs.next()){
+							ret = rs.getString(1);
+						}
+					} finally { rs.close(); }
+				} finally { st.close(); }
+			} finally { conn.close(); }
+		} catch (Exception e) {
+			System.err.printf("Exception: ");
+			System.err.println(e.getMessage());
+		}
+		return ret;
+	}
+	
+	private String[] continent2countries(String id){
+		ArrayList<String> ret = new ArrayList<String>();
+		try	{//Connect to DB 
+            Class.forName(driver); 
+            Connection conn = DriverManager.getConnection(theURL, user, pass);	
+			try{
+				Statement st = conn.createStatement();
+				try {//Grab code from name
+					String query = "SELECT name FROM countries where continent = '"+id+"';";
+					ResultSet rs = st.executeQuery(query);
+					try{//Grab code from rs
+						while(rs.next()){
+							ret.add(rs.getString(1));
+						}
+					} finally { rs.close(); }
+				} finally { st.close(); }
+			} finally { conn.close(); }
+		} catch (Exception e) {
+			System.err.printf("Exception: ");
+			System.err.println(e.getMessage());
+		}
+		ret.trimToSize();
+		return (String[])ret.toArray();
+	}
+	
+	//Grab region name from given iso_country code
+	private String[] country2regions(String count){
+		String iso = country2code(count);
+		ArrayList<String> ret = new ArrayList<String>();
+		try	{//Connect to DB 
+            Class.forName(driver); 
+            Connection conn = DriverManager.getConnection(theURL, user, pass);	
+			try{
+				Statement st = conn.createStatement();
+				try {//Grab code from name
+					String query = "SELECT name FROM regions where iso_country = '"+iso+"';";
+					ResultSet rs = st.executeQuery(query);
+					try{//Grab names from rs
+						while(rs.next()){
+							ret.add(rs.getString(1));
+						}
+					} finally { rs.close(); }
+				} finally { st.close(); }
+			} finally { conn.close(); }
+		} catch (Exception e) {
+			System.err.printf("Exception: ");
+			System.err.println(e.getMessage());
+		}
+		ret.trimToSize();
+		return (String[])ret.toArray();
+	}
+	
+	private String[] region2airports(String region, String type){
+		ArrayList<String> ret = new ArrayList<String>();
         try	{ // connect to the database 
             Class.forName(driver); 
             Connection conn = DriverManager.getConnection(theURL, user, pass);
 			try { // create a statement
 				Statement st = conn.createStatement();
-				
 				try { //Make list of regions
-					String query = "SELECT code FROM regions WHERE name = '"+region+"';";
+					String query = "SELECT name, id FROM airports WHERE iso_region = '"+region+"'";
+					//Add type condition to query if not empty
+					if(type.isEmpty()){
+						query+=";";
+					}
+					else{
+						query+=" and type = '"+type+"';";
+					}
 					ResultSet rs = st.executeQuery(query);
-					String code = "";
-					try { //Grab iso_country
-						rs.next();
-						code = rs.getString(1);
-					} finally { rs.close(); }
-					//System.out.println(code);
-					query = "SELECT name, ident FROM airports WHERE iso_region = '"+code+"';";
-					rs = st.executeQuery(query);
 					try { //Grab countries
 						while(rs.next()){
 							ret.add(rs.getString(1)+"-"+rs.getString(2));
@@ -146,93 +218,63 @@ public class Query {
 			System.err.println(e.getMessage());
 		}
         ret.trimToSize();
-        sendMsg((String[])ret.toArray(),"V-UP-IL");
+        return (String[]) ret.toArray();
 	}
 	
-	//Grab countries for specific continent
-	//M-DB-CT2CY
-	public Query(String continent, Model model){
+	//Init query
+	//Grab list of types, continents, and countries
+	//M-DB-INIT
+	public Query(Model model){
         mod = model;
-        ArrayList<String> ret = new ArrayList<String>();
-        try	{ // connect to the database 
-            Class.forName(driver); 
-            Connection conn = DriverManager.getConnection(theURL, user, pass);
-			try { // create a statement
-				Statement st = conn.createStatement();
-				try { //Make list of regions
-					String query = "SELECT id FROM continents WHERE name = '"+continent+"';";
-					ResultSet rs = st.executeQuery(query);
-					String code = "";
-					try { //Grab iso_country
-						rs.next();
-						code = rs.getString(1);
-					} finally { rs.close(); }
-					System.out.println(code);
-					query = "SELECT name FROM countries WHERE continent = '"+code+"';";
-					rs = st.executeQuery(query);
-					try { //Grab countries
-						while(rs.next()){
-							ret.add(rs.getString(1));
-						}
-					} finally { rs.close(); }
-					System.out.println(ret.toString());
-				} finally { st.close(); }
-			} finally { conn.close(); }
-		} catch (Exception e) {
-			System.err.printf("Exception: ");
-			System.err.println(e.getMessage());
-		}
-        ret.trimToSize();
-        sendMsg((String[])ret.toArray(),"V-UP-CY");
-	}
-	
-	//Grab regions for specific country
-	//M-DB-CY2RN
-	public Query(Model model, String country){
-        mod = model;
-        ArrayList<String> ret = new ArrayList<String>();
+        String[] ret = new String[3];
         try	{ // connect to the database 
             Class.forName(driver); 
             Connection conn = DriverManager.getConnection(theURL, user, pass);	
-
-			try { // create a statement
+			try {
 				Statement st = conn.createStatement();
-				
-				try { //Make list of regions
-					String query = "SELECT code FROM countries WHERE name = '"+country+"';";
-					ResultSet rs = st.executeQuery(query);
-					String code = "";
-					try { //Grab iso_country
-						rs.next();
-						code = rs.getString(1);
-					} finally { rs.close(); }
-					//System.out.println(code);
-					query = "SELECT name FROM regions WHERE iso_country = '"+code+"';";
-					rs = st.executeQuery(query);
-					try { //Grab regions
+				try {//Queries
+					ResultSet rs = st.executeQuery(types);
+					try{ //Grab types
+						String type = "";
 						while(rs.next()){
-							ret.add(rs.getString(1));
+							type+=rs.getString(1)+",";
 						}
+						type = type.substring(0, type.length()-1);//Trim trailing ','
+						ret[0]=type;
+					}finally { rs.close(); }
+					rs = st.executeQuery(conts);
+					try { //Grab continents
+						String cont = "";
+						while (rs.next()){
+							cont+=rs.getString(1)+",";
+						}
+						cont = cont.substring(0, cont.length()-1);//Trim trailing ','
+						ret[1]=cont;
 					} finally { rs.close(); }
-					//System.out.println(ret.toString());
+					rs = st.executeQuery(counts);
+					try { //Grab countries
+						String count = "";
+						while (rs.next()){
+							count+=rs.getString(1)+",";
+						}
+						count = count.substring(0, count.length()-1);//Trim trailing ','
+						ret[2]=count;
+					} finally { rs.close(); }
 				} finally { st.close(); }
 			} finally { conn.close(); }
 		} catch (Exception e) {
 			System.err.printf("Exception: ");
 			System.err.println(e.getMessage());
 		}
-        ret.trimToSize();
-        sendMsg((String[])ret.toArray(),"V-UP-RN");
+        sendMsg(ret,"V-ST-INIT");
 	}
-	
 	
 	//Order of itinerary query result set
 	//airport id, airport name, lat, long, elevation, municipality, regions, country, continent, 
 	//air link, region link, country link
-	
 	//Itinerary constructor
 	//M-DB-ITIN
-	public Query(Model model, String[] ids){
+	public Query(String[] ids, Model model){
 		mod = model;
         String[] ret = new String[ids.length];
         try	{ // connect to the database 
@@ -266,10 +308,9 @@ public class Query {
         sendMsg(ret,"V-ST-ITIN");
 	}
 	
-	
 	//ID query for Model trip planning
 	//M-DB-TRIP
-	public Query(Model model, String[] ids, boolean blah){
+	public Query(Model model, String[] ids){
 		mod = model;
         String[] ret = new String[ids.length];
         try	{ // connect to the database 
@@ -281,7 +322,7 @@ public class Query {
 				
 				try { // submit a query
 					for(int i=0; i<ids.length; i++){
-						String query = "SELECT ident,name,longitude,lattitude,"+"'"+ids[i]+"';";
+						String query = "SELECT id,name,longitude,lattitude,"+"'"+ids[i]+"';";
 						ResultSet rs = st.executeQuery(query);
 						
 						try { // iterate through the query results and print
@@ -306,6 +347,60 @@ public class Query {
 	private void sendMsg(String[] cont, String code){
 		Msg m = new Msg(cont, code);
 		mod.sendToPresenter(m);
+	}
+	
+	
+	//Takes comma seperated string of limits already set in GUI
+	//EX: type-large_aiports,continent-North America,country-United States,region-Texas
+	private String[] parseLimits(String limits){
+		String[] ret = {"","","",""};
+		String[] limit = limits.split(",");
+		for(int i=0; i<limit.length;i++){
+			String[] fields = limit[i].split("-");
+			switch(fields[0]){
+				case "type":{
+					ret[0] = fields[1];
+					break;
+				}
+				case "continent":{
+					ret[1] = continent2id(fields[1]);
+					break;
+				}
+				case "country":{
+					ret[2] = country2code(fields[1]);
+					break;
+				}
+				case "region":{
+					ret[3] = region2code(fields[1], ret[2]);
+					break;
+				}
+				default: break;
+			}
+		}
+		return ret;
+	}
+	
+	//Main Constructor
+	//Based of constraints give, know which query to execute and message back
+	public Query(Model model, String constraints){
+		mod=model;
+		String[] constraint = parseLimits(constraints);
+		//Constraints array, 0=type, 1=continent, 2=country, 3=region
+		//Have continent but nothing else, grab countries for that continent
+		if(!constraint[1].isEmpty() && constraint[2].isEmpty() && constraint[3].isEmpty()){
+			String[] countries = continent2countries(constraint[1]);
+			sendMsg(countries, "V-UP-CY");
+		}
+		//Have country but not region, grab all regions for that country
+		else if(!constraint[2].isEmpty()&&constraint[3].isEmpty()){
+			String[] regions = country2regions(constraint[2]);
+			sendMsg(regions, "V-UP-RN");
+		}
+		//Have region, grab all airports for specific region
+		else if(!constraint[3].isEmpty()){
+			String[] airports = region2airports(constraint[3], constraint[0]);
+			sendMsg(airports, "V-UP-IL");
+		}
 	}
 	
 	
