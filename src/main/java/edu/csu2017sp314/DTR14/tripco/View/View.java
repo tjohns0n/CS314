@@ -11,12 +11,16 @@ import javafx.stage.Stage;
 public class View extends Application {
 
     // Name of the CSV input file, sans the .csv extension 
-	private String rootName;
+	private String title;
     // Optionally display labels on the SVG
-    private boolean mileage;
+    private boolean distances;
     private boolean names;
     private int legCount;
     private boolean ids;
+    private boolean miles;
+    
+    private int totalDistance;
+    
     // ItineraryWriter and SVGWriter:
     private ItineraryWriter itinWrite;
     private ColoradoSVGWriter svgWrite;
@@ -29,42 +33,46 @@ public class View extends Application {
     /*
     View Command Line constructor
     args:
-    rootName - The name of the CSV file, with or without the .csv extension
+    title - The title chosen 
     SVGFile - The name of the input SVGFile (should be "coloradoMap.svg" for spring 1)
-    mileage - Whether or not the SVG should have labels showing the mileages of each leg of a trip
-    totalMileage - the total mileage of the trip
-    names - Whether or not the SVG should have labels showing the names of each location of a trip
-    ids - Whether or not the SVG should have labels showing the id assigned to each location of a trip
+    totalDistance - the total distance of the trip
+	labels - whether to display distances, names, and ids on the map or not
     */
     
-    public View(String rootName, String SVGFile, int totalMileage, boolean mileage, boolean names, boolean ids){
+    public View(String title, String SVGFile, int totalDistance, boolean[] labels, boolean miles){
     	legCount = 0;
     	itinWrite = new ItineraryWriter();
     	if(SVGFile == null || SVGFile.equals("null") || SVGFile.equals(""))
     		svgWrite = new ColoradoSVGWriter();
     	else
     		svgWrite = new ColoradoSVGWriter(SVGFile);
-        // For now, automatically pad the SVG with whitespace
-        //svgWrite.padSVG();
-        // Store the root of the CSV file name
-        if (rootName.substring(rootName.length()-4, rootName.length()).equals(".csv")) {
-            this.rootName = rootName.substring(0, rootName.length() - 4);
-        } else {
-            this.rootName = rootName;
-        }
-
-        // For now, automatically title and foot the SVG 
-        svgWrite.addTitle("Colorado - " + this.rootName, "maptitle");
-        svgWrite.addFooter(totalMileage + " miles", "mapfooter");
-
-        this.mileage = mileage;
-        this.names = names;
-        this.ids = ids;
+       
+        this.title = title;
+        this.totalDistance = totalDistance;
+        
+        setTitle();
+        setFooter();
+        
+        this.ids = labels[0];
+        this.distances = labels[1];
+        this.names = labels[2];
     }
     
-    //Util methods
-    public void run(){
-    	Application.launch(View.class, new String[0]);
+    private void setTitle() {
+    	String substring = title.substring(title.length() - 4).toLowerCase();
+    	if (substring.equals(".csv")) {
+    		title = title.substring(0, title.length() - 4);
+    	}
+    	
+    	svgWrite.addTitle(title, "maptitle");
+    }
+    
+    private void setFooter() {
+    	if (miles) {
+        	svgWrite.addFooter(totalDistance + " miles", "mapfooter");
+        } else {
+        	svgWrite.addFooter(totalDistance + " kilometers", "mapfooter");
+        }
     }
     
     @Override
@@ -73,7 +81,7 @@ public class View extends Application {
 	}
 
     public String getRootName() {
-    	return rootName;
+    	return title;
     }
     
     //Called by Input gui, sets options from gui, starts svgwriter, wakes up Presenter thread
@@ -95,9 +103,10 @@ public class View extends Application {
         svgWrite.addLine(coordinates, "blue", 3, true);
         itinWrite.addLeg(startLocationName, endLocationName, mileage);
 
-        if (this.mileage) {
+        if (this.distances) {
         	testString += "m";
-            svgWrite.addLineLabel(Integer.toString(mileage), "leg" + Integer.toString(legCount), coordinates);
+            svgWrite.addLineLabel(Integer.toString(mileage), "mileage" 
+            		+ Integer.toString(legCount), coordinates);
         }
 
         if (this.names) {
@@ -117,33 +126,9 @@ public class View extends Application {
      * Write the SVG and XML files once all the legs have been added
      */
     public void writeFiles() {
-        svgWrite.writeSVG(rootName + ".svg");
-        itinWrite.writeXML(rootName + ".xml");
+        svgWrite.writeSVG(title + ".svg");
+        itinWrite.writeXML(title + ".xml");
         new GenerateJavascript(getRootName());
     }
 
-    /*
-    === Likely to be removed ===
-    display: output text to the console
-    args:
-    text - The text to be printed to the console
-    */
-    
-    public String display(String text) {
-        System.out.println(text);
-        return text;
-    }
-    
-    public static void main(String[] args) throws Exception {
-    	View vw = new View();
-    	vw.run();
-//    	View v = new View("hello.csv", "coloradoMap.svg", 300, false, false, true);
-//    	v.addLeg(40, -108, "Not Denver", "id1", 39, -107, "Not CO Springs", "id2", 50);
-//    	v.addLeg(39, -107, "Not CO Springs", "id2", 40.5, -108, "Not Fort Collins", "id3", 60);
-//    	v.addLeg(40.5, -108, "Not Fort Collins", "id3", 40, -108, "Not Denver", "id1", 100);
-//    	v.writeFiles();
-    }
-
-
-	
 }

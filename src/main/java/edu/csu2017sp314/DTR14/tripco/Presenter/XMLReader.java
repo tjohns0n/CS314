@@ -28,7 +28,6 @@ public class XMLReader {
 			}
 			if(scan.hasNextLine() && !checkValid(scan.nextLine().trim(), "<destinations")) break;
 			while(scan.hasNextLine() && checkValid(temp = scan.nextLine().trim(), "<id")){
-
 				temp = temp.substring(temp.indexOf('>')+1);
 				temp = temp.substring(0, temp.indexOf('<'));
 				subs.add(temp.trim());

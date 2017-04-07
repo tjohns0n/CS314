@@ -30,6 +30,18 @@ public class SVGWriterTest {
 		test = s.mapPoints(-102, 37);
 		// -102, 37 (CO bottom right corner) should map to 992 + 37, 709 + 37 (bottom right corner of CO + offset of top left)
 		assertTrue(test[0] == (993 + 37) && test[1] == (709 + 37));
+		
+		WorldMapWriter w = new WorldMapWriter();
+		test = w.mapPoints(-109, -41);
+		assertTrue(test[0] == (71 * 4) && test[1] == 131 * 4);
+		test = w.mapPoints(109, 41);
+		assertTrue(test[0] == 289 * 4 && test[1] == 196);
+		test = w.mapPoints(0, 0);
+		assertTrue(test[0] == 720 && test[1] == 360);
+		test = w.mapPoints(-180, 90);
+		assertTrue(test[0] == 0 && test[1] == 0);
+		test = w.mapPoints(180, -90);
+		assertTrue(test[0] == 1440 && test[1] == 720);
 	}
 	
 	@Test
@@ -64,6 +76,11 @@ public class SVGWriterTest {
 		assertTrue(s.footer.get(0).contains("font-size=\"24"));
 		assertTrue(s.footer.get(0).contains(">Test Title<"));
 		assertTrue(s.footer.get(0).contains("id=\"testid"));
+		WorldMapWriter w = new WorldMapWriter();
+		w.addTitle("Test", "test");
+		assertTrue(w.content.get(0).contains("font-size=\"24"));
+		assertTrue(w.content.get(0).contains("x=\"720"));
+		assertTrue(w.content.get(0).contains("y=\"30"));
 	}
 	
 	@Test
@@ -72,7 +89,12 @@ public class SVGWriterTest {
 		s.addFooter("Test Footer", "testid");
 		assertTrue(s.footer.get(1).contains("font-size=\"24"));
 		assertTrue(s.footer.get(1).contains(">Test Footer<"));
-		assertTrue(s.footer.get(1).contains("id=\"testid"));		
+		assertTrue(s.footer.get(1).contains("id=\"testid"));	
+		WorldMapWriter w = new WorldMapWriter();
+		w.addFooter("Test", "test");
+		assertTrue(w.content.get(0).contains("font-size=\"24"));
+		assertTrue(w.content.get(0).contains("x=\"720"));
+		assertTrue(w.content.get(0).contains("y=\"700"));
 	}
 
 	@Test
@@ -99,7 +121,6 @@ public class SVGWriterTest {
 	public void testWriteSVG() {
 		ColoradoSVGWriter s = new ColoradoSVGWriter();
 		ArrayList<String> testData = s.writeSVG("test0.svg");
-		System.out.println(testData);
 		assertTrue(testData.get(0).equals("<?xml version=\"1.0\"?>"));
 		assertTrue(testData.get(1).contains("<svg"));
 		assertTrue(testData.get(2).equals("</svg>"));
@@ -118,7 +139,6 @@ public class SVGWriterTest {
 	public void testNewGroup() {
 		ColoradoSVGWriter s = new ColoradoSVGWriter();
 		s.newGroup("Test group");
-		System.out.println(s.content);
 		assertTrue(s.content.get(0).equals("<g id=\"Test group\">"));
 		assertTrue(s.content.get(1).equals("<title>Test group</title>"));
 	}
@@ -128,6 +148,24 @@ public class SVGWriterTest {
 		ColoradoSVGWriter s = new ColoradoSVGWriter();
 		s.endGroup();
 		assertTrue(s.content.get(0).equals("</g>"));
+	}
+	
+	@Test
+	public void testAddWorldLine() {
+		WorldMapWriter w = new WorldMapWriter();
+		boolean wrap;
+		wrap = w.addWorldLine(new double[] {-179, 0, 179, 0});
+		assertTrue(wrap);
+		assertTrue(w.content.size() == 2);
+		wrap = w.addWorldLine(new double[] {-1, 0, 1, 0});
+		assertFalse(wrap);
+		assertTrue(w.content.size() == 3);
+		wrap = w.addWorldLine(new double[] {0, 0, 180.25, 0});
+		assertTrue(wrap);
+		wrap = w.addWorldLine(new double[] {-180.25, 0, 0, 0});
+		assertTrue(wrap);
+		wrap = w.addWorldLine(new double[] {-180, 0, 0, 0});
+		assertFalse(wrap);
 	}
 
 }

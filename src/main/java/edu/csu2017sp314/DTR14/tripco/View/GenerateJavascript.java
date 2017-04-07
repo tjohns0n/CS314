@@ -37,7 +37,6 @@ public class GenerateJavascript {
 
         try {
         	String dir = System.getProperty("user.dir");
-        	System.out.println(dir);
         	BufferedWriter write;
         	if (dir.contains("src")) {
         		write = new BufferedWriter(new FileWriter(dir + "/main/resources/View.js"));
