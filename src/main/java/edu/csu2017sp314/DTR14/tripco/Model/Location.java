@@ -57,15 +57,6 @@ public class Location{
 		this.extras = "";
 		this.template = "";
 	}
-	
-	protected Location(String[] extracts){
-		this.name = extracts[0];
-		this.latitude = extracts[1];
-		this.longitude = extracts[2];
-		this.idt = extracts[3];
-		this.extras = extracts[4];
-		this.template = extracts[5];
-	}
 
 	// showLoc - Output interface function
 	// # show the location itself information in specific format

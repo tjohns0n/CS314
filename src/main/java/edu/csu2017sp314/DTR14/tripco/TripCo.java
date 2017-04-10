@@ -113,7 +113,19 @@ public class TripCo{
 					_svg += arg;
 			} else if(arg.length() == 2 && arg.charAt(0) == '-'){
 				//Switch for optional flags, so order don't matter
-				caseHandler(arg, opts);
+				switch(arg.charAt(1)){
+					case 'g': opts[0] = true; break;
+					case 'i': opts[1] = true; break;
+					case 'm': opts[2] = true; break;
+					case 'n': opts[3] = true; break;
+					case '2': opts[4] = true; break;
+					case '3': opts[5] = true; break;
+					default:{
+						System.out.println("Argument: '" +arg+"' not a recognized argument");
+						System.out.println("Argument: '" +arg+"' will be ignored");
+						break;
+					}
+				}
 			}else {
 				System.out.println("Argument: '" +arg+"' not a recognized argument");
 				System.out.println("Argument: '" +arg+"' will be ignored");
@@ -129,21 +141,4 @@ public class TripCo{
 		TripCo tc = new TripCo(_xml, _svg, opts, files);
 		tc.initiate();
 	}
-	
-	static void caseHandler(String arg, boolean[] opts){
-		switch(arg.charAt(1)){
-			case 'g': opts[0] = true; break;
-			case 'i': opts[1] = true; break;
-			case 'm': opts[2] = true; break;
-			case 'n': opts[3] = true; break;
-			case '2': opts[4] = true; break;
-			case '3': opts[5] = true; break;
-			default:{
-				System.out.println("Argument: '" +arg+"' not a recognized argument");
-				System.out.println("Argument: '" +arg+"' will be ignored");
-				break;
-			}
-		}
-	}
-
 }

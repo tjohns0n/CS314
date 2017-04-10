@@ -70,6 +70,9 @@ public class ItineraryWriter {
         // Create XMLElement objects for each element of a leg
         XMLElement l = new XMLElement("leg", "");
         XMLElement seq = new XMLElement("sequence", "");
+        XMLElement start = new XMLElement("start", "");
+        XMLElement finish = new XMLElement("finish", "");
+        XMLElement miles = new XMLElement("mileage", "");
 
         // Add the elements, with additional whitespace for nicer formatting
         leg.add("\n");
@@ -79,13 +82,18 @@ public class ItineraryWriter {
         // Increment numLegs: 
         leg.add(Integer.toString(++numLegs));
         leg.add(seq.getEnd());
-        
-        addLegPartion(leg, "start", replaceName(startLocation));
-
-        addLegPartion(leg, "finish", replaceName(endLocation));
-
-        addLegPartion(leg, "miles", Integer.toString(mileage));
-        
+        leg.add("\n");
+        leg.add(start.getStart());
+        leg.add(replaceName(startLocation));
+        leg.add(start.getEnd());
+        leg.add("\n");
+        leg.add(finish.getStart());
+        leg.add(replaceName(endLocation));
+        leg.add(finish.getEnd());
+        leg.add("\n");
+        leg.add(miles.getStart());
+        leg.add(Integer.toString(mileage));
+        leg.add(miles.getEnd());
         leg.add("\n");
         leg.add(l.getEnd());
         leg.add("\n");
@@ -94,14 +102,7 @@ public class ItineraryWriter {
         // Return the leg (mostly for JUnit)
     	return leg;
     }
-    
-    private void addLegPartion(ArrayList<String> leg, String key, String value){
-    	XMLElement xmlE = new XMLElement(key, "");
-    	leg.add("\n");
-        leg.add(xmlE.getStart());
-        leg.add(value);
-        leg.add(xmlE.getEnd());
-    }
+
     public ArrayList<String> writeXML(String filename) {
         // Add all of the XML to a single ArrayList:
         ArrayList<String> data = new ArrayList<String>();
