@@ -12,7 +12,7 @@ public class Model{
 	// args: location list 	
 	// # have a reference of location list
 	// # a reference of location list used for external interface
-	private LocationList locList;
+	private static LocationList locList;
 
 	private ShortestRouteCalculator src;
 	private Presenter prez;

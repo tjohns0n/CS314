@@ -414,7 +414,8 @@ public class Query {
 	public Query(String token, Model model){
 		mod=model;
 		mod = model;
-		ArrayList<String> ret = new ArrayList<String>();
+		String ret0 = "";
+		String ret1 = "";
         try	{ // connect to the database 
             Class.forName(driver); 
             Connection conn = DriverManager.getConnection(theURL, user, pass);	
@@ -426,14 +427,16 @@ public class Query {
 						String query = "SELECT name,id FROM airports WHERE name like '%"+token+"%' ";
 						query+="or municipality like '%"+token+"%' ";
 						query+="or id like '%"+token+"%' ";
-						query+="or municipality like '%"+token+"%' ";
 						query+="or keywords like '%"+token+"%' ";
 						query+=";";
 						ResultSet rs = st.executeQuery(query);
 					try { // iterate through the query results and print
 						while (rs.next()){
-							ret.add(rs.getString(1)+","+rs.getString(2));
+							ret0+=rs.getString(1)+",";
+							ret1+=rs.getString(2)+",";
 						}
+						ret0 = ret0.substring(0, ret0.length()-1);//Remove trailing ,
+						ret1 = ret1.substring(0, ret1.length()-1);
 					} finally { rs.close(); }
 				} finally { st.close(); }
 			} finally { conn.close(); }
@@ -441,8 +444,9 @@ public class Query {
 			System.err.printf("Exception: ");
 			System.err.println(e.getMessage());
 		}
-        ret.trimToSize();
-		String[] r = ret.toArray(new String[ret.size()]);
+		String[] r = {"","","","","",""};
+		r[4] = ret0;
+		r[5] = ret1;
         mess = new Msg(r,"V-ST-SRCH");
 	}
 	
@@ -452,7 +456,8 @@ public class Query {
 	
 	
 	public static void main(String[] args){
-		Query q = new Query(null, "country-United States");
+		Query q = new Query("Dallas",null);
+		System.out.println(Arrays.toString(q.mess.content));
 	}
 	
 	
