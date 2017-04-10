@@ -32,6 +32,9 @@ public class Model{
 		prez = present;
 		locList = new LocationList();
 	}
+	public Model(){
+		locList = new LocationList();
+	}
 
 	public boolean planTrip(boolean run2Opt, boolean run3Opt, String[] selection){
 		//cvsr.initiate(selection);
@@ -107,12 +110,18 @@ public class Model{
 				ret = q.getMsg();
 				break;
 			}
+			case "SRCH":{
+				Query q = new Query(msg.content[0], this);
+				ret = q.getMsg();
+				break;
+			}
 			//M-DB-TRIP
 			//content[] should be array of selected airport ids (ident)
 			case "TRIP":{
 				Query q = new Query(this, msg.content);
 				//Start trip planning
 				//ITIN query and send to itin writer
+				
 				break;
 			}
 			default: break;

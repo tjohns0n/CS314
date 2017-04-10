@@ -139,7 +139,7 @@ public class Query {
 	}
 	
 	private String[] continent2countries(String id){
-		ArrayList<String> ret = new ArrayList<String>();
+		String[] ret = {"","","","",""};
 		try	{//Connect to DB 
             Class.forName(driver); 
             Connection conn = DriverManager.getConnection(theURL, user, pass);	
@@ -150,8 +150,9 @@ public class Query {
 					ResultSet rs = st.executeQuery(query);
 					try{//Grab code from rs
 						while(rs.next()){
-							ret.add(rs.getString(1));
+							ret[2]+=rs.getString(1)+",";
 						}
+						ret[2]=ret[2].substring(0, ret[2].length()-1);
 					} finally { rs.close(); }
 				} finally { st.close(); }
 			} finally { conn.close(); }
@@ -159,14 +160,12 @@ public class Query {
 			System.err.printf("Exception: ");
 			System.err.println(e.getMessage());
 		}
-		ret.trimToSize();
-		String[] r = ret.toArray(new String[ret.size()]);
-		return r;
+		return ret;
 	}
 	
 	//Grab region name from given iso_country code
 	private String[] country2regions(String count){
-		ArrayList<String> ret = new ArrayList<String>();
+		String[] ret = {"","","","",""};
 		try	{//Connect to DB 
             Class.forName(driver); 
             Connection conn = DriverManager.getConnection(theURL, user, pass);	
@@ -177,8 +176,9 @@ public class Query {
 					ResultSet rs = st.executeQuery(query);
 					try{//Grab names from rs
 						while(rs.next()){
-							ret.add(rs.getString(1));
+							ret[3]+=rs.getString(1)+",";
 						}
+						ret[3]=ret[3].substring(0, ret[3].length()-1);
 					} finally { rs.close(); }
 				} finally { st.close(); }
 			} finally { conn.close(); }
@@ -186,13 +186,11 @@ public class Query {
 			System.err.printf("Exception: ");
 			System.err.println(e.getMessage());
 		}
-		ret.trimToSize();
-		String[] r = ret.toArray(new String[ret.size()]);
-		return r;
+		return ret;
 	}
 	
 	private String[] region2airports(String region, String type){
-		ArrayList<String> ret = new ArrayList<String>();
+		String[] ret = {"","","","",""};
         try	{ // connect to the database 
             Class.forName(driver); 
             Connection conn = DriverManager.getConnection(theURL, user, pass);
@@ -210,8 +208,9 @@ public class Query {
 					ResultSet rs = st.executeQuery(query);
 					try { //Grab countries
 						while(rs.next()){
-							ret.add(rs.getString(1)+"-"+rs.getString(2));
+							ret[4]+=rs.getString(1)+"-"+rs.getString(2)+",";
 						}
+						ret[4] = ret[4].substring(0, ret[4].length()-1);
 					} finally { rs.close(); }
 					System.out.println(ret.toString());
 				} finally { st.close(); }
@@ -220,9 +219,7 @@ public class Query {
 			System.err.printf("Exception: ");
 			System.err.println(e.getMessage());
 		}
-        ret.trimToSize();
-		String[] r = ret.toArray(new String[ret.size()]);
-		return r;
+		return ret;
 	}
 	
 	//Init query
@@ -230,7 +227,7 @@ public class Query {
 	//M-DB-INIT
 	public Query(Model model){
         mod = model;
-        String[] ret = new String[3];
+        String[] ret = {"","","","",""};
         try	{ // connect to the database 
             Class.forName(driver); 
             Connection conn = DriverManager.getConnection(theURL, user, pass);	
@@ -446,7 +443,7 @@ public class Query {
 		}
         ret.trimToSize();
 		String[] r = ret.toArray(new String[ret.size()]);
-        sendMsg(r,"V-ST-SRCH");
+        mess = new Msg(r,"V-ST-SRCH");
 	}
 	
 	public Msg getMsg(){
