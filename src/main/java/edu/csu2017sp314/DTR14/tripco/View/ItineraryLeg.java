@@ -133,6 +133,18 @@ public class ItineraryLeg {
 		createString();
 	}
 	
+	public String[] getLocation1() {
+		return loc1;
+	}
+	
+	public String[] getLocation2() {
+		return loc2;
+	}
+	
+	public int getMileage() {
+		return mileage;
+	}
+	
 	public static void main(String[] args) {
 		String[] location = {
 			"KDEN", "Denver International Airport",
