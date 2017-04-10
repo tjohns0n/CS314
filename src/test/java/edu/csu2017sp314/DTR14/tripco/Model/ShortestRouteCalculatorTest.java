@@ -2,6 +2,8 @@ package edu.csu2017sp314.DTR14.tripco.Model;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+
 import org.junit.Test;
 
 public class ShortestRouteCalculatorTest{
@@ -145,7 +147,7 @@ public class ShortestRouteCalculatorTest{
 			src.opt_route[i][0] = i;
 		}
 		src.opt_route[5][0] = 0;
-		src.rebuildDistances();
+		src.rebuildDistances(src.opt_route);
 		double distance = 0;
 		for (int i = 0; i < 4; i++) {
 			distance += src.dis_matrix[i][i + 1];
@@ -162,6 +164,92 @@ public class ShortestRouteCalculatorTest{
 		
 		double dis = src.getDistance(0, 1);
 		assertTrue(dis < 0.0001 && dis > -0.0001);
+	}
+	
+	@Test
+	public void testCopyElements() {
+		ShortestRouteCalculator src = new ShortestRouteCalculator(new LocationList(), 0);
+		src.opt_route = new int[10][2];
+		src.test_route = new int[10][2];
+		for (int i = 0; i < 10; i++) {
+			src.opt_route[i][0] = i + 1;
+			src.test_route[i][0] = i + 2;
+		}
+		src.copyElements(0, 0, 10, false);
+		for (int i = 0; i < 10; i++) {
+			assertTrue(src.test_route[i][0] == src.opt_route[i][0]);
+		}
+		src.copyElements(0, 0, 10, true);
+		int offset = 9;
+		for (int i = 0; i < 10; i++) {
+			assertTrue(src.test_route[i][0] == src.opt_route[i + offset][0]);
+			offset -= 2;
+		}
+		src.copyElements(5, 0, 5, false);
+		src.copyElements(0, 5, 0, true);
+		offset = 4;
+		for (int i = 0; i < 5; i++) {
+			assertTrue(src.test_route[i][0] == src.opt_route[i + 5][0]);
+			assertTrue(src.test_route[i + 5][0] == src.opt_route[i + offset][0]);
+			offset -= 2;
+		}
+	}
+	
+	@Test
+	public void testDo3OptSwap() {
+		ShortestRouteCalculator src = new ShortestRouteCalculator(new LocationList(), 0);
+		src.opt_route = new int[10][2];
+		src.test_route = new int[10][2];
+		for (int i = 0; i < 10; i++) {
+			src.opt_route[i][0] = i + 1;
+			src.test_route[i][0] = i + 1;
+		}
+		src.opt_route[9][0] = 1;
+		src.test_route[9][0] = 1;
+		src.do3OptSwap(0, 3, 9, 1);
+		
+		for (int i = 0; i < 10; i++) {
+			System.out.print(src.test_route[i][0] + " ");
+		}
+		System.out.println();
+		
+		src.opt_route = new int[10][2];
+		src.test_route = new int[10][2];
+		for (int i = 0; i < 9; i++) {
+			src.opt_route[i][0] = i + 1;
+			src.test_route[i][0] = i + 1;
+		}
+		src.opt_route[9][0] = 1;
+		src.test_route[9][0] = 1;
+		src.do3OptSwap(0, 3, 9, 2);
+		for (int i = 0; i < 10; i++) {
+			System.out.print(src.test_route[i][0] + " ");
+		}
+		src.opt_route = new int[10][2];
+		src.test_route = new int[10][2];
+		for (int i = 0; i < 9; i++) {
+			src.opt_route[i][0] = i + 1;
+			src.test_route[i][0] = i + 1;
+		}
+		src.opt_route[9][0] = 1;
+		src.test_route[9][0] = 1;
+		src.do3OptSwap(0, 3, 9, 3);
+		System.out.println();
+		for (int i = 0; i < 10; i++)
+		System.out.print(src.test_route[i][0] + " ");
+		
+		src.opt_route = new int[10][2];
+		src.test_route = new int[10][2];
+		for (int i = 0; i < 10; i++) {
+			src.opt_route[i][0] = i + 1;
+			src.test_route[i][0] = i + 1;
+		}
+		src.opt_route[9][0] = 1;
+		src.test_route[9][0] = 1;
+		src.do3OptSwap(0, 3, 9, 4);
+		System.out.println();
+		for (int i = 0; i < 10; i++)
+			System.out.print(src.test_route[i][0] + " ");
 	}
 }
 
