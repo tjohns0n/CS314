@@ -28,16 +28,14 @@ public class Model{
 		prez = null;
 	}
 	
-	public Model(Presenter present, String csvFileName){
+	public Model(Presenter present){
 		prez = present;
 		locList = new LocationList();
-		cvsr 	= new CSVReader(csvFileName, locList);
 	}
 
 	public boolean planTrip(boolean run2Opt, boolean run3Opt, String[] selection){
 		//cvsr.initiate(selection);
 		src = new ShortestRouteCalculator(locList, 0);
-		
 		if (run3Opt) {
 			src.findBestNearestNeighbor(true, true);
 		} else if (run2Opt) {
@@ -77,31 +75,36 @@ public class Model{
 		}
 	}
 	
-	public void sendQuery(Msg msg){
+	public Msg sendQuery(Msg msg){
 		String[] codes = msg.code.split("-");
 		//Switch based on DB code
+		Msg ret = null;
 		switch(codes[2]){
 			//M-DB-INIT
 			case "INIT":{
 				Query q = new Query(this);
+				ret = q.getMsg();
 				break;
 			}
 			//M-DB-CN2CY
 			//content[] should have a single String with constraints
 			case "CT2CY":{
 				Query q = new Query(this, msg.content[0]);
+				ret = q.getMsg();
 				break;
 			}
 			//M-DB-CY2RN
 			//content[] should have a single String with name of country
 			case "CY2RN":{
 				Query q = new Query(this, msg.content[0]);
+				ret = q.getMsg();
 				break;
 			}
 			//M-DB-RN2IL
 			//content[] should have a single String with constraints
 			case "RN2IL":{
 				Query q = new Query(this, msg.content[0]);
+				ret = q.getMsg();
 				break;
 			}
 			//M-DB-TRIP
@@ -114,6 +117,7 @@ public class Model{
 			}
 			default: break;
 		}
+		return ret;
 	}
 	
 	

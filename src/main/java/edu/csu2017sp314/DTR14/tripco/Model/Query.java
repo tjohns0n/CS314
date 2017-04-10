@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.sql.ResultSet;
 import edu.csu2017sp314.DTR14.tripco.Presenter.Msg;
 
@@ -24,7 +25,8 @@ public class Query {
 	private final String conts = "SELECT name FROM continents;";
 	private final String counts = "SELECT name FROM countries;";
 	private final String Wid = "WHERE airports.id = ";
-	Model mod;
+	public Model mod;
+	private Msg mess;
 	
 	
 	public Query(){
@@ -158,12 +160,12 @@ public class Query {
 			System.err.println(e.getMessage());
 		}
 		ret.trimToSize();
-		return (String[])ret.toArray();
+		String[] r = ret.toArray(new String[ret.size()]);
+		return r;
 	}
 	
 	//Grab region name from given iso_country code
 	private String[] country2regions(String count){
-		String iso = country2code(count);
 		ArrayList<String> ret = new ArrayList<String>();
 		try	{//Connect to DB 
             Class.forName(driver); 
@@ -171,7 +173,7 @@ public class Query {
 			try{
 				Statement st = conn.createStatement();
 				try {//Grab code from name
-					String query = "SELECT name FROM regions where iso_country = '"+iso+"';";
+					String query = "SELECT name FROM regions where iso_country = '"+count+"';";
 					ResultSet rs = st.executeQuery(query);
 					try{//Grab names from rs
 						while(rs.next()){
@@ -185,7 +187,8 @@ public class Query {
 			System.err.println(e.getMessage());
 		}
 		ret.trimToSize();
-		return (String[])ret.toArray();
+		String[] r = ret.toArray(new String[ret.size()]);
+		return r;
 	}
 	
 	private String[] region2airports(String region, String type){
@@ -218,7 +221,8 @@ public class Query {
 			System.err.println(e.getMessage());
 		}
         ret.trimToSize();
-        return (String[]) ret.toArray();
+		String[] r = ret.toArray(new String[ret.size()]);
+		return r;
 	}
 	
 	//Init query
@@ -266,7 +270,8 @@ public class Query {
 			System.err.printf("Exception: ");
 			System.err.println(e.getMessage());
 		}
-        sendMsg(ret,"V-ST-INIT");
+        mess = new Msg(ret, "V-ST-INIT");
+        //sendMsg(ret,"V-ST-INIT");
 	}
 	
 	//Order of itinerary query result set
@@ -305,7 +310,8 @@ public class Query {
 			System.err.printf("Exception: ");
 			System.err.println(e.getMessage());
 		}
-        sendMsg(ret,"V-ST-ITIN");
+        mess = new Msg(ret, "V-ST-ITIN");
+        //sendMsg(ret,"V-ST-ITIN");
 	}
 	
 	//ID query for Model trip planning
@@ -389,24 +395,67 @@ public class Query {
 		//Have continent but nothing else, grab countries for that continent
 		if(!constraint[1].isEmpty() && constraint[2].isEmpty() && constraint[3].isEmpty()){
 			String[] countries = continent2countries(constraint[1]);
-			sendMsg(countries, "V-UP-CY");
+			//sendMsg(countries, "V-UP-CY");
+			mess = new Msg(countries, "V-UP-CY");
 		}
 		//Have country but not region, grab all regions for that country
 		else if(!constraint[2].isEmpty()&&constraint[3].isEmpty()){
+			System.out.println(constraint[2]);
 			String[] regions = country2regions(constraint[2]);
-			sendMsg(regions, "V-UP-RN");
+			//sendMsg(regions, "V-UP-RN");
+			mess = new Msg(regions, "V-UP-RN");
 		}
 		//Have region, grab all airports for specific region
 		else if(!constraint[3].isEmpty()){
 			String[] airports = region2airports(constraint[3], constraint[0]);
-			sendMsg(airports, "V-UP-IL");
+			//sendMsg(airports, "V-UP-IL");
+			mess = new Msg(airports, "V-UP-IL");
 		}
 	}
 	
+	//Search Query for given search token
+	public Query(String token, Model model){
+		mod=model;
+		mod = model;
+		ArrayList<String> ret = new ArrayList<String>();
+        try	{ // connect to the database 
+            Class.forName(driver); 
+            Connection conn = DriverManager.getConnection(theURL, user, pass);	
+
+			try { // create a statement
+				Statement st = conn.createStatement();
+				
+				try { // submit a query
+						String query = "SELECT name,id FROM airports WHERE name like '%"+token+"%' ";
+						query+="or municipality like '%"+token+"%' ";
+						query+="or id like '%"+token+"%' ";
+						query+="or municipality like '%"+token+"%' ";
+						query+="or keywords like '%"+token+"%' ";
+						query+=";";
+						ResultSet rs = st.executeQuery(query);
+					try { // iterate through the query results and print
+						while (rs.next()){
+							ret.add(rs.getString(1)+","+rs.getString(2));
+						}
+					} finally { rs.close(); }
+				} finally { st.close(); }
+			} finally { conn.close(); }
+		} catch (Exception e) {
+			System.err.printf("Exception: ");
+			System.err.println(e.getMessage());
+		}
+        ret.trimToSize();
+		String[] r = ret.toArray(new String[ret.size()]);
+        sendMsg(r,"V-ST-SRCH");
+	}
+	
+	public Msg getMsg(){
+		return mess;
+	}
 	
 	
 	public static void main(String[] args){
-		//Query q = new Query("Texas");
+		Query q = new Query(null, "country-United States");
 	}
 	
 	
