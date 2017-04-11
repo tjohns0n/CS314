@@ -5,6 +5,8 @@ Creates and displays viewable files and pages from data provided by the Presente
 
 package edu.csu2017sp314.DTR14.tripco.View;
 
+import edu.csu2017sp314.DTR14.tripco.Presenter.Message;
+import edu.csu2017sp314.DTR14.tripco.Presenter.Presenter;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -24,6 +26,8 @@ public class View extends Application {
     // ItineraryWriter and SVGWriter:
     private ItineraryWriter itinWrite;
     private ColoradoSVGWriter svgWrite;
+    
+    private static Presenter prez = new Presenter();
 
     //Empty constructor, for javafx Application compliance
     public View(){
@@ -58,6 +62,10 @@ public class View extends Application {
         this.names = labels[2];
     }
     
+    public Message setMsg(Message msg){
+    	return prez.sendMessage(msg);
+    }
+
     private void setTitle() {
     	String substring = title.substring(title.length() - 4).toLowerCase();
     	if (substring.equals(".csv")) {
