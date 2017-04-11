@@ -8,13 +8,6 @@ public class Subset {
 		this.id = id;
 		this.name = name;
 	}
-
-	public Subset(String content){
-		String[] parts = content.split(",");
-		this.id = parts[0];
-		this.name = parts[1];
-	}
-	
 	public String getId(){
 		return id;
 	}

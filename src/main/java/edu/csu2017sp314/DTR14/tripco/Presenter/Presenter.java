@@ -3,9 +3,7 @@
 //Takes ArrayList of files and boolean array for options
 package edu.csu2017sp314.DTR14.tripco.Presenter;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -22,21 +20,20 @@ public class Presenter {
     //Optional argument booleans
 
     // boolean[] opt = {_id, _mileage, _name, _2opt, _3opt, _gui, _unit};
-    private boolean[] options;
-
+    private static boolean[] options;
     private static Model model = new Model();
     private static View view = new View();
-    private String _svg;
-    private String _xml;
+    private static String _svg;
+    private static String _xml;
     private String[] subSet;
     private String unit;
 
     public Presenter(ArrayList<File> files, String _xml, String _svg, boolean[] options) {
         this.files = files;
-        this.options = options;
-        this._svg = _svg;
-        this._xml = _xml;
-        if(this.options[6])
+        Presenter.options = options;
+        Presenter._svg = _svg;
+        Presenter._xml = _xml;
+        if(Presenter.options[6])
         	this.unit="Km";
         else
         	this.unit = "Miles";
@@ -44,7 +41,7 @@ public class Presenter {
 
     public Presenter(ArrayList<File> files) {
         this.files = files;
-        options = new boolean[6];
+        options = new boolean[7];
         Arrays.fill(options, false);
     }
     
@@ -53,9 +50,7 @@ public class Presenter {
 	}
 
     public Message sendMessage(Message msg){
-    	System.out.println("Presenter received");
-    	String[] codes = msg.code.split("-");
-    	return model.sendQuery(msg);
+    	return model.sendMessage(msg);
     }
     
     public void run() throws IOException {
@@ -77,9 +72,9 @@ public class Presenter {
         else subSet = new XMLReader().readSelectFile(_xml, csvFileName);
         if (options[5] == true) {
             // if GUI
+        	files.add(new File("GUIItinerary.csv"));
             Application.launch(View.class, new String[0]);
-            gui_FileHandler();
-            if (subSet.length == 0) subSet = new XMLReader().readSelectFile(_xml, csvFileName);
+            subSet = new String[0];
         }
         else{
         	model.sendToModel(new Message(subSet, "M-DB-TRIP"));
@@ -101,28 +96,6 @@ public class Presenter {
         view = new View(files.get(0).getName(), _svg, totalMileage, label, options[1]);
         viewItin(route);
         viewWriter(route);
-        
-    }
-    
-    private void gui_FileHandler() throws IOException{
-        BufferedReader br = new BufferedReader(new FileReader("GUI_OUTPUT.txt"));
-        try {
-            if(files.isEmpty()) files.add(new File(br.readLine()));
-            else br.readLine();
-            if(_xml.equals("")) _xml = br.readLine();
-            else br.readLine();
-            if(_svg.equals("")) _svg = br.readLine();
-            else br.readLine();
-            options[0] = br.readLine().equals("true");
-            options[1] = br.readLine().equals("true");
-            options[2] = br.readLine().equals("true");
-            options[3] = br.readLine().equals("true");
-            options[4] = br.readLine().equals("true");
-            subSet = br.readLine().split(",");
-        } finally {
-            br.close();
-        }   
-        new File("GUI_OUTPUT.txt").delete();
     }
     
     private void viewWriter(String[][] route){
@@ -156,7 +129,7 @@ public class Presenter {
     		String[] info = route[i][0].split(",");
     		ids[i] = info[4];
     	}
-    	Message m = model.sendQuery(new Message(ids, "M-DB-ITIN"));
+    	Message m = model.sendMessage(new Message(ids, "M-DB-ITIN"));
     	for(int j=0;j<m.content.length-1;j++){
     		 String[] essentials1 = route[j][0].split(",");
              String[] essentials2 = route[j + 1][0].split(",");
@@ -187,7 +160,7 @@ public class Presenter {
     }
     
     private void printlines(){
-      System.out.println("csv File = " + files.get(0).getName());
+      //System.out.println("csv File = " + files.get(0).getName());
       System.out.println("svg File = " + _svg);
       System.out.println("xml File = " + _xml);
       System.out.println("_i = " + options[0]);
@@ -198,4 +171,16 @@ public class Presenter {
       for(int i = 0; i < subSet.length; i++)
           System.out.println("subSet = " + subSet[i]);
     }
+  
+	public static void setOptions(boolean[] options) {
+		Presenter.options = options;
+	}
+
+	public static void set_svg(String _svg) {
+		Presenter._svg = _svg;
+	}
+
+	public static void set_xml(String _xml) {
+		Presenter._xml = _xml;
+	}
 }

@@ -22,7 +22,7 @@ public class TripCo{
 	private boolean _name;		//-n
 	private boolean _2opt;		//-2
 	private boolean _3opt;		//-3
-	private boolean _km;		//-k or -m
+	private boolean _kilo;
 	//Std usage message
 	private static void usage(){
 		System.out.println("TripCo is a trip planning program that creates the shortest trip from a given list of locations");
@@ -44,7 +44,7 @@ public class TripCo{
 		_name = false;
 		_2opt = false;
 		_3opt = false;
-		_km = false;
+		_kilo = false;
 		files = new ArrayList<File>();
 	}
 	
@@ -60,7 +60,7 @@ public class TripCo{
 		this._name = opts[3];
 		this._2opt = opts[4];
 		this._3opt = opts[5];
-		this._km = opts[6];
+		this._kilo = opts[6];
 		this.files = files;
 	}
 
@@ -76,7 +76,7 @@ public class TripCo{
 	}
 
 	public void initiate() throws FileNotFoundException, Exception{
-		boolean[] opt = {_id, _mileage, _name, _2opt, _3opt, _gui, _km};
+		boolean[] opt = {_id, _mileage, _name, _2opt, _3opt, _gui,_kilo};
 		//Instantiate Presenter, put in running loop to check for needed updates
 		Presenter present = new Presenter(files, _xml, _svg, opt);
         
@@ -116,21 +116,7 @@ public class TripCo{
 					_svg += arg;
 			} else if(arg.length() == 2 && arg.charAt(0) == '-'){
 				//Switch for optional flags, so order don't matter
-				switch(arg.charAt(1)){
-					case 'g': opts[0] = true; break;
-					case 'i': opts[1] = true; break;
-					case 'd': opts[2] = true; break;
-					case 'n': opts[3] = true; break;
-					case '2': opts[4] = true; break;
-					case '3': opts[5] = true; break;
-					case 'k': opts[6] = true; break;
-					case 'm': opts[6] = false; break;
-					default:{
-						System.out.println("Argument: '" +arg+"' not a recognized argument");
-						System.out.println("Argument: '" +arg+"' will be ignored");
-						break;
-					}
-				}
+				caseHandler(arg, opts);
 			}else {
 				System.out.println("Argument: '" +arg+"' not a recognized argument");
 				System.out.println("Argument: '" +arg+"' will be ignored");
@@ -146,4 +132,22 @@ public class TripCo{
 		TripCo tc = new TripCo(_xml, _svg, opts, files);
 		tc.initiate();
 	}
+	
+	static void caseHandler(String arg, boolean[] opts){
+		switch(arg.charAt(1)){
+			case 'g': opts[0] = true; break;
+			case 'i': opts[1] = true; break;
+			case 'm': opts[2] = true; break;
+			case 'n': opts[3] = true; break;
+			case '2': opts[4] = true; break;
+			case '3': opts[5] = true; break;
+			case 'k': opts[6] = true; break;
+			default:{
+				System.out.println("Argument: '" +arg+"' not a recognized argument");
+				System.out.println("Argument: '" +arg+"' will be ignored");
+				break;
+			}
+		}
+	}
+
 }
