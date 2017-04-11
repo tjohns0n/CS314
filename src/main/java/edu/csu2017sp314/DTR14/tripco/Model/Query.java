@@ -45,7 +45,6 @@ public class Query {
 						{
 							String id = rs.getString("Id");
 							String name = rs.getString("name");
-							System.out.printf("%s,%s\n", id, name);
 						}
 					} finally { rs.close(); }
 				} finally { st.close(); }

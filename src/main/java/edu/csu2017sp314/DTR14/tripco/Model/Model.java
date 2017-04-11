@@ -37,8 +37,6 @@ public class Model{
 	}
 
 	public boolean planTrip(boolean run2Opt, boolean run3Opt, String[] selection){
-		//cvsr.initiate(selection);
-		locList.showLocList();
 		src = new ShortestRouteCalculator(locList, 0, KM);
 		if (run3Opt) {
 			src.findBestNearestNeighbor(true, true);
