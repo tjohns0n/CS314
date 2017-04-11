@@ -7,6 +7,8 @@ import java.util.Arrays;
 
 public class ShortestRouteCalculator{
 
+	boolean debug = true;
+	
 	// args: location list 	
 	// # have a reference of location list
 	private LocationList locList;
@@ -25,7 +27,7 @@ public class ShortestRouteCalculator{
 
 	// args: dis_matrix matrix - 2D
 	// # store the calculated distance between each city
-	protected double[][] dis_matrix;
+	protected int[][] dis_matrix;
 
 	// args: startIndex
 	// # refer to the city where it decide to start
@@ -33,23 +35,24 @@ public class ShortestRouteCalculator{
 
 	// args: startIndex
 	// # store the final_disance
-	private double final_dis;
-	private double testDistance;
+	private int final_dis;
+	private int testDistance;
 	
-	private boolean do2opt, do3opt;
+	private boolean do2opt, do3opt, KM;
 
 
 	// Constructor 
 	// args: LocationList / args: startIndex
 	// # LocationList is the information where the shortestroute algorithm built from
 	// # startIndex is the index where the city in the LocationList
-	protected ShortestRouteCalculator(LocationList locList, int startIndex){
+	protected ShortestRouteCalculator(LocationList locList, int startIndex, boolean km){
 		this.locList = locList;
 		this.startIndex = startIndex;
+		KM=km;
 		// Set final distance to Int.MAX for finding minimum distance later
-		final_dis = Double.MAX_VALUE;
+		final_dis = Integer.MAX_VALUE;
 		// Init arrays
-		dis_matrix = new double[locList.getsize()][locList.getsize()];
+		dis_matrix = new int[locList.getsize()][locList.getsize()];
 		final_route = new int[locList.getsize() + 1][2];
 		test_route = new int[locList.getsize() + 1][2];
 		// Populate a distance table of locations
@@ -62,7 +65,7 @@ public class ShortestRouteCalculator{
 		this.do2opt = do2opt;
 		this.do3opt = do3opt;
 		// temp var for each NN total distance
-		double test_dis;
+		int test_dis;
 		// start NN at each location
 		for (int i = 0; i < locList.getsize(); i++) {
 			if(this.startIndex != -1 && i != startIndex) continue;
@@ -97,14 +100,14 @@ public class ShortestRouteCalculator{
 	// getFinalDis - External interface function
 	// #return args:final_dis
 	protected int getFinalDis(){
-		return (int)Math.ceil(final_dis);
+		return final_dis;
 	}
 
 	// showResult - private function
 	protected void showResult(){
 		for(int i = 0; i < locList.getsize(); i++){
 			for(int j = 0 ; j < locList.getsize(); j++)
-				System.out.printf("%d ", (int)dis_matrix[i][j]);
+				System.out.printf("%d ", dis_matrix[i][j]);
 			System.out.println();
 		}
 		for(int i = 0; i < final_route.length; i++)
@@ -126,7 +129,7 @@ public class ShortestRouteCalculator{
 		//boolean vis, check if city was visited
 		boolean[] vis = new boolean[locList.getsize()];
 		for(int i = 0; i < locList.getsize(); i++) vis[i] = false;
-		double final_dis = 0;
+		int final_dis = 0;
 
 		// to set the startIndex as the first city
 		int i = startIndex;
@@ -148,16 +151,17 @@ public class ShortestRouteCalculator{
 			}
 			vis[test_route[cnt][0]] = true;
 			final_dis += dis_matrix[i][test_route[cnt][0]];
-			test_route[cnt][1] = (int)final_dis;
+			test_route[cnt][1] = final_dis;
 			i = test_route[cnt++][0];
 		}
 		test_route[cnt][0] = startIndex;
 		final_dis += dis_matrix[test_route[cnt-1][0]][startIndex];
-		test_route[cnt][1] = (int)Math.ceil(final_dis);
+		test_route[cnt][1] = final_dis;
 		if (do2opt) {
 			final_dis = findBestOpt(do3opt, final_dis);
 		}
-		return (int)Math.ceil(final_dis);
+		System.out.println("return");
+		return final_dis;
 	}
 
 	/*
@@ -165,15 +169,19 @@ public class ShortestRouteCalculator{
 	 * args:
 	 * do3Opt - do 3-opt in addition to 2-opt
 	 */
-	public double findBestOpt(boolean do3Opt, double originalDistance) {
+	public int findBestOpt(boolean do3Opt, int originalDistance) {
 		// if 3-opt is selected, interleave 2-opt and 3-opt
 		// run until no better route is found
 		if (do3Opt) {
 			// initialize opt_route, which is used by 3-opt code
 			opt_route = new int[final_route.length][final_route[0].length];
-			while(run2Opt() || run3Opt()) {
+			while(run3Opt() || run2Opt()) {
 				if (testDistance < originalDistance) {
+					//System.out.println("orig: " + originalDistance + " test: " + testDistance);
 					originalDistance = testDistance;
+					for (int i = 0; i < test_route.length; i++) {
+						//System.out.println("loc: " + test_route[i][0] + " dis: " + test_route[i][1]);
+					}
 				}
 			}
 		// if 3-opt is not selected, only run 2-opt 
@@ -200,9 +208,9 @@ public class ShortestRouteCalculator{
 			// j: last element affected by swap (i.e. j - 1 is last element moved in a swap)
 			for (int j = i + 2; j < test_route.length; j++) {
 				int originalDistance = test_route[test_route.length - 1][test_route[0].length - 1];
-				double swapDistance = find2OptSwapDistance(i, j);
+				int swapDistance = find2OptSwapDistance(i, j);
 				// if the 2-opt gives a shorter distance:
-				if ((int)Math.ceil(swapDistance) < originalDistance) {
+				if (swapDistance < originalDistance) {
 					// reinit opt_route
 					opt_route = new int[final_route.length][final_route[0].length];
 					// reverse i to j - 1
@@ -218,9 +226,9 @@ public class ShortestRouteCalculator{
 		return false;
 	}
 	
-	protected double find2OptSwapDistance(int i, int j) {
+	protected int find2OptSwapDistance(int i, int j) {
 		// Start with distance of last element not affected by swap
-		double distance = test_route[i - 1][1];
+		int distance = test_route[i - 1][1];
 		// Add in distances of swapped elements:
 			// Add in i - 1 to j - 1 distance
 		int loc1 = test_route[i - 1][0];
@@ -272,26 +280,26 @@ public class ShortestRouteCalculator{
 		}
 		
 		// Recalculate distances
-		rebuildDistances();
+		rebuildDistances(opt_route);
 	}
 	
-	protected void rebuildDistances() {
+	protected void rebuildDistances(int[][] route) {
 		// Set initial distance to 0
-		opt_route[0][1] = 0;
+		route[0][1] = 0;
 		int loc1;
 		int loc2;
 		// Loop through trip
-		for (int i = 0; i < opt_route.length - 2; i++) {
+		for (int i = 0; i < route.length - 2; i++) {
 			// find i and i + 1 in the trip
-			loc1 = opt_route[i][0];
-			loc2 = opt_route[i + 1][0];
+			loc1 = route[i][0];
+			loc2 = route[i + 1][0];
 			// calculate the distance between them and add it in to distance
-			opt_route[i + 1][1] = opt_route[i][1] + (int)dis_matrix[loc1][loc2];
+			route[i + 1][1] = route[i][1] + dis_matrix[loc1][loc2];
 		}
 		// Math.ceil final distance to be consistent with nn's distance calculations
-		loc1 = opt_route[opt_route.length - 2][0];
-		loc2 = opt_route[opt_route.length - 1][0];
-		opt_route[opt_route.length - 1][1] = opt_route[opt_route.length - 2][1] + (int)Math.ceil(dis_matrix[loc1][loc2]); 
+		loc1 = route[route.length - 2][0];
+		loc2 = route[route.length - 1][0];
+		route[route.length - 1][1] = route[route.length - 2][1] + dis_matrix[loc1][loc2]; 
 	}
 
 	/*
@@ -312,10 +320,206 @@ public class ShortestRouteCalculator{
 	 * TODO: run3Opt - perform 3-opt on a nn tour
 	 */
 	private boolean run3Opt() {
+		for (int i = 0; i < final_route.length - 5; i++) {
+			for (int j = i + 2; j < final_route.length - 3; j++) {
+				for (int k = j + 2; k < final_route.length - 1; k++) {
+					// if an improvement is found, return to findBestOpt and start 3-opt again
+					if (find3OptImprovement(i, j, k)) {
+						opt_route = new int[final_route.length][final_route[0].length];
+						return true;
+					}
+				}
+			}
+		}
 		return false;
 	}
 
-
+	
+	protected boolean find3OptImprovement(int i, int j, int k) {
+		// find which of the 4 possible 3-opt swaps is best, if any
+		int swapType = findBest3OptSwap(i, j, k);
+		// if no swap improves on current route, return to run3Opt and try new i,j,k combination
+		if (swapType == 0) {
+			return false;
+		} else {
+			// otherwise, do a 3-opt swap
+			do3OptSwap(i, j, k, swapType);
+			// rebuild the test_route mileage array
+			rebuildDistances(test_route);
+			// set distance for comparison later
+			testDistance = test_route[test_route.length - 1][1];
+			return true;
+		}
+	}
+	
+	// find the best of the four swaps
+	// return 0 if no swap is better
+	// return 1 if i -> j -> i + 1 -> k -> j + 1 -> k + 1
+	// return 2 if i -> j + 1 -> k -> i + 1 -> j -> k + 1
+	// return 3 if i -> j + 1 -> k -> j -> i + 1 -> k + 1
+	// return 4 if i -> k -> j + 1 -> i + 1 -> j -> k + 1
+	protected int findBest3OptSwap(int i, int j, int k) {
+		int bestSwap = 0;
+		int test;
+		int compare = findCompare(i, k + 1);
+		
+		if ((test = checkPossibility1(i, j, k)) < compare) {
+			System.out.println("com: " + compare + "test: " + test);
+			compare = test;
+			bestSwap = 1;
+		}
+		if ((test = checkPossibility2(i, j, k)) < compare) {
+			compare = test;
+			bestSwap = 2;
+		}
+		if ((test = checkPossibility3(i, j, k)) < compare) {
+			compare = test;
+			bestSwap = 3;
+		}
+		if ((test = checkPossibility4(i, j, k)) < compare) {
+			compare = test;
+			bestSwap = 4;
+		}
+		
+		return bestSwap;
+	}
+	
+	// calculate the cumulative distance between two locations on the trip
+	protected int findCompare(int start, int end) {
+		return test_route[end][1] - test_route[start][1];
+	}
+	
+	protected int checkPossibility1(int i, int j, int k) {
+		int distance = 0;
+		int loc1, loc2;
+		// i to j distance
+		loc1 = test_route[i][0]; loc2 = test_route[j][0];
+		distance += getDistance(loc1, loc2);
+		// j through i + 1 distance
+		distance += findCompare(i + 1, j);
+		// i + 1 to k distance
+		loc1 = test_route[i + 1][0]; loc2 = test_route[k][0];
+		distance += getDistance(loc1, loc2);
+		// k through j + 1 distance
+		distance += findCompare(j + 1, k);
+		// j + 1 to k + 1 distance
+		loc1 = test_route[j + 1][0]; loc2 = test_route[k + 1][0];
+		distance += getDistance(loc1, loc2);
+		return distance;
+	}
+	
+	protected int checkPossibility2(int i, int j, int k) {
+		int distance = 0;
+		int loc1, loc2;
+		// i to j + 1 distance
+		loc1 = test_route[i][0]; loc2 = test_route[j + 1][0];
+		distance += getDistance(loc1, loc2);
+		// j + 1 through k distance
+		distance += findCompare(j + 1, k);
+		// k to i + 1 distance
+		loc1 = test_route[k][0]; loc2 = test_route[i + 1][0];
+		distance += getDistance(loc1, loc2);
+		// i + 1 through j distance
+		distance += findCompare(i + 1, j);
+		// j to k + 1 distance
+		loc1 = test_route[j][0]; loc2 = test_route[k + 1][0];
+		distance += getDistance(loc1, loc2);
+		return distance;
+	}
+	
+	protected int checkPossibility3(int i, int j, int k) {
+		int distance = 0;
+		int loc1, loc2;
+		// i to j + 1 distance
+		loc1 = test_route[i][0]; loc2 = test_route[j + 1][0];
+		distance += getDistance(loc1, loc2);
+		// j + 1 through k distance
+		distance += findCompare(j + 1, k);
+		// k to j distance
+		loc1 = test_route[k][0]; loc2 = test_route[j][0];
+		distance += getDistance(loc1, loc2);
+		// j through i + 1 distance
+		distance += findCompare(i + 1, j);
+		// i + 1 to k + 1 distance
+		loc1 = test_route[i + 1][0]; loc2 = test_route[k + 1][0];
+		distance += getDistance(loc1, loc2);
+		return distance;
+	}
+	
+	protected int checkPossibility4(int i, int j, int k) {
+		int distance = 0;
+		int loc1, loc2;
+		// i to k distance
+		loc1 = test_route[i][0]; loc2 = test_route[k][0];
+		distance += getDistance(loc1, loc2);
+		// k through j + 1 distance
+		distance += findCompare(j + 1, k);
+		// j + 1 to i + 1 distance
+		loc1 = test_route[j + 1][0]; loc2 = test_route[i + 1][0];
+		distance += getDistance(loc1, loc2);
+		// i + 1 to j distance
+		distance += findCompare(i + 1, j);
+		// j to k distance
+		loc1 = test_route[j][0]; loc2 = test_route[k + 1][0];
+		distance += getDistance(loc1, loc2);
+		return distance;
+	}
+	
+	// rearrange test_route to follow the swap routine
+	protected void do3OptSwap(int i, int j, int k, int swapType) {
+		System.out.println("swap: " + swapType + " i " + i + " j " + j + " k " + k);
+		// counter to keep track of where in array to write
+		int counter = i;
+		// copy test_route to opt_route so there is a backup
+		copyRoute(test_route, opt_route);
+		if (swapType == 1) {
+			copyElements(i + 1, ++counter, (j - (i + 1)) + 1, true);
+			counter += (j - (i + 1)) + 1;
+			copyElements(j + 1, counter, (k - (j + 1)) + 1, true);
+			counter += (k - (j)) + 1;
+			copyElements(k + 1, counter, test_route.length - k - 1, false);
+		}
+		if (swapType == 2) {
+			copyElements(j + 1, ++counter, (k - (j + 1)) + 1, false);
+			counter += (k - (j + 1)) + 1;
+			copyElements(i + 1, counter, (j - (i + 1)) + 1, false);
+			counter += (j - (i + 1)) + 1;
+			copyElements(k + 1, counter, test_route.length - k - 1, false);
+		}
+		if (swapType == 3) {
+			copyElements(j + 1, ++counter, (k - (j + 1)) + 1, false);
+			counter += (k - (j + 1)) + 1;
+			copyElements(i + 1, counter, (j - (i + 1)) + 1, true);
+			counter += (j - (i + 1)) + 1;
+			copyElements(k + 1, counter, test_route.length - k - 1, false);
+		}
+		if (swapType == 4) {
+			
+			copyElements(j + 1, ++counter, (k - (j + 1)) + 1, true);
+			counter += (k - (j + 1)) + 1;
+			copyElements(i + 1, counter, (j - (i + 1)) + 1, false);
+			counter = (j - (i + 1)) + 1;
+			copyElements(k + 1, counter, test_route.length - k - 1, false);
+		}
+		
+	}
+	
+	// copy elements of opt_route[sourceIndex] through opt_route [sourceIndex + length] to test_route[destIndex] through test_route[destIndex + length]
+	// if reverse is true, the elements will be copied from sourceIndex + length to sourceIndex, reversing their order in test_route
+	protected void copyElements(int sourceIndex, int destIndex, int length, boolean reverse) {
+		System.out.println("src: " + sourceIndex + " dest: " + destIndex + " len: " + length + " route: " + test_route.length);
+		int offset = 0;
+		if (reverse) {
+			offset = length - 1;
+		}
+		for (int i = 0; i < length; i++) {
+			test_route[destIndex + i][0] = opt_route[sourceIndex + i + offset][0];
+			if (reverse) {
+				offset -= 2;
+			}
+		}
+	}
+	
 	// calculateDistance - private function
 	// # calculate the distrance matrix
 	private void calculateDistanceTable(){
@@ -324,16 +528,21 @@ public class ShortestRouteCalculator{
 				dis_matrix[i][j] = dis_matrix[j][i] = distanceCalculator(locList.get(i), locList.get(j));
 	}
 	
-	protected double getDistance(int loc1, int loc2) {
+	protected int getDistance(int loc1, int loc2) {
 		return dis_matrix[loc1][loc2];
 	}
 
 	// distanceCalculator - private function
 	// # calculate the distance between two locations
 	// Prerequirements -- assume that the latitude and longitude has no chars
-	private double distanceCalculator(Location l1, Location l2){
-
-		final int R = 3959; // Radius of the earth
+	private int distanceCalculator(Location l1, Location l2){
+		int R;
+		if(KM){
+			R = 6371; // Radius of the earth in kilometers
+		}
+		else{
+			R = 3959; // Radius of the earth in miles
+		}
 
 		Double latDistance = Math.toRadians(l1.getLatitude() - l2.getLatitude());
 	    Double lonDistance = Math.toRadians(l1.getLongitude() - l2.getLongitude());
@@ -342,7 +551,7 @@ public class ShortestRouteCalculator{
 	            + Math.cos(Math.toRadians(l1.getLatitude())) * Math.cos(Math.toRadians(l2.getLatitude()))
 	            * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
 	    Double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-	    double distance = R * c;
+	    int distance = (int)Math.round(R * c);
 
 
 	    return distance;

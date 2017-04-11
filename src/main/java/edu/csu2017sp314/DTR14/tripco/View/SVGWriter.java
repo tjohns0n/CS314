@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 abstract class SVGWriter {
 
@@ -277,6 +278,7 @@ abstract class SVGWriter {
 			coordinates[1] = (double)point[1];
 		}
 
+		System.out.println(Arrays.toString(coordinates));
 		ArrayList<String> attributes = new ArrayList<String>();
 		
         attributes.add(Integer.toString((int)coordinates[0]));
@@ -335,7 +337,17 @@ abstract class SVGWriter {
 		double y1 = coordinates[1];
 		double x2 = coordinates[2];
 		double y2 = coordinates[3];
-		XMLElement txt = addText(text, new double[]{x1 + (x2 - x1) / 2, y1 + (y2 - y1) / 2}, 16, id, false, true);
+		XMLElement txt;
+		if (x1 - x2 > 720 || x1 - x2 < -720) {
+			if (x1 < x2) {
+				txt = addText(text, new double[]{x1 - 10, y1}, 16, id, false, false);
+			} else {
+				txt = addText(text, new double[]{x2 - 10, y2}, 16, id, false, false);
+			}
+		} else {
+			txt = addText(text, new double[]{x1 + (x2 - x1) / 2, y1 + (y2 - y1) / 2}, 16, id, false, false);
+		}
+		
 		content.add(txt.getStart() + text + txt.getEnd());
 	}
 
@@ -347,7 +359,7 @@ abstract class SVGWriter {
 	 *	coordinates should be in decimal geographic form 
 	 */
 	public void addLabel(String text, String id, double[] coordinates) {
-		XMLElement txt = addText(text, coordinates, 16, id, false, true);
+		XMLElement txt = addText(text, coordinates, 16, id, false, false);
 		content.add(txt.getStart() + text + txt.getEnd());
 	}
 

@@ -97,9 +97,9 @@ public class ItineraryLeg {
 		for (int i = 0; i < 12; i++) {
 			xml += "\t\t" + location.get(i).getStart();
 			if (start) {
-				xml += loc1[i];
+				xml += replaceName(loc1[i]);
 			} else {
-				xml += loc2[i];
+				xml += replaceName(loc2[i]);
 			}
 			xml += location.get(i).getEnd() + "\n";
 		}
@@ -124,6 +124,14 @@ public class ItineraryLeg {
 		return xml;
 	}
 	
+    private String replaceName(String origin){
+    	String temp = origin;
+    	temp = temp.replaceAll("&", "&amp;");
+    	temp = temp.replaceAll("<", "&lt;");
+    	temp = temp.replaceAll(">", "&gt;");
+        temp = temp.replaceAll("%", "&#37;");
+    	return  temp;
+    }
 	protected void reset(String[] location1, String[] location2, int mileage, int sequence) {
 		loc1 = location1;
 		loc2 = location2;
