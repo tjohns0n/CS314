@@ -5,6 +5,8 @@ Creates and displays viewable files and pages from data provided by the Presente
 
 package edu.csu2017sp314.DTR14.tripco.View;
 
+import edu.csu2017sp314.DTR14.tripco.Presenter.Message;
+import edu.csu2017sp314.DTR14.tripco.Presenter.Presenter;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -24,7 +26,10 @@ public class View extends Application {
     // ItineraryWriter and SVGWriter:
     private ItineraryWriter itinWrite;
     private WorldMapWriter svgWrite;
+    private HTMLItinerary htmlWrite;
 
+    private static Presenter prez = new Presenter();
+    
     //Empty constructor, for javafx Application compliance
     public View(){
 
@@ -39,9 +44,17 @@ public class View extends Application {
 	labels - whether to display distances, names, and ids on the map or not
     */
     
-    public View(String title, String SVGFile, int totalDistance, boolean[] labels, boolean miles){
+    public View(String title, String SVGFile, int totalDistance, boolean[] labels, boolean miles, int numberLocs){
     	legCount = 0;
     	itinWrite = new ItineraryWriter();
+    	String units;
+    	if (miles) {
+    		units = "kilometers";
+    	} else {
+    		units = "miles";
+    	}
+    	String dir = System.getProperty("user.dir") + "/main/resources/";
+    	htmlWrite = new HTMLItinerary(numberLocs, dir + "base1.html", dir + "base2.html", units);
 //    	if(SVGFile == null || SVGFile.equals("null") || SVGFile.equals(""))
 //    		svgWrite = new ColoradoSVGWriter();
 //    	else
@@ -58,7 +71,12 @@ public class View extends Application {
         this.names = false;
     }
     
+    public Message setMsg(Message msg){
+    	return prez.sendMessage(msg);
+    }
+    
     private void setTitle() {
+    	System.out.println(title);
     	String substring = title.substring(title.length() - 4).toLowerCase();
     	if (substring.equals(".csv")) {
     		title = title.substring(0, title.length() - 4);
@@ -100,9 +118,9 @@ public class View extends Application {
     						String endLocationName, String endLocationID, int mileage) {
     	String testString = "";
     	svgWrite.newGroup("leg" + Integer.toString(++legCount));
-        svgWrite.addLine(coordinates, "blue", 3, true);
+        svgWrite.addWorldLine(coordinates);
         //itinWrite.addLeg(startLocationName, endLocationName, mileage);
-
+        
         if (this.distances) {
         	testString += "m";
             svgWrite.addLineLabel(Integer.toString(mileage), "mileage" 
@@ -124,6 +142,7 @@ public class View extends Application {
     
     public void addItinLeg(ItineraryLeg il){
     	itinWrite.addDetailedLeg(il);
+    	htmlWrite.addLeg(il);
     }
 
     /*
@@ -132,6 +151,7 @@ public class View extends Application {
     public void writeFiles() {
         svgWrite.writeSVG(title + ".svg");
         itinWrite.writeXML(title + ".xml");
+        htmlWrite.writeHTMLItinerary();
         new GenerateJavascript(getRootName());
     }
 

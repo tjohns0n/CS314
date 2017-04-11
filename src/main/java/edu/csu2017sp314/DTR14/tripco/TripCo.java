@@ -137,11 +137,12 @@ public class TripCo{
 		switch(arg.charAt(1)){
 			case 'g': opts[0] = true; break;
 			case 'i': opts[1] = true; break;
-			case 'm': opts[2] = true; break;
+			case 'd': opts[2] = true; break;
 			case 'n': opts[3] = true; break;
 			case '2': opts[4] = true; break;
 			case '3': opts[5] = true; break;
 			case 'k': opts[6] = true; break;
+			case 'm': opts[6] = false; break;
 			default:{
 				System.out.println("Argument: '" +arg+"' not a recognized argument");
 				System.out.println("Argument: '" +arg+"' will be ignored");

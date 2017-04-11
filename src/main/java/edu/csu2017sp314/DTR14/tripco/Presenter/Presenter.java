@@ -25,6 +25,7 @@ public class Presenter {
     private static View view = new View();
     private static String _svg;
     private static String _xml;
+    private static String name;
     private String[] subSet;
     private String unit;
 
@@ -72,12 +73,12 @@ public class Presenter {
         else subSet = new XMLReader().readSelectFile(_xml, csvFileName);
         if (options[5] == true) {
             // if GUI
-        	files.add(new File("GUIItinerary.csv"));
+        	files.add(new File(name+".csv"));
             Application.launch(View.class, new String[0]);
             subSet = new String[0];
         }
         else{
-        	model.sendToModel(new Message(subSet, "M-DB-TRIP"));
+        	model.sendToModel(new Message(subSet, "M-DB-TRIP0"));
         }
         if(csvFileName.length() != 0) files.add(new File(csvFileName.toString()));
     }
@@ -93,7 +94,7 @@ public class Presenter {
         String[] total = route[route.length - 1][0].split(",");
         int totalMileage = Integer.parseInt(total[0]);
         boolean[] label = {options[0], options[1]};
-        view = new View(files.get(0).getName(), _svg, totalMileage, label, options[1]);
+        view = new View(Presenter.name, _svg, totalMileage, label, options[6], route.length);
         viewItin(route);
         viewWriter(route);
     }
@@ -137,6 +138,7 @@ public class Presenter {
              ItineraryLeg itinLeg = new ItineraryLeg(m.content[j].split(","), m.content[j+1].split(","),
             		 mile, j+1, unit);
              view.addItinLeg(itinLeg);
+             
     	}
     }
     
@@ -163,6 +165,7 @@ public class Presenter {
       //System.out.println("csv File = " + files.get(0).getName());
       System.out.println("svg File = " + _svg);
       System.out.println("xml File = " + _xml);
+      System.out.println("Filename = " + name);
       System.out.println("_i = " + options[0]);
       System.out.println("_m = " + options[1]);
       System.out.println("_n = " + options[2]);
@@ -182,5 +185,9 @@ public class Presenter {
 
 	public static void set_xml(String _xml) {
 		Presenter._xml = _xml;
+	}
+	
+	public static void setName(String name) {
+		Presenter.name = name;
 	}
 }

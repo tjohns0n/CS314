@@ -336,10 +336,10 @@ public class SelectionGUI extends Application{
 	}
 
 	private void updateSubsets(String data){
+		System.out.println("update = " +data);
 		for(int i = 0; i < subsets.size(); i++){
 			if(!data.contains(subsets.get(i).getId()))
-				if(!data.contains(subsets.get(i).getName()))
-					subsets.remove(i);
+				subsets.remove(i);
 		}
 	}
 

@@ -24,7 +24,7 @@ import javafx.stage.Stage;
 
 public class FileChooserGUI extends Application{
 	private boolean[] options;
-	private String xmlFile;
+	private String name;
 	private String csvFile;
 	private String svgFile;
 	private Basic basic;
@@ -34,7 +34,7 @@ public class FileChooserGUI extends Application{
 	
 	//Empty constructor, for javafx Application compliance
     public FileChooserGUI(){
-    	this.options = new boolean[6];
+    	this.options = new boolean[7];
     	basic = new Basic();
     }
     
@@ -185,10 +185,6 @@ public class FileChooserGUI extends Application{
 		Button btn = basic.newButton("Start Planning Trip!");
 		btn.setOnAction(e->{
 			String entered = newTextField.getText();
-			if(xmlFile == null){
-				if(entered.isEmpty()) xmlFile = "temp.xml";
-				else xmlFile = entered.concat(".xml");
-			}
 			try {
 				writeResults();
 				stage.close();
@@ -211,11 +207,12 @@ public class FileChooserGUI extends Application{
 
 	protected void writeResults() throws Exception{
 		if(fontChBox.getSelectionModel().getSelectedItem().toString().equals("Kilometers"))
-			options[5] = true; 
+			options[6] = true; 
 		System.out.println(options[5]);
 	    Presenter.set_svg(svgFile);
+	    Presenter.setName(name);
 	    Presenter.setOptions(options);
-	    SelectionGUI.setXmlFile(xmlFile);
+	    SelectionGUI.setXmlFile(name);
 	    SelectionGUI.setXmlFile(csvFile);
 	}
 	

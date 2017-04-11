@@ -71,7 +71,7 @@ public class Model{
 		if(codes[0].equalsIgnoreCase("M")){
 			switch(codes[1]){
 				case "DB": {
-					sendQuery(message);
+					sendMessage(message);
 					break;
 				}
 				default: break;
@@ -79,7 +79,7 @@ public class Model{
 		}
 	}
 	
-	public Message sendQuery(Message message){
+	public Message sendMessage(Message message){
 		String[] codes = message.code.split("-");
 		//Switch based on DB code
 		Message ret = null;
@@ -119,6 +119,13 @@ public class Model{
 			//M-DB-TRIP
 			//content[] should be array of selected airport ids (ident)
 			case "TRIP":{
+				Query q = new Query(this, message.content[0].split(","));
+				//Start trip planning
+				//ITIN query and send to itin writer
+				
+				break;
+			}
+			case "TRIP0":{
 				Query q = new Query(this, message.content);
 				//Start trip planning
 				//ITIN query and send to itin writer

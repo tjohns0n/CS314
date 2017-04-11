@@ -291,7 +291,7 @@ public class Query {
 				
 				try { // submit a query
 					for(int i=0; i<ids.length; i++){
-						String query = itin+Wid+"'"+ids[i]+"';";
+						String query = itin+Wid+"'"+ids[i].trim()+"';";
 						ResultSet rs = st.executeQuery(query);
 						
 						try { // iterate through the query results and print
@@ -317,7 +317,7 @@ public class Query {
 	//M-DB-TRIP
 	public Query(Model model, String[] ids){
 		mod = model;
-        String[] ret = new String[ids.length];
+        ArrayList<String> ret = new ArrayList<String>();
         try	{ // connect to the database 
             Class.forName(driver); 
             Connection conn = DriverManager.getConnection(theURL, user, pass);
@@ -325,12 +325,13 @@ public class Query {
 				Statement st = conn.createStatement();
 				try { // submit a query
 					for(int i=0; i<ids.length; i++){
-						String query = "SELECT id,name,longitude,latitude FROM airports WHERE id = '"+ids[i]+"';";
+						System.out.println(ids[i]);
+						String query = "SELECT id,name,longitude,latitude FROM airports WHERE id = '"+ids[i].trim()+"';";
 						ResultSet rs = st.executeQuery(query);
 						try { // iterate through the query results and print
 							rs.next();
 							String add=rs.getString(1)+","+rs.getString(2)+","+rs.getString(3)+","+rs.getString(4);
-							ret[i] = add;
+							ret.add(add);
 						} finally { rs.close(); }
 					}
 				} finally { st.close(); }
@@ -339,8 +340,11 @@ public class Query {
 			System.err.printf("Exception: ");
 			System.err.println(e.getMessage());
 		}
-        mess = new Message(ret, "V-ST-PLAN");
-        mod.setLocList(ret);
+        ret.trimToSize();
+        String[] r = ret.toArray(new String[ret.size()]);
+        mess = new Message(r, "V-ST-PLAN");
+        System.out.println(Arrays.toString(r));
+        mod.setLocList(r);
 	}
 	
 	//Takes comma seperated string of limits already set in GUI
