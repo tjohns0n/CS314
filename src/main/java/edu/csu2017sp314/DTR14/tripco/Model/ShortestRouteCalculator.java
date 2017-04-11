@@ -139,13 +139,11 @@ public class ShortestRouteCalculator{
 		// each time pick the nearest neighbor
 		for(int step = 0; step < locList.getsize() - 1; step++){
 			double mins = Double.MAX_VALUE;
-			for(int j = 0; j < locList.getsize(); j++){
-				if(vis[j] == true) continue;
-				if(mins > dis_matrix[i][j]){
+			for(int j = 0; j < locList.getsize(); j++)
+				if(vis[j] != true && mins > dis_matrix[i][j]){
 					mins = dis_matrix[i][j];
 					test_route[cnt][0] = j;
 				}
-			}
 			vis[test_route[cnt][0]] = true;
 			final_dis += dis_matrix[i][test_route[cnt][0]];
 			test_route[cnt][1] = (int)final_dis;
@@ -154,9 +152,7 @@ public class ShortestRouteCalculator{
 		test_route[cnt][0] = startIndex;
 		final_dis += dis_matrix[test_route[cnt-1][0]][startIndex];
 		test_route[cnt][1] = (int)Math.ceil(final_dis);
-		if (do2opt) {
-			final_dis = findBestOpt(do3opt, final_dis);
-		}
+		if (do2opt) final_dis = findBestOpt(do3opt, final_dis);
 		return (int)Math.ceil(final_dis);
 	}
 
@@ -235,7 +231,7 @@ public class ShortestRouteCalculator{
 			distance += dis_matrix[loc1][loc2];
 		}
 		// Add in distances of elements after swap:
-			// Add in i to j distance
+		// Add in i to j distance
 		loc1 = test_route[i][0];
 		loc2 = test_route[j][0];
 
@@ -322,10 +318,6 @@ public class ShortestRouteCalculator{
 		for(int i = 0; i < locList.getsize(); i++)
 			for(int j = i; j < locList.getsize(); j++)
 				dis_matrix[i][j] = dis_matrix[j][i] = distanceCalculator(locList.get(i), locList.get(j));
-	}
-	
-	protected double getDistance(int loc1, int loc2) {
-		return dis_matrix[loc1][loc2];
 	}
 
 	// distanceCalculator - private function

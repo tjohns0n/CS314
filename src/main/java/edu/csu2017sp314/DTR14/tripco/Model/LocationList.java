@@ -55,12 +55,7 @@ public class LocationList{
 	protected void lineHandler(String line, String[] titles, String[] selection){
 		boolean useSelection = true;
 		if (selection.length == 0) useSelection = false;
-		String name 	= "";
-		String latitude = "";
-		String longitude= "";
-		String extras 	= "";
-		String template = "";
-		String id 		= "";
+		String[] extracts = new String[6];
 		String parts[] = line.split(cvsSplitRegex);
 		for(int i = 0; i < parts.length; i++){
 			
@@ -69,33 +64,33 @@ public class LocationList{
 
 			// If column on csv corresponds to name, assign this element as name:
 			if (title.toUpperCase().equals("NAME")) 
-				name = valid;
+				extracts[0] = valid;
 			// If column on csv corresponds to latitude, assign this element as latitude:
 			else if (title.toUpperCase().equals("LATITUDE"))
-				latitude = valid;
+				extracts[1] = valid;
 			// If column on csv corresponds to longitude, assign this element as longitude:
 			else if (title.toUpperCase().equals("LONGITUDE"))
-				longitude = valid;
+				extracts[2] = valid;
 			// If column does not correspond to name, lat, or long:
 			else {
 				// Grab name of ID:
 				if (title.toUpperCase().equals("ID"))
-					id = valid;
+					extracts[3] = valid;
 				// If not first element of template, add a comma:
-				if(template != "") template += ",";
+				if(extracts[4] != null) extracts[4] += ",";
 				// If not first element of extras, add a comma:
-				if(extras != "") extras += ",";
+				if(extracts[5] != null) extracts[5] += ",";
 				// Add element name to title and element contents to extras:
-				template += title;
-				extras += valid;
+				extracts[4] += title;
+				extracts[5] += valid;
 			}
 		}
 
-		Location loc = new Location(name, latitude, longitude, id, extras, template);
+		Location loc = new Location(extracts);
 		
 		// Add the location if it's valid AND 
 		// the location is either in the selection or a selection is not being used
-		if(checkValid(loc) == true && (!useSelection || Arrays.asList(selection).contains(id))){
+		if(checkValid(loc) == true && (!useSelection || Arrays.asList(selection).contains(extracts[3]))){
 			locList.add(loc);
 		}
 		

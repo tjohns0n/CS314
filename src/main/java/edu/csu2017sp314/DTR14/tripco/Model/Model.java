@@ -1,5 +1,8 @@
 package edu.csu2017sp314.DTR14.tripco.Model;
 
+import edu.csu2017sp314.DTR14.tripco.Presenter.Presenter;
+import edu.csu2017sp314.DTR14.tripco.Presenter.Message;
+
 public class Model{
 
 	// args: *.csv 			
@@ -12,20 +15,29 @@ public class Model{
 	private LocationList locList;
 
 	private ShortestRouteCalculator src;
-
+	private static Presenter prez = new Presenter();
 	// Constructor 
 	// args: csvFileName
 	// # build a new location list which store the information from csv file
 	// # build a new CSVReader which handle the file and auto add location to the list
 	// # calculate a shortestneighborroute
 	// Improvement: ShortestRouteCalculator is in process and need improvement
+	public Model(){}
+	
 	public Model(String csvFileName){
+		locList = new LocationList();
+		cvsr 	= new CSVReader(csvFileName, locList);
+		prez = null;
+	}
+	
+	public Model(Presenter present, String csvFileName){
+		prez = present;
 		locList = new LocationList();
 		cvsr 	= new CSVReader(csvFileName, locList);
 	}
 
 	public boolean planTrip(boolean run2Opt, boolean run3Opt, String[] selection){
-		cvsr.initiate(selection);
+		//cvsr.initiate(selection);
 		src = new ShortestRouteCalculator(locList, 0);
 		
 		if (run3Opt) {
@@ -41,6 +53,70 @@ public class Model{
 	public String[][] reteriveTrip(){
 		Trip trip = new Trip(locList, src.getFinalRoute());
 		return trip.createTrip();
+	}
+	
+	public Message sendMessage(Message msg){
+		String[] codes = msg.code.split("-");
+		Message ret = null;
+		//Switch based on DB code
+		switch(codes[2]){
+			//M-DB-INIT
+			case "INIT":{
+				Query q = new Query(this);
+				ret = q.getMessage();
+				break;
+			}
+			//M-DB-CN2CY
+			//content[] should have a single String with constraints
+			case "CT2CY":{
+				Query q = new Query(this, msg.content[0]);
+				ret = q.getMessage();
+				break;
+			}
+			//M-DB-CY2RN
+			//content[] should have a single String with name of country
+			case "CY2RN":{
+				Query q = new Query(this, msg.content[0]);
+				ret = q.getMessage();
+				break;
+			}
+			//M-DB-RN2IL
+			//content[] should have a single String with constraints
+			case "RN2IL":{
+				Query q = new Query(this, msg.content[0]);
+				ret = q.getMessage();
+				break;
+			}
+			//M-DB-SRCH
+			//content[] should be array of selected airport ids (ident)
+			case "SRCH":{
+				Query q = new Query(msg.content[0], this);
+				ret = q.getMessage();
+				//Start trip planning
+				//ITIN query and send to itin writer
+				break;
+			}
+			//M-DB-TRIP
+			//content[] should be array of selected airport ids (ident)
+			case "TRIP":{
+				Query q = new Query(this, msg.content);
+				ret = q.getMessage();
+				//Start trip planning
+				//ITIN query and send to itin writer
+				break;
+			}
+			default: break;
+		}
+		return ret;
+	}
+	
+	
+	//Set Location list from DB data for subset
+	public void setLocList(String[] subset){
+		String [] titles = "id,name,longitude,lattitude".split(",");
+		for(int i=0;i<subset.length;i++){
+			locList.lineHandler(subset[i], titles, new String[0]);
+		}
 	}
 
 	public static void main(String args[]){

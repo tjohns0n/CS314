@@ -23,8 +23,8 @@ public class Presenter {
     // boolean[] opt = {_id, _mileage, _name, _2opt, _3opt, _gui};
     private boolean[] options;
 
-    private Model model;
-    private View view;
+    private static Model model = new Model();
+    private static View view = new View();
     private String _svg;
     private String _xml;
     private String[] subSet;
@@ -41,7 +41,17 @@ public class Presenter {
         options = new boolean[6];
         Arrays.fill(options, false);
     }
+    
+    public Presenter() {
+		// TODO Auto-generated constructor stub
+	}
 
+    public Message sendMessage(Message msg){
+    	System.out.println("Presenter received");
+    	String[] codes = msg.code.split("-");
+    	return model.sendMessage(msg);
+    }
+    
     public void run() throws IOException {
     	this.run(true);
     }
@@ -78,8 +88,8 @@ public class Presenter {
     	String[][] route = s;
         String[] total = route[route.length - 1][0].split(",");
         int totalMileage = Integer.parseInt(total[0]);
-        String title = files.get(0).getName();
-        view = new View(title, _svg, totalMileage, Arrays.copyOfRange(options, 0, 3), true);
+        
+        view = new View(files.get(0).getName(), _svg, totalMileage, options[1], options[2], options[0]);
         
         viewWriter(route);
         
@@ -118,10 +128,8 @@ public class Presenter {
             System.out.println(Arrays.toString(essentials1));
             int mile = Integer.parseInt(essentials2[0]) - Integer.parseInt(essentials1[0]);
 
-            double[] coordinates = {Double.parseDouble(essentials1[3]), 
-            		Double.parseDouble(essentials1[2]), 
-            		Double.parseDouble(essentials2[3]), 
-            		Double.parseDouble(essentials2[2])};
+            double[] coordinates = {Double.parseDouble(essentials1[3]), Double.parseDouble(essentials1[2]), 
+            		Double.parseDouble(essentials2[3]), Double.parseDouble(essentials2[2])};
             
             view.addLeg(coordinates, essentials1[1], essentials1[4],
             		essentials2[1], essentials2[4],  mile);
@@ -145,8 +153,7 @@ public class Presenter {
             e.printStackTrace();
             System.out.println("We tried to get the webpage to launch without the server");
             System.out.println("A bandaid yes, but we tried, and it looks like it didn't work");
-            System.out.println("But the XML and svg files should be in the directory with the "
-            		+ "proper names/data");
+            System.out.println("But the XML and svg files should be in the directory with the proper names/data");
         }
         
     }

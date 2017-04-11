@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<trip>
+
+<leg>
+<sequence>1</sequence>
+<start>Mount Elbert</start>
+<finish>Mount Massive</finish>
+<mileage>5</mileage>
+</leg>
+
+<leg>
+<sequence>2</sequence>
+<start>Mount Massive</start>
+<finish>Mount Harvard</finish>
+<mileage>20</mileage>
+</leg>
+
+<leg>
+<sequence>3</sequence>
+<start>Mount Harvard</start>
+<finish>Blanca Peak</finish>
+<mileage>103</mileage>
+</leg>
+
+<leg>
+<sequence>4</sequence>
+<start>Blanca Peak</start>
+<finish>Mount Elbert</finish>
+<mileage>120</mileage>
+</leg>
+
+</trip>

@@ -1,5 +1,5 @@
 /*
- * ItineraryWriter - Produce a trip itinerary in XML & HTML/Grommet format
+ * ItineraryWriter - Produce a trip itinerary in XML format
  */
 
 package edu.csu2017sp314.DTR14.tripco.View;
@@ -18,17 +18,6 @@ public class ItineraryWriter {
     ArrayList<String> footer;
     // The number of legs of the trip
     int numLegs;
-
-    // For HTML versions:
-    ArrayList<String> htmlHeader;
-    ArrayList<String> htmlLegs;
-    ArrayList<String> htmlFooter;
-    XMLElement html;
-    XMLElement head;
-    XMLElement meta;
-    XMLElement link;
-    XMLElement script;
-    XMLElement div;
 
     /*
      * ItineraryWriter constructor - initialize the XML structure
@@ -49,14 +38,7 @@ public class ItineraryWriter {
         footer.add(trip.getEnd());
     } 
 
-    public void addLeg(ItineraryLeg leg) {
-        String newLeg = leg.toString();
-        newLeg = replaceName(newLeg);
-        legs.add(newLeg);
-    }
-
     /*
-     * DEPRECATED METHOD, USE FOR COLORADO MAP ONLY 
      * addLeg - add a leg to the itinerary 
      * args:
      * startLocation - where the leg begins
@@ -70,9 +52,6 @@ public class ItineraryWriter {
         // Create XMLElement objects for each element of a leg
         XMLElement l = new XMLElement("leg", "");
         XMLElement seq = new XMLElement("sequence", "");
-        XMLElement start = new XMLElement("start", "");
-        XMLElement finish = new XMLElement("finish", "");
-        XMLElement miles = new XMLElement("mileage", "");
 
         // Add the elements, with additional whitespace for nicer formatting
         leg.add("\n");
@@ -82,18 +61,13 @@ public class ItineraryWriter {
         // Increment numLegs: 
         leg.add(Integer.toString(++numLegs));
         leg.add(seq.getEnd());
-        leg.add("\n");
-        leg.add(start.getStart());
-        leg.add(replaceName(startLocation));
-        leg.add(start.getEnd());
-        leg.add("\n");
-        leg.add(finish.getStart());
-        leg.add(replaceName(endLocation));
-        leg.add(finish.getEnd());
-        leg.add("\n");
-        leg.add(miles.getStart());
-        leg.add(Integer.toString(mileage));
-        leg.add(miles.getEnd());
+        
+        addLegPartion(leg, "start", replaceName(startLocation));
+
+        addLegPartion(leg, "finish", replaceName(endLocation));
+
+        addLegPartion(leg, "miles", Integer.toString(mileage));
+        
         leg.add("\n");
         leg.add(l.getEnd());
         leg.add("\n");
@@ -102,7 +76,14 @@ public class ItineraryWriter {
         // Return the leg (mostly for JUnit)
     	return leg;
     }
-
+    
+    private void addLegPartion(ArrayList<String> leg, String key, String value){
+    	XMLElement xmlE = new XMLElement(key, "");
+    	leg.add("\n");
+        leg.add(xmlE.getStart());
+        leg.add(value);
+        leg.add(xmlE.getEnd());
+    }
     public ArrayList<String> writeXML(String filename) {
         // Add all of the XML to a single ArrayList:
         ArrayList<String> data = new ArrayList<String>();
@@ -138,17 +119,7 @@ public class ItineraryWriter {
     	temp = temp.replaceAll("&", "&amp;");
     	temp = temp.replaceAll("<", "&lt;");
     	temp = temp.replaceAll(">", "&gt;");
-        temp = temp.replaceAll("%", "&#37;");
     	return  temp;
-    }
-    
-    public void addDetailedLeg(ItineraryLeg newLeg) {
-    	legs.add(newLeg.toString());
-    }
-    
-    @Override
-    public String toString() {
-    	return legs.toString();
     }
     
     public static void main(String[] args) {

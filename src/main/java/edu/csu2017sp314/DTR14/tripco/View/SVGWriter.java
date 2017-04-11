@@ -31,15 +31,14 @@ abstract class SVGWriter {
     // Boolean used by file reader
     protected boolean svgTagReached;
 
-	// Common XMLElements 
     protected XMLElement lineElement;
     protected XMLElement textElement;
     protected XMLElement groupElement;
     protected XMLElement titleElement;
 
-    // Constructor 1: Don't use a base SVG
+    // Don't use a base SVG
     protected SVGWriter() {
-        // Init arraylists and XMLElements 
+        // Init arraylists
         header = new ArrayList<String>();
     	content = new ArrayList<String>();
     	footer = new ArrayList<String>();
@@ -48,14 +47,12 @@ abstract class SVGWriter {
         createGroupElement();
     }
 
-    // Constructor 2: Use a base SVG
+    // Use a base SVG
     protected SVGWriter(String filename) {
-        // Init arraylists and XMLElements
+        // Init arraylists
     	this();
 		originalContent = new ArrayList<String>();
-		// Set filename
     	this.filename = filename;
-		// Read in the base SVG
     	readFile();
     }
 
@@ -173,9 +170,7 @@ abstract class SVGWriter {
 	public void addLine(double[] coordinates, String color, int width, boolean map) {
 		int[] point1;
 		int[] point2;
-		// Get new attributes to update the <line> element 
 		ArrayList<String> attributes = new ArrayList<String>();
-		// If geographic -> SVG coordinate mapping should be enabled
 		if (map) {
 			point1 = mapPoints(coordinates[0], coordinates[1]);
 			point2 = mapPoints(coordinates[2], coordinates[3]);
@@ -185,7 +180,6 @@ abstract class SVGWriter {
         	for (int i = 0; i < 2; i++) {
         		attributes.add(Integer.toString(point2[i]));
         	}
-		// If not using coordinate mapping
 		}
         if (!map) {
         	for (int i = 0; i < 4; i++) {
@@ -195,18 +189,12 @@ abstract class SVGWriter {
         
         attributes.add(color);
         attributes.add(Integer.toString(width));
-        // Update the <line> attributes and add the new line to the SVG
+        
 		lineElement.updateAttributes(attributes);
     	content.add(lineElement.getStart());
 	}
 
-	/*
-	 * createLineElement() - initialize the <line> element for the SVG 
-	 * When lines are added via the addLine method, these attributes
-	 * will be updated with the correct values 
-	 */
     private void createLineElement() {
-		// Add attributes to arraylist for XMLElement constructor
         ArrayList<String> attributes = new ArrayList<String>();
         attributes.add("x1");
         attributes.add("0");
@@ -220,7 +208,6 @@ abstract class SVGWriter {
         attributes.add("#000000");
         attributes.add("stroke-width");
         attributes.add("0");
-		// init line element 
         lineElement = new XMLElement("line", attributes);
     }
 
@@ -237,12 +224,8 @@ abstract class SVGWriter {
 		content.add(titleElement.getStart() + groupTitle + titleElement.getEnd());
 	}
 	
-	/*
-	 * createGroupElement - init g and title XMLElements
-	 */
 	private void createGroupElement() {
 		ArrayList<String> group = new ArrayList<String>();
-		// make sure every group has an id 
 		group.add("id");
 		group.add("default");
 		groupElement = new XMLElement("g", group);
@@ -293,11 +276,6 @@ abstract class SVGWriter {
 		return textElement;
 	}
 
-	/*
-	 * createTextElement - init XML text element 
-	 * attributes will be overwritten for each new 
-	 * piece of text added to the SVG 
-	 */
 	private void createTextElement() {
         ArrayList<String> attributes = new ArrayList<String>();
         attributes.add("x");
@@ -327,8 +305,7 @@ abstract class SVGWriter {
 	 * addLineLabel - add a text label in the middle of two x,y coordinates
 	 * text - the text of the label
 	 * id - the id attribute of the text (e.g. "leg1")
-	 * coordinates - x1, y1, x2, y2 - the coordinates of a line 
-	 * 	coordinates should be in decimal geographic form
+	 * x1, y1, x2, y2 - the coordinates of a line 
 	 */
 	public void addLineLabel(String text, String id, double[] coordinates) {
 		double x1 = coordinates[0];
@@ -339,13 +316,6 @@ abstract class SVGWriter {
 		content.add(txt.getStart() + text + txt.getEnd());
 	}
 
-	/*
-	 * addLabel - add text label at any x, y coordinates 
-	 * text - the text of the label 
-	 * id - the id attribute of the text 
-	 * coordinate - x1, y1 - the coordinates of a location 
-	 *	coordinates should be in decimal geographic form 
-	 */
 	public void addLabel(String text, String id, double[] coordinates) {
 		XMLElement txt = addText(text, coordinates, 16, id, false, true);
 		content.add(txt.getStart() + text + txt.getEnd());

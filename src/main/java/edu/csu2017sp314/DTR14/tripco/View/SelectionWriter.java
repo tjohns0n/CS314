@@ -37,19 +37,7 @@ public class SelectionWriter {
 	//Writes body of Selection XML
 	private void writeBody(String[] subSet, String xmlFile, String csvFile){
 		//Add title
-		XMLElement title = new XMLElement("title", "");
-		body.add("\t");
-		body.add(title.getStart());
-		body.add(xmlFile);
-		body.add(title.getEnd());
-		body.add("\n");
-		//Add filename
-		XMLElement filename = new XMLElement("filename", "");
-		body.add("\t");
-		body.add(filename.getStart());
-		body.add(csvFile);
-		body.add(filename.getEnd());
-		body.add("\n");
+		writeBodyHead(xmlFile, csvFile);
 		if(subSet.length>1){
 			//Add subset of destinations
 			XMLElement dest = new XMLElement("destinations", "");
@@ -71,6 +59,22 @@ public class SelectionWriter {
 			body.add(dest.getEnd());
 			body.add("\n");
 		}
+	}
+	
+	private void writeBodyHead(String xmlFile, String csvFile){
+		XMLElement title = new XMLElement("title", "");
+		body.add("\t");
+		body.add(title.getStart());
+		body.add(xmlFile);
+		body.add(title.getEnd());
+		body.add("\n");
+		//Add filename
+		XMLElement filename = new XMLElement("filename", "");
+		body.add("\t");
+		body.add(filename.getStart());
+		body.add(csvFile);
+		body.add(filename.getEnd());
+		body.add("\n");
 	}
 	
 	protected boolean writeXML() {
