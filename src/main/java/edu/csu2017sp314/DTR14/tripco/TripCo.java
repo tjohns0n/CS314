@@ -18,10 +18,11 @@ public class TripCo{
 	private String _svg;			//.svg
 	private boolean _gui;		//-g
 	private boolean _id;		//-i
-	private boolean _mileage;	//-m
+	private boolean _mileage;	//-d
 	private boolean _name;		//-n
 	private boolean _2opt;		//-2
 	private boolean _3opt;		//-3
+	private boolean _km;		//-k or -m
 	//Std usage message
 	private static void usage(){
 		System.out.println("TripCo is a trip planning program that creates the shortest trip from a given list of locations");
@@ -43,12 +44,13 @@ public class TripCo{
 		_name = false;
 		_2opt = false;
 		_3opt = false;
+		_km = false;
 		files = new ArrayList<File>();
 	}
 	
 	//	boolean 
 	//	[1] = _gui, [2] = _id, [3] = _mileage, 
-	//	[4] = _name, [5] =  _2opt, [6] = boolean _3opt,
+	//	[4] = _name, [5] =  _2opt, [6] =  _3opt, [7] = _km
 	public TripCo(String _xml, String _svg, boolean[] opts, ArrayList<File> files){
 		this._xml = _xml;
 		this._svg = _svg;
@@ -58,6 +60,7 @@ public class TripCo{
 		this._name = opts[3];
 		this._2opt = opts[4];
 		this._3opt = opts[5];
+		this._km = opts[6];
 		this.files = files;
 	}
 
@@ -73,7 +76,7 @@ public class TripCo{
 	}
 
 	public void initiate() throws FileNotFoundException, Exception{
-		boolean[] opt = {_id, _mileage, _name, _2opt, _3opt, _gui};
+		boolean[] opt = {_id, _mileage, _name, _2opt, _3opt, _gui, _km};
 		//Instantiate Presenter, put in running loop to check for needed updates
 		Presenter present = new Presenter(files, _xml, _svg, opt);
         
@@ -116,11 +119,12 @@ public class TripCo{
 				switch(arg.charAt(1)){
 					case 'g': opts[0] = true; break;
 					case 'i': opts[1] = true; break;
-					case 'm': opts[2] = true; break;
+					case 'd': opts[2] = true; break;
 					case 'n': opts[3] = true; break;
 					case '2': opts[4] = true; break;
 					case '3': opts[5] = true; break;
 					case 'k': opts[6] = true; break;
+					case 'm': opts[6] = false; break;
 					default:{
 						System.out.println("Argument: '" +arg+"' not a recognized argument");
 						System.out.println("Argument: '" +arg+"' will be ignored");

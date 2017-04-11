@@ -215,7 +215,7 @@ public class Query {
 						}
 						ret[4] = ret[4].substring(0, ret[4].length()-1);
 					} finally { rs.close(); }
-					System.out.println(ret.toString());
+					//System.out.println(ret.toString());
 				} finally { st.close(); }
 			} finally { conn.close(); }
 		} catch (Exception e) {
@@ -387,7 +387,6 @@ public class Query {
 		}
 		//Have country but not region, grab all regions for that country
 		else if(!constraint[2].isEmpty()&&constraint[3].isEmpty()){
-			System.out.println(constraint[2]);
 			String[] regions = country2regions(constraint[2]);
 			//sendMsg(regions, "V-UP-RN");
 			mess = new Message(regions, "V-UP-RN");
@@ -402,7 +401,6 @@ public class Query {
 	
 	//Search Query for given search token
 	public Query(String token, Model model){
-		mod=model;
 		mod = model;
 		String ret0 = "";
 		String ret1 = "";

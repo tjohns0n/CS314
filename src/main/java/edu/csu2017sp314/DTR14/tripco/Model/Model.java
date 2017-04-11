@@ -38,6 +38,7 @@ public class Model{
 
 	public boolean planTrip(boolean run2Opt, boolean run3Opt, String[] selection){
 		//cvsr.initiate(selection);
+		locList.showLocList();
 		src = new ShortestRouteCalculator(locList, 0, KM);
 		if (run3Opt) {
 			src.findBestNearestNeighbor(true, true);
@@ -135,7 +136,7 @@ public class Model{
 	
 	
 	//Set Location list from DB data for subset
-	public void setLocList(String[] subset){
+	public static void setLocList(String[] subset){
 		String [] titles = "id,name,longitude,latitude".split(",");
 		for(int i=0;i<subset.length;i++){
 			locList.lineHandler(subset[i], titles, new String[0]);
