@@ -175,7 +175,7 @@ public class ShortestRouteCalculator{
 		if (do3Opt) {
 			// initialize opt_route, which is used by 3-opt code
 			opt_route = new int[final_route.length][final_route[0].length];
-			while(run3Opt() || run2Opt()) {
+			while(run2Opt()) {
 				if (testDistance < originalDistance) {
 					//System.out.println("orig: " + originalDistance + " test: " + testDistance);
 					originalDistance = testDistance;
