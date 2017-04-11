@@ -61,8 +61,19 @@ public class HTMLItinerary {
 	protected void addLeg(ItineraryLeg l) {
 		if (leg == 1) {
 			insertNewLeg(l.getLocation1(), l.getMileage());
+			addMileageHeader(l.getMileage());
 		}
 		insertNewLeg(l.getLocation2(), l.getMileage());
+		if (leg != size) {
+			addMileageHeader(l.getMileage());
+		}
+	}
+	
+	private void addMileageHeader(int mileage) {
+		String head = "<Heading tag='h3' align='center'>"
+				+ "Travel " + mileage + " " + units
+				+ "</Heading><br />";
+		content.add(head);
 	}
 	
 	/*
@@ -112,7 +123,7 @@ public class HTMLItinerary {
 		String airport = "<Topology.Part id='leg" + leg + "port' status='unknown' "
 				+ "justify='start' align='center' > <Paragraph size='large' margin='none'>"
 				+ "<b>Airport: </b> "
-				+ location[1] + "</Paragraph> </Topology.Part>";
+				+ "<Anchor href='" + location[9] + "'> " + location[1] + "</Anchor></Paragraph> </Topology.Part>";
 		return airport;
 	}
 	
@@ -127,7 +138,9 @@ public class HTMLItinerary {
 	private String getLocationInfo(String[] location) {
 		String loc = "<Topology.Part id='" + leg + "loc' status='unknown' justify='start' "
 				+ "align='center'><Paragraph size='large' margin='none'><b>Location: </b>"
-				+ location[5] + ", " + location[6] + ", " + location[7] + ", " + location[8]
+				+ location[5] + ", " 
+				+ "<Anchor href='" + location[10] + "'> " + location[6] + "</Anchor>, " 
+				+ "<Anchor href='" + location[11] + "'> " + location[7] + "</Anchor>, " + location[8]
 				+ "</Paragraph></Topology.Part>";
 		return loc;
 	}

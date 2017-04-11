@@ -76,12 +76,6 @@ public class View extends Application {
     }
     
     private void setTitle() {
-    	System.out.println(title);
-    	String substring = title.substring(title.length() - 4).toLowerCase();
-    	if (substring.equals(".csv")) {
-    		title = title.substring(0, title.length() - 4);
-    	}
-    	
     	svgWrite.addTitle(title, "maptitle");
     }
     
