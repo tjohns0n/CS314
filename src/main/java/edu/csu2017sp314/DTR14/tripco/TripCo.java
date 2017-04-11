@@ -18,7 +18,7 @@ public class TripCo{
 	private String _svg;			//.svg
 	private boolean _gui;		//-g
 	private boolean _id;		//-i
-	private boolean _mileage;	//-m
+	private boolean _mileage;	//-d
 	private boolean _name;		//-n
 	private boolean _2opt;		//-2
 	private boolean _3opt;		//-3
@@ -50,7 +50,7 @@ public class TripCo{
 	
 	//	boolean 
 	//	[1] = _gui, [2] = _id, [3] = _mileage, 
-	//	[4] = _name, [5] =  _2opt, [6] = boolean _3opt,
+	//	[4] = _name, [5] =  _2opt, [6] =  _3opt, [7] = _km
 	public TripCo(String _xml, String _svg, boolean[] opts, ArrayList<File> files){
 		this._xml = _xml;
 		this._svg = _svg;

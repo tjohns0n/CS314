@@ -11,7 +11,7 @@ public class ShortestRouteCalculatorTest{
 	@Test
 	public void testConstructor() {
 		locList = new LocationList();
-		new ShortestRouteCalculator(locList, 0);
+		new ShortestRouteCalculator(locList, 0, false);
 	}
 
 	@Test
@@ -21,7 +21,7 @@ public class ShortestRouteCalculatorTest{
 		locList.addLocation(new Location("B", "30", "31", "2", "", ""));
 		locList.addLocation(new Location("C", "20", "30", "3","", ""));
 		
-		ShortestRouteCalculator src = new ShortestRouteCalculator(locList, 0);
+		ShortestRouteCalculator src = new ShortestRouteCalculator(locList, 0, false);
 		src.findBestNearestNeighbor(false, false);
 		int[][] tests = src.getFinalRoute();
 		
@@ -38,7 +38,7 @@ public class ShortestRouteCalculatorTest{
 		locList.addLocation(new Location("B", "30", "31", "2","", ""));
 		locList.addLocation(new Location("C", "20", "30", "3","", ""));
 
-		ShortestRouteCalculator src = new ShortestRouteCalculator(locList, 0);
+		ShortestRouteCalculator src = new ShortestRouteCalculator(locList, 0, false);
 		src.findBestNearestNeighbor(false, false);
 		int[][] tests = src.getFinalRoute();
 		assertTrue(tests.length == 4);
@@ -52,7 +52,7 @@ public class ShortestRouteCalculatorTest{
 		locList.addLocation(new Location("B", "30", "31", "2","", ""));
 		locList.addLocation(new Location("C", "20", "30", "3", "", ""));
 
-		ShortestRouteCalculator src = new ShortestRouteCalculator(locList, 0);
+		ShortestRouteCalculator src = new ShortestRouteCalculator(locList, 0, false);
 		src.findBestNearestNeighbor(false, false);
 		int[][] tests = src.getFinalRoute();
 		assertTrue((int)Math.ceil(tests[tests.length - 1][tests[0].length - 1]) == src.getFinalDis());
@@ -65,10 +65,10 @@ public class ShortestRouteCalculatorTest{
 		locList.addLocation(new Location("B", "20.1", "20", "1","", ""));
 		locList.addLocation(new Location("C", "19.9", "20", "1","", ""));
 		locList.addLocation(new Location("D", "30", "30", "1","", ""));
-		ShortestRouteCalculator src = new ShortestRouteCalculator(locList, 0);
+		ShortestRouteCalculator src = new ShortestRouteCalculator(locList, 0, false);
 		src.findBestNearestNeighbor(false, false);
 		int[][] test1 = src.getFinalRoute();
-		ShortestRouteCalculator src2 = new ShortestRouteCalculator(locList, 0);
+		ShortestRouteCalculator src2 = new ShortestRouteCalculator(locList, 0, false);
 		src2.findBestNearestNeighbor(true, false);
 		
 		int[][] test2 = src2.getFinalRoute();
@@ -85,7 +85,7 @@ public class ShortestRouteCalculatorTest{
 		locList.addLocation(new Location("C", "38.9243","-106.3208"));
 		locList.addLocation(new Location("D", "37.5774", "-105.4857"));
 		locList.addLocation(new Location("E", "39.0294", "-106.4729"));
-		ShortestRouteCalculator src = new ShortestRouteCalculator(locList, 0);
+		ShortestRouteCalculator src = new ShortestRouteCalculator(locList, 0, false);
 		
 		src.findBestNearestNeighbor(false, false);
 		
@@ -110,7 +110,7 @@ public class ShortestRouteCalculatorTest{
 		locList.addLocation(new Location("C", "38.9243","-106.3208"));
 		locList.addLocation(new Location("D", "37.5774", "-105.4857"));
 		locList.addLocation(new Location("E", "39.0294", "-106.4729"));
-		ShortestRouteCalculator src = new ShortestRouteCalculator(locList, 0);
+		ShortestRouteCalculator src = new ShortestRouteCalculator(locList, 0, false);
 		
 		src.opt_route = new int[6][2];
 		src.test_route = new int[6][2];
@@ -137,7 +137,7 @@ public class ShortestRouteCalculatorTest{
 		locList.addLocation(new Location("C", "38.9243","-106.3208"));
 		locList.addLocation(new Location("D", "37.5774", "-105.4857"));
 		locList.addLocation(new Location("E", "39.0294", "-106.4729"));
-		ShortestRouteCalculator src = new ShortestRouteCalculator(locList, 0);
+		ShortestRouteCalculator src = new ShortestRouteCalculator(locList, 0, false);
 		
 		src.opt_route = new int[6][2];
 		
@@ -158,7 +158,7 @@ public class ShortestRouteCalculatorTest{
 		locList = new LocationList();
 		locList.addLocation(new Location("A", "39.1177", "-180"));
 		locList.addLocation(new Location("B", "39.1177", "180"));
-		ShortestRouteCalculator src = new ShortestRouteCalculator(locList, 0);
+		ShortestRouteCalculator src = new ShortestRouteCalculator(locList, 0, false);
 		
 		double dis = src.getDistance(0, 1);
 		assertTrue(dis < 0.0001 && dis > -0.0001);

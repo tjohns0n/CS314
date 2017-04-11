@@ -23,7 +23,7 @@ public class View extends Application {
     
     // ItineraryWriter and SVGWriter:
     private ItineraryWriter itinWrite;
-    private ColoradoSVGWriter svgWrite;
+    private WorldMapWriter svgWrite;
 
     //Empty constructor, for javafx Application compliance
     public View(){
@@ -42,11 +42,11 @@ public class View extends Application {
     public View(String title, String SVGFile, int totalDistance, boolean[] labels, boolean miles){
     	legCount = 0;
     	itinWrite = new ItineraryWriter();
-    	if(SVGFile == null || SVGFile.equals("null") || SVGFile.equals(""))
-    		svgWrite = new ColoradoSVGWriter();
-    	else
-    		svgWrite = new ColoradoSVGWriter(SVGFile);
-       
+//    	if(SVGFile == null || SVGFile.equals("null") || SVGFile.equals(""))
+//    		svgWrite = new ColoradoSVGWriter();
+//    	else
+//    		svgWrite = new ColoradoSVGWriter(SVGFile);
+    	svgWrite = new WorldMapWriter("World3.svg");
         this.title = title;
         this.totalDistance = totalDistance;
         
@@ -55,7 +55,7 @@ public class View extends Application {
         
         this.ids = labels[0];
         this.distances = labels[1];
-        this.names = labels[2];
+        this.names = false;
     }
     
     private void setTitle() {
@@ -101,7 +101,7 @@ public class View extends Application {
     	String testString = "";
     	svgWrite.newGroup("leg" + Integer.toString(++legCount));
         svgWrite.addLine(coordinates, "blue", 3, true);
-        itinWrite.addLeg(startLocationName, endLocationName, mileage);
+        //itinWrite.addLeg(startLocationName, endLocationName, mileage);
 
         if (this.distances) {
         	testString += "m";
@@ -120,6 +120,10 @@ public class View extends Application {
         }
         svgWrite.endGroup();
         return testString;
+    }
+    
+    public void addItinLeg(ItineraryLeg il){
+    	itinWrite.addDetailedLeg(il);
     }
 
     /*

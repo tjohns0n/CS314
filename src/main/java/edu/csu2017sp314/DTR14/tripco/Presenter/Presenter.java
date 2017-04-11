@@ -21,7 +21,6 @@ public class Presenter {
 
     // boolean[] opt = {_id, _mileage, _name, _2opt, _3opt, _gui, _unit};
     private static boolean[] options;
-
     private static Model model = new Model();
     private static View view = new View();
     private static String _svg;
@@ -59,6 +58,7 @@ public class Presenter {
     }
     
     public void run(boolean flag) throws IOException {
+    	model = new Model(this, options[6]);
     	xmlHandler();
         printlines();
         viewHandler(modelHandler());
@@ -76,6 +76,9 @@ public class Presenter {
             Application.launch(View.class, new String[0]);
             subSet = new String[0];
         }
+        else{
+        	model.sendToModel(new Message(subSet, "M-DB-TRIP"));
+        }
         if(csvFileName.length() != 0) files.add(new File(csvFileName.toString()));
     }
 
@@ -91,9 +94,8 @@ public class Presenter {
         int totalMileage = Integer.parseInt(total[0]);
         boolean[] label = {options[0], options[1]};
         view = new View(files.get(0).getName(), _svg, totalMileage, label, options[1]);
-
+        viewItin(route);
         viewWriter(route);
-        
     }
     
     private void viewWriter(String[][] route){
@@ -169,7 +171,7 @@ public class Presenter {
       for(int i = 0; i < subSet.length; i++)
           System.out.println("subSet = " + subSet[i]);
     }
-
+  
 	public static void setOptions(boolean[] options) {
 		Presenter.options = options;
 	}

@@ -17,7 +17,7 @@ public class TripTest{
 		Location l2 = new Location("Mount Cool", "39", "-106", "4", "Cool", "Weather");
 		locList.addLocation(l1);
 		locList.addLocation(l2);
-		src = new ShortestRouteCalculator(locList, 0);
+		src = new ShortestRouteCalculator(locList, 0, false);
 	}
 	
 	@Test
