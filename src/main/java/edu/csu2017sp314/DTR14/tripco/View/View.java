@@ -46,7 +46,7 @@ public class View extends Application {
 //    		svgWrite = new ColoradoSVGWriter();
 //    	else
 //    		svgWrite = new ColoradoSVGWriter(SVGFile);
-    	svgWrite = new WorldMapWriter("");
+    	svgWrite = new WorldMapWriter("World3.svg");
         this.title = title;
         this.totalDistance = totalDistance;
         

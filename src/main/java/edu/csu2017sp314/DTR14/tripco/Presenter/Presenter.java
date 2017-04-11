@@ -134,7 +134,7 @@ public class Presenter {
             String[] essentials2 = route[i + 1][0].split(",");
             //Leg Distance calculated by difference between accumulated miles
             //First locations should have "0" as accumulated distance
-            System.out.println(Arrays.toString(essentials1));
+            //System.out.println(Arrays.toString(essentials1));
             int mile = Integer.parseInt(essentials2[0]) - Integer.parseInt(essentials1[0]);
 
             double[] coordinates = {Double.parseDouble(essentials1[3]), Double.parseDouble(essentials1[2]), 
@@ -160,7 +160,6 @@ public class Presenter {
     	for(int j=0;j<m.content.length-1;j++){
     		 String[] essentials1 = route[j][0].split(",");
              String[] essentials2 = route[j + 1][0].split(",");
-             System.out.println(Arrays.toString(essentials1));
              int mile = Integer.parseInt(essentials2[0]) - Integer.parseInt(essentials1[0]);
              ItineraryLeg itinLeg = new ItineraryLeg(m.content[j].split(","), m.content[j+1].split(","),
             		 mile, j+1, unit);

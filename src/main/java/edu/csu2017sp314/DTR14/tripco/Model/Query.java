@@ -339,14 +339,9 @@ public class Query {
 			System.err.printf("Exception: ");
 			System.err.println(e.getMessage());
 		}
+        mess = new Message(ret, "V-ST-PLAN");
         mod.setLocList(ret);
 	}
-	
-	private void sendMsg(String[] cont, String code){
-		Message m = new Message(cont, code);
-		mod.sendToPresenter(m);
-	}
-	
 	
 	//Takes comma seperated string of limits already set in GUI
 	//EX: type-large_aiports,continent-North America,country-United States,region-Texas
@@ -451,8 +446,10 @@ public class Query {
 	
 	
 	public static void main(String[] args){
-		Query q = new Query("Dallas",null);
-		System.out.println(Arrays.toString(q.mess.content));
+		String[] s = {"KDAL", "KDFW"};
+		Query q = new Query(null, s);
+		System.out.println(q.mess.content[0]);
+		System.out.println(q.mess.content[1]);
 	}
 	
 	
