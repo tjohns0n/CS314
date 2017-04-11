@@ -94,7 +94,7 @@ public class Presenter {
         String[] total = route[route.length - 1][0].split(",");
         int totalMileage = Integer.parseInt(total[0]);
         boolean[] label = {options[0], options[1]};
-        view = new View(files.get(0).getName(), _svg, totalMileage, label, options[6]);
+        view = new View(files.get(0).getName(), _svg, totalMileage, label, options[6], route.length);
         viewItin(route);
         viewWriter(route);
     }
