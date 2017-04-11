@@ -1,6 +1,6 @@
 package edu.csu2017sp314.DTR14.tripco.Presenter;
 
-public class Msg {
+public class Message {
 	
 	//Content is an array holding comma separated Strings to be processed based on the code
 	public String[] content;
@@ -24,7 +24,7 @@ public class Msg {
 	//
 	
 	
-	public Msg(String[] cont, String Code){
+	public Message(String[] cont, String Code){
 		content = cont;
 		code = Code;
 	}

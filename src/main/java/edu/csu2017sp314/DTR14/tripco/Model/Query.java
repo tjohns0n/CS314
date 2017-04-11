@@ -7,7 +7,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.sql.ResultSet;
-import edu.csu2017sp314.DTR14.tripco.Presenter.Msg;
+import edu.csu2017sp314.DTR14.tripco.Presenter.Message;
 
 public class Query {
 
@@ -26,7 +26,7 @@ public class Query {
 	private final String counts = "SELECT name FROM countries;";
 	private final String Wid = "WHERE airports.id = ";
 	public Model mod;
-	private Msg mess;
+	private Message mess;
 	
 	
 	public Query(){
@@ -189,6 +189,9 @@ public class Query {
 		return ret;
 	}
 	
+	//Returns
+	//airportname-airportID,airportname-airportID,
+	//EX: Dallas International-KDFW,Denver International-KDIA
 	private String[] region2airports(String region, String type){
 		String[] ret = {"","","","",""};
         try	{ // connect to the database 
@@ -208,7 +211,7 @@ public class Query {
 					ResultSet rs = st.executeQuery(query);
 					try { //Grab countries
 						while(rs.next()){
-							ret[4]+=rs.getString(1)+"-"+rs.getString(2)+",";
+							ret[4]+=rs.getString(2)+":"+rs.getString(1)+",";
 						}
 						ret[4] = ret[4].substring(0, ret[4].length()-1);
 					} finally { rs.close(); }
@@ -267,7 +270,7 @@ public class Query {
 			System.err.printf("Exception: ");
 			System.err.println(e.getMessage());
 		}
-        mess = new Msg(ret, "V-ST-INIT");
+        mess = new Message(ret, "V-ST-INIT");
         //sendMsg(ret,"V-ST-INIT");
 	}
 	
@@ -307,7 +310,7 @@ public class Query {
 			System.err.printf("Exception: ");
 			System.err.println(e.getMessage());
 		}
-        mess = new Msg(ret, "V-ST-ITIN");
+        mess = new Message(ret, "V-ST-ITIN");
         //sendMsg(ret,"V-ST-ITIN");
 	}
 	
@@ -318,24 +321,17 @@ public class Query {
         String[] ret = new String[ids.length];
         try	{ // connect to the database 
             Class.forName(driver); 
-            Connection conn = DriverManager.getConnection(theURL, user, pass);	
-
+            Connection conn = DriverManager.getConnection(theURL, user, pass);
 			try { // create a statement
 				Statement st = conn.createStatement();
-				
 				try { // submit a query
 					for(int i=0; i<ids.length; i++){
-						String query = "SELECT id,name,longitude,lattitude,"+"'"+ids[i]+"';";
+						String query = "SELECT id,name,longitude,latitude FROM airports WHERE id = '"+ids[i]+"';";
 						ResultSet rs = st.executeQuery(query);
-						
 						try { // iterate through the query results and print
-							String add="";
-							int j=0;
-							while (rs.next()){
-								add+=rs.getString(j+1)+",";
-								j++;
-							}
-							ret[i] = add.substring(0, add.length()-1);
+							rs.next();
+							String add=rs.getString(1)+","+rs.getString(2)+","+rs.getString(3)+","+rs.getString(4);
+							ret[i] = add;
 						} finally { rs.close(); }
 					}
 				} finally { st.close(); }
@@ -348,7 +344,7 @@ public class Query {
 	}
 	
 	private void sendMsg(String[] cont, String code){
-		Msg m = new Msg(cont, code);
+		Message m = new Message(cont, code);
 		mod.sendToPresenter(m);
 	}
 	
@@ -361,19 +357,19 @@ public class Query {
 		for(int i=0; i<limit.length;i++){
 			String[] fields = limit[i].split("-");
 			switch(fields[0]){
-				case "type":{
+				case "Type":{
 					ret[0] = fields[1];
 					break;
 				}
-				case "continent":{
+				case "Continent":{
 					ret[1] = continent2id(fields[1]);
 					break;
 				}
-				case "country":{
+				case "Country":{
 					ret[2] = country2code(fields[1]);
 					break;
 				}
-				case "region":{
+				case "Region":{
 					ret[3] = region2code(fields[1], ret[2]);
 					break;
 				}
@@ -393,20 +389,20 @@ public class Query {
 		if(!constraint[1].isEmpty() && constraint[2].isEmpty() && constraint[3].isEmpty()){
 			String[] countries = continent2countries(constraint[1]);
 			//sendMsg(countries, "V-UP-CY");
-			mess = new Msg(countries, "V-UP-CY");
+			mess = new Message(countries, "V-UP-CY");
 		}
 		//Have country but not region, grab all regions for that country
 		else if(!constraint[2].isEmpty()&&constraint[3].isEmpty()){
 			System.out.println(constraint[2]);
 			String[] regions = country2regions(constraint[2]);
 			//sendMsg(regions, "V-UP-RN");
-			mess = new Msg(regions, "V-UP-RN");
+			mess = new Message(regions, "V-UP-RN");
 		}
 		//Have region, grab all airports for specific region
 		else if(!constraint[3].isEmpty()){
 			String[] airports = region2airports(constraint[3], constraint[0]);
 			//sendMsg(airports, "V-UP-IL");
-			mess = new Msg(airports, "V-UP-IL");
+			mess = new Message(airports, "V-UP-IL");
 		}
 	}
 	
@@ -447,10 +443,10 @@ public class Query {
 		String[] r = {"","","","","",""};
 		r[4] = ret0;
 		r[5] = ret1;
-        mess = new Msg(r,"V-ST-SRCH");
+        mess = new Message(r,"V-ST-SRCH");
 	}
 	
-	public Msg getMsg(){
+	public Message getMsg(){
 		return mess;
 	}
 	

@@ -7,7 +7,6 @@ package edu.csu2017sp314.DTR14.tripco.View;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import edu.csu2017sp314.DTR14.tripco.Presenter.Msg;
 
 public class View extends Application {
 
@@ -24,7 +23,7 @@ public class View extends Application {
     
     // ItineraryWriter and SVGWriter:
     private ItineraryWriter itinWrite;
-    private ColoradoSVGWriter svgWrite;
+    private WorldMapWriter svgWrite;
 
     //Empty constructor, for javafx Application compliance
     public View(){
@@ -43,11 +42,11 @@ public class View extends Application {
     public View(String title, String SVGFile, int totalDistance, boolean[] labels, boolean miles){
     	legCount = 0;
     	itinWrite = new ItineraryWriter();
-    	if(SVGFile == null || SVGFile.equals("null") || SVGFile.equals(""))
-    		svgWrite = new ColoradoSVGWriter();
-    	else
-    		svgWrite = new ColoradoSVGWriter(SVGFile);
-       
+//    	if(SVGFile == null || SVGFile.equals("null") || SVGFile.equals(""))
+//    		svgWrite = new ColoradoSVGWriter();
+//    	else
+//    		svgWrite = new ColoradoSVGWriter(SVGFile);
+    	svgWrite = new WorldMapWriter("");
         this.title = title;
         this.totalDistance = totalDistance;
         
@@ -56,7 +55,7 @@ public class View extends Application {
         
         this.ids = labels[0];
         this.distances = labels[1];
-        this.names = labels[2];
+        this.names = false;
     }
     
     private void setTitle() {
@@ -85,58 +84,6 @@ public class View extends Application {
     	return title;
     }
     
-    public void sendToView(Msg msg){
-    	String[] codes = msg.code.split("-");
-    	if(codes.length<3){
-			return;
-		}
-    	if(codes[0].equalsIgnoreCase("V")){
-    		if(codes[1].equalsIgnoreCase("ST")){
-    			setMsg(msg);
-    		}
-    		else if(codes[1].equalsIgnoreCase("UP")){
-    			updateMsg(msg);
-    		}
-    	}
-    	else{
-    		return;
-    	}
-    }
-    
-    public void setMsg(Msg msg){
-    	String[] codes = msg.code.split("-");
-    	switch(codes[2]){
-	    	case "INIT":{
-	    		//Send to GUI
-	    		break;
-	    	}
-	    	case "ITIN":{
-	    		//Write itin
-	    		break;
-	    	}
-	    	default: break;
-    	}
-    }
-    
-    public void updateMsg(Msg msg){
-    	String[] codes = msg.code.split("-");
-    	switch(codes[2]){
-	    	case "CY":{
-	    		//Send to GUI
-	    		break;
-	    	}
-	    	case "RN":{
-	    		//Write itin
-	    		break;
-	    	}
-	    	case "IL":{
-	    		//
-	    		break;
-	    	}
-	    	default: break;
-    	}
-    }
-    
     //Called by Input gui, sets options from gui, starts svgwriter, wakes up Presenter thread
     
     /*
@@ -154,7 +101,7 @@ public class View extends Application {
     	String testString = "";
     	svgWrite.newGroup("leg" + Integer.toString(++legCount));
         svgWrite.addLine(coordinates, "blue", 3, true);
-        itinWrite.addLeg(startLocationName, endLocationName, mileage);
+        //itinWrite.addLeg(startLocationName, endLocationName, mileage);
 
         if (this.distances) {
         	testString += "m";
@@ -173,6 +120,10 @@ public class View extends Application {
         }
         svgWrite.endGroup();
         return testString;
+    }
+    
+    public void addItinLeg(ItineraryLeg il){
+    	itinWrite.addDetailedLeg(il);
     }
 
     /*

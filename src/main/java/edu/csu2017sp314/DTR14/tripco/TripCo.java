@@ -92,7 +92,7 @@ public class TripCo{
 
 		String _xml = "";
 		String _svg = "";
-		boolean[] opts = new boolean[6];
+		boolean[] opts = new boolean[7];
 		ArrayList<File> files = new ArrayList<File>();
 
 		//Need at least one input file
@@ -120,6 +120,7 @@ public class TripCo{
 					case 'n': opts[3] = true; break;
 					case '2': opts[4] = true; break;
 					case '3': opts[5] = true; break;
+					case 'k': opts[6] = true; break;
 					default:{
 						System.out.println("Argument: '" +arg+"' not a recognized argument");
 						System.out.println("Argument: '" +arg+"' will be ignored");
