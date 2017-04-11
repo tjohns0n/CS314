@@ -116,7 +116,6 @@ public class SelectionGUI extends Application{
 		    		return;
 		    	}
 		    	else  msg = sendMsg(labels[index] + "-" + chosen);
-		    	System.out.println("fff : " + msg.content[index+1]);
 		    	updateDropDownBox(myComboBoxes[index + 1], msg.content[index+1].split(","));
 		    }
 		});
@@ -135,7 +134,6 @@ public class SelectionGUI extends Application{
 	//EX: region-Texas,type-large_aiport
 	//EX: search-dallas
 	private Message sendMsg(String content){
-		System.out.println(content);
 		int index = content.indexOf("-");
 		String title = content.substring(0, index);
 		String code = "";
@@ -261,7 +259,6 @@ public class SelectionGUI extends Application{
 			if(!text.isEmpty()){
 				subSet = text.split(",");
 				for(int i = 0; i < subSet.length; i++) subSet[i].trim();
-				System.out.print("..." + xmlFile);
 				new SelectionWriter(subSet, "usr"+xmlFile, "").writeXML();
 				setWarnText(warnText, "Saved Successfully in " + xmlFile);
 			}
@@ -311,7 +308,6 @@ public class SelectionGUI extends Application{
 		Button btn = basic.newButton("Plan Trip");
 		Text warnText = new Text();
 		btn.setOnAction(e -> {
-			System.out.println(subSet.length);
 			if(subSet.length == 1){
 				String warns = "No Selection Chosen";
 				basic.newWarnText(warnText, warns, true);
@@ -338,7 +334,6 @@ public class SelectionGUI extends Application{
 	}
 
 	private void updateSubsets(String data){
-		System.out.println("update = " +data);
 		for(int i = 0; i < subsets.size(); i++){
 			if(!data.contains(subsets.get(i).getId()))
 				subsets.remove(i);
