@@ -61,7 +61,6 @@ public class Presenter {
     public void run(boolean flag) throws IOException {
     	model = new Model(this, options[6]);
     	xmlHandler();
-        printlines();
         viewHandler(modelHandler());
         
         if(flag) webPageViewer();
@@ -73,8 +72,8 @@ public class Presenter {
         else subSet = new XMLReader().readSelectFile(_xml, csvFileName);
         if (options[5] == true) {
             // if GUI
-        	files.add(new File(name+".csv"));
             Application.launch(View.class, new String[0]);
+            files.add(new File(name+".csv"));
             subSet = new String[0];
         }
         else{
@@ -179,14 +178,19 @@ public class Presenter {
 	}
 
 	public static void set_svg(String _svg) {
-		Presenter._svg = _svg;
+		if(Presenter._svg == null)
+			Presenter._svg = _svg;
 	}
 
 	public static void set_xml(String _xml) {
-		Presenter._xml = _xml;
+		if(Presenter._xml == null)
+			Presenter._xml = _xml;
 	}
 	
 	public static void setName(String name) {
-		Presenter.name = name;
+		if(Presenter.name == null || 
+				Presenter.name.equals("temp"));
+			Presenter.name = name;
 	}
+
 }

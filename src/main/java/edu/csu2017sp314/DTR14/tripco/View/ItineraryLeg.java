@@ -48,15 +48,7 @@ public class ItineraryLeg {
 	}
 	
 	private void populateLocations() {
-		if (loc1.length != 12) {
-			System.err.println("location1 array not correct length");
-			return;
-		}
 		
-		if (loc2.length != 12) {
-			System.err.println("location2 array not correct length");
-			return;
-		}
 		
 		for (int i = 0; i < 12; i++) {
 			location.add(new XMLElement(head[i], ""));

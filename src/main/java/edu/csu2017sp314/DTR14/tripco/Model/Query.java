@@ -324,12 +324,12 @@ public class Query {
 				Statement st = conn.createStatement();
 				try { // submit a query
 					for(int i=0; i<ids.length; i++){
-						System.out.println(ids[i]);
 						String query = "SELECT id,name,longitude,latitude FROM airports WHERE id = '"+ids[i].trim()+"';";
 						ResultSet rs = st.executeQuery(query);
 						try { // iterate through the query results and print
 							rs.next();
-							String add=rs.getString(1)+","+rs.getString(2)+","+rs.getString(3)+","+rs.getString(4);
+							String add=removeStuff(rs.getString(1))+","+removeStuff(rs.getString(2))+","+
+									removeStuff(rs.getString(3))+","+removeStuff(rs.getString(4));
 							ret.add(add);
 						} finally { rs.close(); }
 					}
@@ -342,10 +342,12 @@ public class Query {
         ret.trimToSize();
         String[] r = ret.toArray(new String[ret.size()]);
         mess = new Message(r, "V-ST-PLAN");
-        System.out.println(Arrays.toString(r));
-        mod.setLocList(r);
+        Model.setLocList(r);
 	}
 	
+	private String removeStuff(String line){
+			return line.replaceAll(",", "");
+	}
 	//Takes comma seperated string of limits already set in GUI
 	//EX: type-large_aiports,continent-North America,country-United States,region-Texas
 	private String[] parseLimits(String limits){

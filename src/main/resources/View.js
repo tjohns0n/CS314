@@ -1,6 +1,6 @@
 function nameSVG() {
-	return '/s/bach/m/under/bcgood/CS314/Sprint3T/DTR-14/src/main/resources/.svg';
+	return '/Users/Jim/Desktop/cs314/project/DTR-14-master/src/main/resources/worldmedium.svg';
 }
 function nameXML() {
-	return '/s/bach/m/under/bcgood/CS314/Sprint3T/DTR-14/src/main/resources/.xml';
+	return '/Users/Jim/Desktop/cs314/project/DTR-14-master/src/main/resources/worldmedium.xml';
 }

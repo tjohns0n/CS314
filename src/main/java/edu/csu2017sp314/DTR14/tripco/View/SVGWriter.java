@@ -8,7 +8,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 abstract class SVGWriter {
 
@@ -278,7 +277,6 @@ abstract class SVGWriter {
 			coordinates[1] = (double)point[1];
 		}
 
-		System.out.println(Arrays.toString(coordinates));
 		ArrayList<String> attributes = new ArrayList<String>();
 		
         attributes.add(Integer.toString((int)coordinates[0]));

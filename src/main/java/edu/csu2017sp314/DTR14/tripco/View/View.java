@@ -76,14 +76,19 @@ public class View extends Application {
     }
     
     private void setTitle() {
+    	String substring = title.substring(title.length() - 4).toLowerCase();
+    	if (substring.equals(".csv")) {
+    		title = title.substring(0, title.length() - 4);
+    	}
+    	
     	svgWrite.addTitle(title, "maptitle");
     }
     
     private void setFooter() {
     	if (miles) {
-        	svgWrite.addFooter(totalDistance + " miles", "mapfooter");
-        } else {
         	svgWrite.addFooter(totalDistance + " kilometers", "mapfooter");
+        } else {
+        	svgWrite.addFooter(totalDistance + " miles", "mapfooter");
         }
     }
     
@@ -136,7 +141,7 @@ public class View extends Application {
     
     public void addItinLeg(ItineraryLeg il){
     	itinWrite.addDetailedLeg(il);
-    	htmlWrite.addLeg(il);
+    	//htmlWrite.addLeg(il);
     }
 
     /*

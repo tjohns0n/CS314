@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 import edu.csu2017sp314.DTR14.tripco.Presenter.Message;
+import edu.csu2017sp314.DTR14.tripco.Presenter.Presenter;
 import edu.csu2017sp314.DTR14.tripco.Presenter.XMLReader;
 import javafx.application.Application;
 import javafx.event.Event;
@@ -107,7 +108,8 @@ public class SelectionGUI extends Application{
 		    	Message msg = null;
 		    	if(index == 3) {
 		    		String type =  myComboBoxes[0].getSelectionModel().getSelectedItem().toString();  
-		    		msg = sendMsg(labels[index] + "-" + chosen + "," + labels[0] + "-" + type);
+		    		if (!type.isEmpty()) msg = sendMsg(labels[index] + "-" + chosen + "," + labels[0] + "-" + type);
+		    		else msg = sendMsg(labels[index] + "-" + chosen);
 		    	}
 		    	if(index == 4){
 	    			addToSubsets(chosen);
@@ -115,7 +117,6 @@ public class SelectionGUI extends Application{
 		    		return;
 		    	}
 		    	else  msg = sendMsg(labels[index] + "-" + chosen);
-		    	System.out.println("fff : " + msg.content[index+1]);
 		    	updateDropDownBox(myComboBoxes[index + 1], msg.content[index+1].split(","));
 		    }
 		});
@@ -134,7 +135,6 @@ public class SelectionGUI extends Application{
 	//EX: region-Texas,type-large_aiport
 	//EX: search-dallas
 	private Message sendMsg(String content){
-		System.out.println(content);
 		int index = content.indexOf("-");
 		String title = content.substring(0, index);
 		String code = "";
@@ -260,7 +260,7 @@ public class SelectionGUI extends Application{
 			if(!text.isEmpty()){
 				subSet = text.split(",");
 				for(int i = 0; i < subSet.length; i++) subSet[i].trim();
-				new SelectionWriter(subSet, xmlFile, csvFile).writeXML();
+				new SelectionWriter(subSet, "usr"+xmlFile, "").writeXML();
 				setWarnText(warnText, "Saved Successfully in " + xmlFile);
 			}
 			else setWarnText(warnText, "Error! No SubSet!");
@@ -279,6 +279,7 @@ public class SelectionGUI extends Application{
 				if(name.length() > 4){
 					if(name.substring(name.length()-4, name.length()).equalsIgnoreCase(".xml")) {
                         xmlFile = in.getAbsolutePath();
+                        Presenter.setName(xmlFile.substring(0, xmlFile.indexOf(".")));
                         try {
                         	StringBuilder cvsFileName = new StringBuilder();
 							subSet = new XMLReader().readSelectFile(in.getAbsolutePath(), cvsFileName);
@@ -309,7 +310,6 @@ public class SelectionGUI extends Application{
 		Button btn = basic.newButton("Plan Trip");
 		Text warnText = new Text();
 		btn.setOnAction(e -> {
-			System.out.println(subSet.length);
 			if(subSet.length == 1){
 				String warns = "No Selection Chosen";
 				basic.newWarnText(warnText, warns, true);
@@ -336,7 +336,6 @@ public class SelectionGUI extends Application{
 	}
 
 	private void updateSubsets(String data){
-		System.out.println("update = " +data);
 		for(int i = 0; i < subsets.size(); i++){
 			if(!data.contains(subsets.get(i).getId()))
 				subsets.remove(i);
@@ -348,10 +347,17 @@ public class SelectionGUI extends Application{
 		String names[] = msg.content[4].split(",");
 		for(int i = 0; i < names.length; i++){
 			Subset newsub = new Subset(ids[i], names[i]);
-			if(!subsets.contains(newsub)) subsets.add(newsub);
+			if(checkValid(newsub)) subsets.add(newsub);
 		}
 	}
-
+	
+	private boolean checkValid(Subset newsub){
+		for(int i = 0; i < subsets.size(); i++){
+			if(subsets.get(i).getId().equals(newsub.getId()))
+				return false;
+		}
+		return true;
+	}
 	private void addToSubsets(String string){
 		String parts[] = string.split(":");
 		Subset newsub = new Subset(parts[0], parts[1]);

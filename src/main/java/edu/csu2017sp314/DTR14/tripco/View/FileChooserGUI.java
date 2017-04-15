@@ -24,7 +24,7 @@ import javafx.stage.Stage;
 
 public class FileChooserGUI extends Application{
 	private boolean[] options;
-	private String name;
+	private String inputname;
 	private String csvFile;
 	private String svgFile;
 	private Basic basic;
@@ -95,10 +95,20 @@ public class FileChooserGUI extends Application{
 	private VBox setMarkerBox(){
 		Label label = basic.newLabel("Select optional Markers");
 		VBox vbox = basic.newVBox(10);
-		vbox.getChildren().addAll(label,setMarkers());
+		vbox.getChildren().addAll(label,setMarkers(), setSelected());
 		return vbox;
 	}
-
+	
+	private VBox setSelected(){
+		VBox vbox = basic.newVBox(10);
+		fontChBox = new ChoiceBox<>(FXCollections.observableArrayList("Kilometers", "Miles"));
+		fontChBox.setMinWidth(100);
+		fontChBox.getSelectionModel().selectFirst();
+		vbox.getChildren().add(fontChBox);
+		vbox.setAlignment(Pos.BASELINE_CENTER);
+		return vbox;
+	}
+	
 	private GridPane setMarkers(){
 		CheckBox name = basic.newCheckBox("Name");
 		CheckBox id = basic.newCheckBox("ID");
@@ -112,11 +122,10 @@ public class FileChooserGUI extends Application{
 		name.setOnAction(e -> {
 			options[2] = name.isSelected();
 		});
-		fontChBox = new ChoiceBox<>(FXCollections.observableArrayList("Kilometers", "Miles"));
-		fontChBox.getSelectionModel().selectFirst();
+		
 		GridPane gridpane = basic.newGridPane(25, 45, 30);
 		VBox vbox = basic.newVBox(5);
-		vbox.getChildren().addAll(name, id, miles, fontChBox);
+		vbox.getChildren().addAll(name, id, miles);
 		vbox.setAlignment(Pos.CENTER_LEFT);
 		gridpane.add(vbox, 1, 0, 1, 3);
 		return gridpane;
@@ -186,6 +195,8 @@ public class FileChooserGUI extends Application{
 		btn.setOnAction(e->{
 			String entered = newTextField.getText();
 			try {
+				if(!entered.isEmpty()) inputname = entered;
+				else inputname = "temp";
 				writeResults();
 				stage.close();
 				new SelectionGUI().start(new Stage());
@@ -206,14 +217,12 @@ public class FileChooserGUI extends Application{
 	}
 
 	protected void writeResults() throws Exception{
-		if(fontChBox.getSelectionModel().getSelectedItem().toString().equals("Kilometers"))
+		if(fontChBox.getValue().toString().equals("Kilometers"))
 			options[6] = true; 
-		System.out.println(options[5]);
 	    Presenter.set_svg(svgFile);
-	    Presenter.setName(name);
+	    Presenter.setName(inputname);
 	    Presenter.setOptions(options);
-	    SelectionGUI.setXmlFile(name);
-	    SelectionGUI.setXmlFile(csvFile);
+	    SelectionGUI.setXmlFile(inputname+".xml");
 	}
 	
 	@Override

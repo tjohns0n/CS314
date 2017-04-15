@@ -113,17 +113,17 @@ public class HTMLItinerary {
 		content.add(getLocationInfo(location));
 		content.add(getCoordinatesInfo(location));
 		content.add("</Topology.Parts></Topology.Parts><br />");
-		if (leg == size) {
-			content.add("<Heading tag='h3' align='center'>"
-					+ "Travel " + mileage + " " + units + " to:</Heading>");
-		}
+		//if (leg == size) {
+		//	content.add("<Heading tag='h3' align='center'>"
+		//			+ "Travel " + mileage + " " + units + " to:</Heading>");
+		//}
 	}
 	
 	private String getAirportInfo(String[] location) {
 		String airport = "<Topology.Part id='leg" + leg + "port' status='unknown' "
 				+ "justify='start' align='center' > <Paragraph size='large' margin='none'>"
 				+ "<b>Airport: </b> "
-				+ "<Anchor href='" + location[9] + "'> " + location[1] + "</Anchor></Paragraph> </Topology.Part>";
+				+ "<Anchor href='" + escapeQuotes(location[9]) + "'> " + escapeQuotes(location[1]) + "</Anchor></Paragraph> </Topology.Part>";
 		return airport;
 	}
 	
@@ -138,9 +138,9 @@ public class HTMLItinerary {
 	private String getLocationInfo(String[] location) {
 		String loc = "<Topology.Part id='" + leg + "loc' status='unknown' justify='start' "
 				+ "align='center'><Paragraph size='large' margin='none'><b>Location: </b>"
-				+ location[5] + ", " 
-				+ "<Anchor href='" + location[10] + "'> " + location[6] + "</Anchor>, " 
-				+ "<Anchor href='" + location[11] + "'> " + location[7] + "</Anchor>, " + location[8]
+				+ escapeQuotes(location[5]) + ", " 
+				+ "<Anchor href='" + escapeQuotes(location[10]) + "'> " + escapeQuotes(location[6]) + "</Anchor>, " 
+				+ "<Anchor href='" + escapeQuotes(location[11]) + "'> " + escapeQuotes(location[7]) + "</Anchor>, " + escapeQuotes(location[8])
 				+ "</Paragraph></Topology.Part>";
 		return loc;
 	}
@@ -203,6 +203,13 @@ public class HTMLItinerary {
     	} catch (IOException e) {
     		
     	}
+	}
+	
+	public String escapeQuotes(String loc) {
+		if (loc.contains("'")) {
+			loc = loc.replaceAll("'", "");
+		}
+		return loc;
 	}
 	
 	public static void main(String[] args) {
