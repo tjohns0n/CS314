@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 import edu.csu2017sp314.DTR14.tripco.Presenter.Message;
+import edu.csu2017sp314.DTR14.tripco.Presenter.Presenter;
 import edu.csu2017sp314.DTR14.tripco.Presenter.XMLReader;
 import javafx.application.Application;
 import javafx.event.Event;
@@ -278,6 +279,7 @@ public class SelectionGUI extends Application{
 				if(name.length() > 4){
 					if(name.substring(name.length()-4, name.length()).equalsIgnoreCase(".xml")) {
                         xmlFile = in.getAbsolutePath();
+                        Presenter.setName(xmlFile.substring(0, xmlFile.indexOf(".")));
                         try {
                         	StringBuilder cvsFileName = new StringBuilder();
 							subSet = new XMLReader().readSelectFile(in.getAbsolutePath(), cvsFileName);

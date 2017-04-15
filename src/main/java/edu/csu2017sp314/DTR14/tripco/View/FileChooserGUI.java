@@ -95,10 +95,20 @@ public class FileChooserGUI extends Application{
 	private VBox setMarkerBox(){
 		Label label = basic.newLabel("Select optional Markers");
 		VBox vbox = basic.newVBox(10);
-		vbox.getChildren().addAll(label,setMarkers());
+		vbox.getChildren().addAll(label,setMarkers(), setSelected());
 		return vbox;
 	}
-
+	
+	private VBox setSelected(){
+		VBox vbox = basic.newVBox(10);
+		fontChBox = new ChoiceBox<>(FXCollections.observableArrayList("Kilometers", "Miles"));
+		fontChBox.setMinWidth(100);
+		fontChBox.getSelectionModel().selectFirst();
+		vbox.getChildren().add(fontChBox);
+		vbox.setAlignment(Pos.BASELINE_CENTER);
+		return vbox;
+	}
+	
 	private GridPane setMarkers(){
 		CheckBox name = basic.newCheckBox("Name");
 		CheckBox id = basic.newCheckBox("ID");
@@ -112,11 +122,10 @@ public class FileChooserGUI extends Application{
 		name.setOnAction(e -> {
 			options[2] = name.isSelected();
 		});
-		fontChBox = new ChoiceBox<>(FXCollections.observableArrayList("Kilometers", "Miles"));
-		fontChBox.getSelectionModel().selectFirst();
+		
 		GridPane gridpane = basic.newGridPane(25, 45, 30);
 		VBox vbox = basic.newVBox(5);
-		vbox.getChildren().addAll(name, id, miles, fontChBox);
+		vbox.getChildren().addAll(name, id, miles);
 		vbox.setAlignment(Pos.CENTER_LEFT);
 		gridpane.add(vbox, 1, 0, 1, 3);
 		return gridpane;
