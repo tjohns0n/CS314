@@ -56,7 +56,7 @@ public class TripCoTest {
         files = new ArrayList<File>();
         files.add(new File("Colorado14ers.csv"));
         tc = new TripCo();
-        opts = new boolean[]{false, true, false, false, true, true};
+        opts = new boolean[]{false, true, false, false, true, true, false};
     }
 
 	@Test
@@ -65,7 +65,7 @@ public class TripCoTest {
         new TripCo();
         
         // test full constructor
-        new TripCo("test.xml", null, opts, files);
+        new TripCo("test.xml", "null", opts, files);
 		new TripCo(null, "coloradoMap.svg", opts, files);
 		new TripCo(null, null, opts, files);
 	}

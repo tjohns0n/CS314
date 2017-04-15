@@ -6,6 +6,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ComboBox;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -17,7 +18,7 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 
 public class Basic{
-	protected GridPane newGridPane(){
+	protected GridPane newGridPane(double d1, double d2, double d3){
 		GridPane grid = new GridPane();
 		ColumnConstraints column1 = new ColumnConstraints();
 	    column1.setPercentWidth(35);
@@ -27,11 +28,11 @@ public class Basic{
 	    column3.setPercentWidth(35);
 	    grid.getColumnConstraints().addAll(column1, column2, column3);
 	    RowConstraints row1 = new RowConstraints();
-	    row1.setPercentHeight(25);
+	    row1.setPercentHeight(d1);
 	    RowConstraints row2 = new RowConstraints();
-	    row2.setPercentHeight(40);
+	    row2.setPercentHeight(d2);
 	    RowConstraints row3 = new RowConstraints();
-	    row3.setPercentHeight(35);
+	    row3.setPercentHeight(d3);
 	    grid.getRowConstraints().addAll(row1, row2, row3);
 		return grid;
 	}
@@ -124,5 +125,13 @@ public class Basic{
 		ChoiceBox<Object> choiceBox = new ChoiceBox<Object>();
 		choiceBox.setMaxSize(50, 100);
 		return choiceBox;
+	}
+
+	protected ComboBox<String> newComboBox(String content){
+		ComboBox<String> comboBox = new ComboBox<String>();
+		comboBox.setMinWidth(200);
+		comboBox.setMaxWidth(200);
+		comboBox.setValue("choose" + content); 
+		return comboBox;
 	}
 }
