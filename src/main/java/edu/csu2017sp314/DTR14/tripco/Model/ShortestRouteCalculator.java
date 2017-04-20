@@ -8,7 +8,7 @@ import java.util.Arrays;
 public class ShortestRouteCalculator{
 
 	boolean debug = true;
-	
+	int debugVal = 0;
 	// args: location list 	
 	// # have a reference of location list
 	private LocationList locList;
@@ -24,6 +24,8 @@ public class ShortestRouteCalculator{
 
 	// store single 3-opt routes
 	protected int[][] opt_route;
+
+	protected int[] temp;
 
 	// args: dis_matrix matrix - 2D
 	// # store the calculated distance between each city
@@ -55,6 +57,7 @@ public class ShortestRouteCalculator{
 		dis_matrix = new int[locList.getsize()][locList.getsize()];
 		final_route = new int[locList.getsize() + 1][2];
 		test_route = new int[locList.getsize() + 1][2];
+		temp = new int[test_route.length];
 		// Populate a distance table of locations
 		calculateDistanceTable();
 	}
@@ -207,10 +210,8 @@ public class ShortestRouteCalculator{
 		for (int i = 1; i < test_route.length - 1; i++) {
 			// j: last element affected by swap (i.e. j - 1 is last element moved in a swap)
 			for (int j = i + 2; j < test_route.length; j++) {
-				int originalDistance = test_route[test_route.length - 1][test_route[0].length - 1];
-				int swapDistance = find2OptSwapDistance(i, j);
 				// if the 2-opt gives a shorter distance:
-				if (swapDistance < originalDistance) {
+				if (find2OptSwapDistance(i, j)) {
 					// reinit opt_route
 					opt_route = new int[final_route.length][final_route[0].length];
 					// reverse i to j - 1
@@ -226,37 +227,18 @@ public class ShortestRouteCalculator{
 		return false;
 	}
 	
-	protected int find2OptSwapDistance(int i, int j) {
-		// Start with distance of last element not affected by swap
-		int distance = test_route[i - 1][1];
-		// Add in distances of swapped elements:
-			// Add in i - 1 to j - 1 distance
-		int loc1 = test_route[i - 1][0];
-		int loc2 = test_route[j - 1][0];
+	protected boolean find2OptSwapDistance(int i, int j) {
+		int delta = getDistance(test_route[i - 1][0], test_route[i][0]);
+		delta += getDistance(test_route[j - 1][0], test_route[j][0]);
 
-		distance += dis_matrix[loc1][loc2];
-			// Add in j - 1 to j - 2 to j - 3 to ... i distances
-		for (int x = i; x < j - 1; x++) { 
-			loc1 = test_route[x][0];
-			loc2 = test_route[x + 1][0];
+		delta -= getDistance(test_route[i - 1][0], test_route[j - 1][0]);
+		delta -= getDistance(test_route[i][0], test_route[j][0]);
 
-			distance += dis_matrix[loc1][loc2];
+		if (debug) {
+			debugVal = test_route[test_route.length - 1][1] - delta;
 		}
-		// Add in distances of elements after swap:
-			// Add in i to j distance
-		loc1 = test_route[i][0];
-		loc2 = test_route[j][0];
 
-		distance += dis_matrix[loc1][loc2];
-			// Add in j to end of trip distances
-		for (int x = j; x < test_route.length - 1; x++) {
-			loc1 = test_route[x][0];
-			loc2 = test_route[x + 1][0];
-
-			distance += dis_matrix[loc1][loc2];
-		}
-	
-		return distance;
+		return (delta > 0);
 	}
 	
 	protected void do2OptSwap(int i, int j) {
@@ -471,57 +453,27 @@ public class ShortestRouteCalculator{
 		// counter to keep track of where in array to write
 		int counter = i;
 		// copy test_route to opt_route so there is a backup
-		copyRoute(test_route, opt_route);
-		if (swapType == 1) {
-			copyElements(i + 1, ++counter, (j - (i + 1)) + 1, true);
-			counter += (j - (i + 1)) + 1;
-			copyElements(j + 1, counter, (k - (j + 1)) + 1, true);
-			counter += (k - (j)) + 1;
-			copyElements(k + 1, counter, test_route.length - k - 1, false);
-		}
-		if (swapType == 2) {
-			copyElements(j + 1, ++counter, (k - (j + 1)) + 1, false);
-			counter += (k - (j + 1)) + 1;
-			copyElements(i + 1, counter, (j - (i + 1)) + 1, false);
-			counter += (j - (i + 1)) + 1;
-			copyElements(k + 1, counter, test_route.length - k - 1, false);
-		}
-		if (swapType == 3) {
-			copyElements(j + 1, ++counter, (k - (j + 1)) + 1, false);
-			counter += (k - (j + 1)) + 1;
-			copyElements(i + 1, counter, (j - (i + 1)) + 1, true);
-			counter += (j - (i + 1)) + 1;
-			copyElements(k + 1, counter, test_route.length - k - 1, false);
-		}
-		if (swapType == 4) {
-			
-			copyElements(j + 1, ++counter, (k - (j + 1)) + 1, true);
-			counter += (k - (j + 1)) + 1;
-			copyElements(i + 1, counter, (j - (i + 1)) + 1, false);
-			counter = (j - (i + 1)) + 1;
-			copyElements(k + 1, counter, test_route.length - k - 1, false);
-		}
-		
+
 	}
-	
+
 	// copy elements of opt_route[sourceIndex] through opt_route [sourceIndex + length] to test_route[destIndex] through test_route[destIndex + length]
-	// if reverse is true, the elements will be copied from sourceIndex + length to sourceIndex, reversing their order in test_route
-	protected void copyElements(int sourceIndex, int destIndex, int length, boolean reverse) {
-		System.out.println("src: " + sourceIndex + " dest: " + destIndex + " len: " + length + " route: " + test_route.length);
-		int offset = 0;
-		if (reverse) {
-			offset = length - 1;
-		}
+	protected void copyElements(int sourceIndex, int destIndex, int length) {
 		for (int i = 0; i < length; i++) {
-			test_route[destIndex + i][0] = opt_route[sourceIndex + i + offset][0];
-			if (reverse) {
-				offset -= 2;
-			}
+			temp[destIndex + i] = test_route[sourceIndex + i][0];
+		}
+	}
+
+	protected void reverseElements(int startIndex, int endIndex) {
+		int tempVal;
+		for (int i = startIndex; i < startIndex + ((endIndex - startIndex + 1) / 2); i++) {
+			tempVal = temp[i];
+			temp[i] = temp[endIndex - 1 - (i - startIndex)];
+			temp[endIndex - 1 - (i - startIndex)] = tempVal;
 		}
 	}
 	
 	// calculateDistance - private function
-	// # calculate the distrance matrix
+	// # calculate the distance matrix
 	private void calculateDistanceTable(){
 		for(int i = 0; i < locList.getsize(); i++)
 			for(int j = i; j < locList.getsize(); j++)

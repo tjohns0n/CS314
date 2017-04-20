@@ -1,8 +1,12 @@
 package edu.csu2017sp314.DTR14.tripco.Model;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import org.junit.Test;
+
+import java.util.Arrays;
 
 public class ShortestRouteCalculatorTest{
 	
@@ -86,12 +90,14 @@ public class ShortestRouteCalculatorTest{
 		locList.addLocation(new Location("D", "37.5774", "-105.4857"));
 		locList.addLocation(new Location("E", "39.0294", "-106.4729"));
 		ShortestRouteCalculator src = new ShortestRouteCalculator(locList, 0, false);
-		
+
+		src.debug = true;
 		src.findBestNearestNeighbor(false, false);
 		
 		src.copyRoute(src.final_route, src.test_route);
-		double dis = src.find2OptSwapDistance(1, 3);
-		double correctDis = 0;
+		assertFalse(src.find2OptSwapDistance(1, 3));
+		int dis = src.debugVal;
+		int correctDis = 0;
 		
 		correctDis += src.dis_matrix[0][4];
 		correctDis += src.dis_matrix[4][1];
@@ -99,7 +105,18 @@ public class ShortestRouteCalculatorTest{
 		correctDis += src.dis_matrix[2][3];
 		correctDis += src.dis_matrix[3][0];
 
-		assertTrue(dis - correctDis < 0.01 && dis - correctDis > -0.01);
+		assertTrue((dis - correctDis) == 0);
+
+		locList = new LocationList();
+		locList.addLocation(new Location("A", "10", "10", "1","Hello", ""));
+		locList.addLocation(new Location("B", "20.1", "20", "1","", ""));
+		locList.addLocation(new Location("C", "19.9", "20", "1","", ""));
+		locList.addLocation(new Location("D", "30", "30", "1","", ""));
+
+		src = new ShortestRouteCalculator(locList, 0, false);
+		src.findBestNearestNeighbor(false, false);
+		src.copyRoute(src.final_route, src.test_route);
+		assertTrue(src.find2OptSwapDistance(2, 4));
 	}
 	
 	@Test
@@ -146,6 +163,57 @@ public class ShortestRouteCalculatorTest{
 		}
 		src.opt_route[5][0] = 0;
 
+	}
+
+	@Test
+	public void testCopyElements() {
+		locList = new LocationList();
+		locList.addLocation(new Location("A", "39.1177", "-106.4453"));
+		locList.addLocation(new Location("B", "39.1875", "-106.4756"));
+		locList.addLocation(new Location("C", "38.9243","-106.3208"));
+		locList.addLocation(new Location("D", "37.5774", "-105.4857"));
+		locList.addLocation(new Location("E", "39.0294", "-106.4729"));
+		ShortestRouteCalculator src = new ShortestRouteCalculator(locList, 0, false);
+
+		src.findBestNearestNeighbor(false, false);
+
+		src.copyElements(3, 0, 3);
+		src.copyElements(0, 3, 3);
+
+		assertArrayEquals(new int[] {2, 3, 0, 0, 1, 4}, src.temp);
+
+		src.copyElements(0, 2, 4);
+
+		assertArrayEquals(new int[] {2, 3, 0, 1, 4, 2}, src.temp);
+	}
+
+	@Test
+	public void testReverseElements() {
+		locList = new LocationList();
+
+		locList = new LocationList();
+		locList.addLocation(new Location("A", "39.1177", "-106.4453"));
+		locList.addLocation(new Location("B", "39.1875", "-106.4756"));
+		locList.addLocation(new Location("C", "38.9243","-106.3208"));
+		locList.addLocation(new Location("D", "37.5774", "-105.4857"));
+		locList.addLocation(new Location("E", "39.0294", "-106.4729"));
+		ShortestRouteCalculator src = new ShortestRouteCalculator(locList, 0, false);
+
+		src.findBestNearestNeighbor(false, false);
+
+		src.copyElements(0, 0, src.temp.length);
+		src.temp[0] = 9;
+		assertArrayEquals(new int[] {9, 1, 4, 2, 3, 0}, src.temp);
+		src.reverseElements(0, src.temp.length);
+		assertArrayEquals(new int[] {0, 3, 2, 4, 1, 9}, src.temp);
+		src.reverseElements(1, src.temp.length);
+		assertArrayEquals(new int[] {0, 9, 1, 4, 2, 3}, src.temp);
+		src.reverseElements(1, 2);
+		assertArrayEquals(new int[] {0, 9, 1, 4, 2, 3}, src.temp);
+		src.reverseElements(1, 3);
+		assertArrayEquals(new int[] {0, 1, 9, 4, 2, 3}, src.temp);
+		src.reverseElements(0, src.temp.length - 1);
+		assertArrayEquals(new int[] {2, 4, 9, 1, 0, 3}, src.temp);
 	}
 	
 	@Test
