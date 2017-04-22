@@ -65,19 +65,6 @@ public class TripCoTest {
         new TripCo();
         
         // test full constructor
-        new TripCo("test.xml", "null", opts, files);
-		new TripCo(null, "coloradoMap.svg", opts, files);
-		new TripCo(null, null, opts, files);
-	}
-        
-    @Test
-	public void testAddFile(){
-    	// test correct file
-        Assert.assertTrue(tc.addFile(new File("test.csv")));
-        // test wrong file - not csv
-        Assert.assertFalse(tc.addFile(new File("coloradoMap.svg")));
-        // test wrong file - not exist
-        Assert.assertFalse(tc.addFile(new File("coloradoMap.csv")));
 	}
 	
 	@Test
