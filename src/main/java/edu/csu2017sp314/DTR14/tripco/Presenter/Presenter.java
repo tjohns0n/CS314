@@ -3,87 +3,37 @@
 //Takes ArrayList of files and boolean array for options
 package edu.csu2017sp314.DTR14.tripco.Presenter;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import javafx.application.Application;
 import edu.csu2017sp314.DTR14.tripco.Model.Model;
+import edu.csu2017sp314.DTR14.tripco.Model.Query;
 import edu.csu2017sp314.DTR14.tripco.View.ItineraryLeg;
 import edu.csu2017sp314.DTR14.tripco.View.View;
 
 public class Presenter {
 
-    //List of input .csv files
-    private ArrayList<File> files;
-    //Optional argument booleans
-
-    // boolean[] opt = {_id, _mileage, _name, _2opt, _3opt, _gui, _unit};
-    private static boolean[] options;
-    private static Model model = new Model();
-    private static View view = new View();
-    private static String _svg;
-    private static String _xml;
-    private static String name;
+    // boolean[] opt = {_id, _mileage, _name, _unit};
+    private boolean[] options;
+    private String name;
     private String[] subSet;
     private String unit;
-
-    public Presenter(ArrayList<File> files, String _xml, String _svg, boolean[] options) {
-        this.files = files;
-        Presenter.options = options;
-        Presenter._svg = _svg;
-        Presenter._xml = _xml;
-        if(Presenter.options[6])
+    private Model model;
+    private View view;
+    
+    public Presenter(boolean[] options, String Name, String[] sub) {
+        this.options = options;
+        subSet = sub;
+        name = Name;
+        if(options[3])
         	this.unit="Km";
         else
         	this.unit = "Miles";
     }
-
-    public Presenter(ArrayList<File> files) {
-        this.files = files;
-        options = new boolean[7];
-        Arrays.fill(options, false);
-    }
     
-    public Presenter() {
-		// TODO Auto-generated constructor stub
-	}
-
-    public Message sendMessage(Message msg){
-    	return model.sendMessage(msg);
-    }
-    
-    public void run() throws IOException {
-    	this.run(true);
-    }
-    
-    public void run(boolean flag) throws IOException {
-    	model = new Model(this, options[6]);
-    	xmlHandler();
+    public void run(){
+    	model = new Model(subSet, options[3]);
         viewHandler(modelHandler());
-        
-        if(flag) webPageViewer();
     }
-
-    private void xmlHandler() throws IOException{
-        StringBuilder csvFileName = new StringBuilder();
-        if(_xml == null || _xml.equals("null") || _xml.equals("")) subSet = new String[0];
-        else subSet = new XMLReader().readSelectFile(_xml, csvFileName);
-        if (options[5] == true) {
-            // if GUI
-            Application.launch(View.class, new String[0]);
-            files.add(new File(name+".csv"));
-            subSet = new String[0];
-        }
-        else{
-        	model.sendToModel(new Message(subSet, "M-DB-TRIP0"));
-        }
-        if(csvFileName.length() != 0) files.add(new File(csvFileName.toString()));
-    }
-
     private String[][] modelHandler(){
-        model.planTrip(options[3], options[4], subSet);
+        model.planTrip(true, true, subSet);
         return model.reteriveTrip();
     }
     
@@ -92,8 +42,8 @@ public class Presenter {
     	String[][] route = s;
         String[] total = route[route.length - 1][0].split(",");
         int totalMileage = Integer.parseInt(total[0]);
-        boolean[] label = {options[0], options[1]};
-        view = new View(files.get(0).getName(), _svg, totalMileage, label, options[6], route.length);
+        boolean[] label = {options[0], options[1], options[2]};
+        view = new View(name, totalMileage, label, options[3], route.length);
         viewItin(route);
         viewWriter(route);
     }
@@ -129,7 +79,8 @@ public class Presenter {
     		String[] info = route[i][0].split(",");
     		ids[i] = info[4];
     	}
-    	Message m = model.sendMessage(new Message(ids, "M-DB-ITIN"));
+    	Query q = new Query(subSet, null);
+    	Message m = q.getMsg();
     	for(int j=0;j<m.content.length-1;j++){
     		 String[] essentials1 = route[j][0].split(",");
              String[] essentials2 = route[j + 1][0].split(",");
@@ -139,58 +90,13 @@ public class Presenter {
              view.addItinLeg(itinLeg);
     	}
     }
-    
-    private void webPageViewer(){
-    	URI webpage = null;
-        String dir = System.getProperty("user.dir") + "/main/resources/View.html";
-
-        System.out.println("Ready to show the webpage = " + dir);
-        File webFile = new File(dir);
-        webpage = webFile.toURI();
-        //Launch webpage
-        try {
-            java.awt.Desktop.getDesktop().browse(webpage);
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("We tried to get the webpage to launch without the server");
-            System.out.println("A bandaid yes, but we tried, and it looks like it didn't work");
-            System.out.println("But the XML and svg files should be in the directory with the proper names/data");
-        }
-        
-    }
-    
-    private void printlines(){
-      //System.out.println("csv File = " + files.get(0).getName());
-      System.out.println("svg File = " + _svg);
-      System.out.println("xml File = " + _xml);
-      System.out.println("Filename = " + name);
-      System.out.println("_i = " + options[0]);
-      System.out.println("_m = " + options[1]);
-      System.out.println("_n = " + options[2]);
-      System.out.println("_2 = " + options[3]);
-      System.out.println("_3 = " + options[4]);
-      for(int i = 0; i < subSet.length; i++)
-          System.out.println("subSet = " + subSet[i]);
-    }
-  
-	public static void setOptions(boolean[] options) {
-		Presenter.options = options;
-	}
-
-	public static void set_svg(String _svg) {
-		if(Presenter._svg == null)
-			Presenter._svg = _svg;
-	}
-
-	public static void set_xml(String _xml) {
-		if(Presenter._xml == null)
-			Presenter._xml = _xml;
-	}
-	
-	public static void setName(String name) {
-		if(Presenter.name == null || 
-				Presenter.name.equals("temp"));
-			Presenter.name = name;
-	}
-
+    //For Debugging
+//    private void printlines(){
+//      System.out.println("Filename = " + name);
+//      System.out.println("_i = " + options[0]);
+//      System.out.println("_m = " + options[1]);
+//      System.out.println("_n = " + options[2]);
+//      for(int i = 0; i < subSet.length; i++)
+//          System.out.println("subSet = " + subSet[i]);
+//    }
 }

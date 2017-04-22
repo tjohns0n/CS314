@@ -14,15 +14,12 @@ public class TripCo{
 	//List of input .csv files
 	private ArrayList<File> files;
 	//Optional argument booleans
-	private String _xml;			//.xml
-	private String _svg;			//.svg
-	private boolean _gui;		//-g
+	private String name;			//.svg
 	private boolean _id;		//-i
 	private boolean _mileage;	//-d
 	private boolean _name;		//-n
-	private boolean _2opt;		//-2
-	private boolean _3opt;		//-3
 	private boolean _kilo;
+	private String[] subset;
 	//Std usage message
 	private static void usage(){
 		System.out.println("TripCo is a trip planning program that creates the shortest trip from a given list of locations");
@@ -36,32 +33,23 @@ public class TripCo{
 	}
 	
 	public TripCo(){
-		_xml = "";
-		_svg = "";
-		_gui = false;
+		name = "";
 		_id = false;
 		_mileage = false;
 		_name = false;
-		_2opt = false;
-		_3opt = false;
 		_kilo = false;
 		files = new ArrayList<File>();
 	}
 	
 	//	boolean 
-	//	[1] = _gui, [2] = _id, [3] = _mileage, 
-	//	[4] = _name, [5] =  _2opt, [6] =  _3opt, [7] = _km
-	public TripCo(String _xml, String _svg, boolean[] opts, ArrayList<File> files){
-		this._xml = _xml;
-		this._svg = _svg;
-		this._gui = opts[0];
-		this._id = opts[1];
-		this._mileage = opts[2];
-		this._name = opts[3];
-		this._2opt = opts[4];
-		this._3opt = opts[5];
-		this._kilo = opts[6];
-		this.files = files;
+	//	[0] = ID, [1] = mileage, [2] = name, [3] = kilo
+	public TripCo(String Name, boolean[] opts, String[] subset){
+		name = Name;
+		this._id = opts[0];
+		this._mileage = opts[1];
+		this._name = opts[2];
+		this._kilo = opts[3];
+		this.subset = subset;
 	}
 
 	//To string method
@@ -70,15 +58,10 @@ public class TripCo{
 		return "TripCo is an interactive Colorado trip planning application";
 	}
 
-	public synchronized boolean addFile(File file){
-		if(file.exists() && file.getName().contains("csv")) return files.add(file);
-		else return false;
-	}
-
 	public void initiate() throws FileNotFoundException, Exception{
-		boolean[] opt = {_id, _mileage, _name, _2opt, _3opt, _gui,_kilo};
+		boolean[] opt = {_id, _mileage, _name, _kilo};
 		//Instantiate Presenter, put in running loop to check for needed updates
-		Presenter present = new Presenter(files, _xml, _svg, opt);
+		Presenter present = new Presenter(opt, name, subset);
         
 		present.run();
 		
@@ -129,20 +112,15 @@ public class TripCo{
 			return;
 		}
 		
-		TripCo tc = new TripCo(_xml, _svg, opts, files);
-		tc.initiate();
 	}
 	
 	static void caseHandler(String arg, boolean[] opts){
 		switch(arg.charAt(1)){
-			case 'g': opts[0] = true; break;
-			case 'i': opts[1] = true; break;
-			case 'd': opts[2] = true; break;
-			case 'n': opts[3] = true; break;
-			case '2': opts[4] = true; break;
-			case '3': opts[5] = true; break;
-			case 'k': opts[6] = true; break;
-			case 'm': opts[6] = false; break;
+			case 'i': opts[0] = true; break;
+			case 'd': opts[1] = true; break;
+			case 'n': opts[2] = true; break;
+			case 'k': opts[3] = true; break;
+			case 'm': opts[3] = false; break;
 			default:{
 				System.out.println("Argument: '" +arg+"' not a recognized argument");
 				System.out.println("Argument: '" +arg+"' will be ignored");
