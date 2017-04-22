@@ -103,8 +103,8 @@ public class SVGWriterTest {
 		// Label should be halfway between the two points:
 		int[] test = s.mapPoints(-105.5, 39);
 		s.addLineLabel("Test Label", "testlabel", new double[]{-109, 41, -102, 37});
-		assertTrue(s.content.get(0).contains("x=\"" + test[0]));
-		assertTrue(s.content.get(0).contains("y=\"" + test[1]));
+		assertTrue(s.content.get(0).contains("x=\"" + -105));
+		assertTrue(s.content.get(0).contains("y=\"" + 39));
 	}
 	
 	@Test
@@ -112,8 +112,9 @@ public class SVGWriterTest {
 		ColoradoSVGWriter s = new ColoradoSVGWriter();
 		s.addLabel("Test Label", "test id", new double[] {-109, 41});
 		int[] test = s.mapPoints(-109, 41);
-		assertTrue(s.content.get(0).contains("x=\"" + test[0]));
-		assertTrue(s.content.get(0).contains("y=\"" + test[1]));
+		System.out.println(s.content.get(0));		
+		assertTrue(s.content.get(0).contains("x=\"" + -109));
+		assertTrue(s.content.get(0).contains("y=\"" + 41));
 		assertTrue(s.content.get(0).contains(">Test Label<"));
 	}
 	
