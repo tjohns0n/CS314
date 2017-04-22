@@ -1,8 +1,10 @@
-package edu.csu2017sp314.DTR14.tripco.Presenter;
+package edu.csu2017sp314.DTR14.tripco;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import edu.csu2017sp314.DTR14.tripco.XMLReader;
 
 import static org.junit.Assert.assertTrue;
 
@@ -13,8 +15,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import org.junit.AfterClass;
-
-import edu.csu2017sp314.DTR14.tripco.Presenter.XMLReader;
 
 public class XMLReaderTest {
 	
@@ -42,12 +42,12 @@ public class XMLReaderTest {
 					+ "\n<version>4.11</version>"
 					+ "\n<scope>test</scope>"
 					+ "\n</dependency>");
+			w.close();
 		} catch (IOException e) {
 			System.err.println("Failed to open new file for writing - XMLReaderTest");
 			e.printStackTrace();
 		}
 		testfile = "testBadXML.xml";
-		new FileWriter(testfile);
 	}
 	
 	@Before

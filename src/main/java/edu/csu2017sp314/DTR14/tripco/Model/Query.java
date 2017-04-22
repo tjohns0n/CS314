@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.sql.ResultSet;
 import edu.csu2017sp314.DTR14.tripco.Presenter.Message;
 
@@ -24,7 +23,6 @@ public class Query {
 	private final String types = "SELECT distinct type FROM airports;";
 	private final String conts = "SELECT name FROM continents;";
 	private final String counts = "SELECT name FROM countries;";
-	private final String Wid = "WHERE airports.id = ";
 	public Model mod;
 	private Message mess;
 	
@@ -45,6 +43,7 @@ public class Query {
 						{
 							String id = rs.getString("Id");
 							String name = rs.getString("name");
+							System.out.printf("%s,%s\n", id, name);
 						}
 					} finally { rs.close(); }
 				} finally { st.close(); }
@@ -284,24 +283,24 @@ public class Query {
         try	{ // connect to the database 
             Class.forName(driver); 
             Connection conn = DriverManager.getConnection(theURL, user, pass);	
-
 			try { // create a statement
 				Statement st = conn.createStatement();
-				
 				try { // submit a query
-					for(int i=0; i<ids.length; i++){
-						String query = itin+Wid+"'"+ids[i].trim()+"';";
-						ResultSet rs = st.executeQuery(query);
-						
-						try { // iterate through the query results and print
+					String query = itin+"WHERE airports.id in "+id2in(ids)+
+								" ORDER BY FIELD"+id2field(ids)+";";
+					System.out.println(query);
+					ResultSet rs = st.executeQuery(query);
+					try { // iterate through the query results and print
+						int i=0;
+						while(rs.next()){
 							String add="";
-							rs.next();
 							add+=rs.getString(1)+","+rs.getString(2)+","+rs.getString(3)+","+rs.getString(4)+",";
 							add+=rs.getString(5)+","+rs.getString(6)+","+rs.getString(7)+","+rs.getString(8)+",";
 							add+=rs.getString(9)+","+rs.getString(10)+","+rs.getString(11)+","+rs.getString(12);
 							ret[i] = add;
-						} finally { rs.close(); }
-					}
+							i++;
+						}
+					} finally { rs.close(); }
 				} finally { st.close(); }
 			} finally { conn.close(); }
 		} catch (Exception e) {
@@ -323,16 +322,15 @@ public class Query {
 			try { // create a statement
 				Statement st = conn.createStatement();
 				try { // submit a query
-					for(int i=0; i<ids.length; i++){
-						String query = "SELECT id,name,longitude,latitude FROM airports WHERE id = '"+ids[i].trim()+"';";
-						ResultSet rs = st.executeQuery(query);
-						try { // iterate through the query results and print
-							rs.next();
-							String add=removeStuff(rs.getString(1))+","+removeStuff(rs.getString(2))+","+
-									removeStuff(rs.getString(3))+","+removeStuff(rs.getString(4));
+					String query = "SELECT id,name,longitude,latitude FROM airports WHERE id in "+id2in(ids)+
+							"ORDER BY FIELD"+id2field(ids)+";";
+					ResultSet rs = st.executeQuery(query);
+					try { // iterate through the query results
+						while(rs.next()){
+							String add=rs.getString(1)+","+rs.getString(2)+","+rs.getString(3)+","+rs.getString(4);
 							ret.add(add);
-						} finally { rs.close(); }
-					}
+						}
+					} finally { rs.close(); }
 				} finally { st.close(); }
 			} finally { conn.close(); }
 		} catch (Exception e) {
@@ -342,11 +340,28 @@ public class Query {
         ret.trimToSize();
         String[] r = ret.toArray(new String[ret.size()]);
         mess = new Message(r, "V-ST-PLAN");
-        Model.setLocList(r);
+        //System.out.println(Arrays.toString(r));
+        mod.setLocList(r);
 	}
 	
-	private String removeStuff(String line){
-			return line.replaceAll(",", "");
+	private String id2in(String [] id){
+		String r = "(";
+		for(int i=0;i<id.length;i++){
+			r+="'"+id[i].trim()+"',";
+		}
+		r=r.substring(0, r.length()-1);//Trim trailing ','
+		r+=")";
+		return r;
+	}
+
+	private String id2field(String [] id){
+		String r = "(airports.id,";
+		for(int i=0;i<id.length;i++){
+			r+="'"+id[i].trim()+"',";
+		}
+		r=r.substring(0, r.length()-1);//Trim trailing ','
+		r+=")";
+		return r;
 	}
 	//Takes comma seperated string of limits already set in GUI
 	//EX: type-large_aiports,continent-North America,country-United States,region-Texas
@@ -411,11 +426,9 @@ public class Query {
 		String ret1 = "";
         try	{ // connect to the database 
             Class.forName(driver); 
-            Connection conn = DriverManager.getConnection(theURL, user, pass);	
-
+            Connection conn = DriverManager.getConnection(theURL, user, pass);
 			try { // create a statement
-				Statement st = conn.createStatement();
-				
+				Statement st = conn.createStatement();		
 				try { // submit a query
 						String query = "SELECT name,id FROM airports WHERE name like '%"+token+"%' ";
 						query+="or municipality like '%"+token+"%' ";
@@ -449,10 +462,11 @@ public class Query {
 	
 	
 	public static void main(String[] args){
-		String[] s = {"KDAL", "KDFW"};
-		Query q = new Query(null, s);
+		String[] s = {"KDFW", "KDEN", "KDAL"};
+		Query q = new Query(s, null);
 		System.out.println(q.mess.content[0]);
 		System.out.println(q.mess.content[1]);
+		System.out.println(q.mess.content[2]);
 	}
 	
 	

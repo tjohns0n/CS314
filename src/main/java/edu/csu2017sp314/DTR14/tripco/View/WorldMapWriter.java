@@ -12,6 +12,9 @@ public class WorldMapWriter extends SVGWriter {
 	
 	public WorldMapWriter() {
 		super();
+		header.add("<?xml version=\"1.0\"?>");
+		header.add("<svg>");
+		footer.add("</svg>");
 		width = 1440;
 		height = 720;
 	}
@@ -88,7 +91,7 @@ public class WorldMapWriter extends SVGWriter {
 	}
 
 	public static void main(String[] args) {
-		WorldMapWriter wmw = new WorldMapWriter("World3.svg");
+		WorldMapWriter wmw = new WorldMapWriter();
 		wmw.addTitle("Here is a test title", "title");
 		wmw.addFooter("Here is a test footer", "footer");
 		wmw.addWorldLine(new double[] {-104.6737, 39.8561, 144.8410, -37.6690});
