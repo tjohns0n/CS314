@@ -23,13 +23,13 @@ public class Presenter {
         subSet = sub;
         name = Name;
         if(options[3])
-        	this.unit="Km";
+            this.unit="Km";
         else
-        	this.unit = "Miles";
+            this.unit = "Miles";
     }
     
     public void run(){
-    	model = new Model(subSet, options[3]);
+        model = new Model(subSet, options[3]);
         viewHandler(modelHandler());
     }
     private String[][] modelHandler(){
@@ -39,7 +39,7 @@ public class Presenter {
     
     
     private void viewHandler(String[][] s){
-    	String[][] route = s;
+        String[][] route = s;
         String[] total = route[route.length - 1][0].split(",");
         int totalMileage = Integer.parseInt(total[0]);
         boolean[] label = {options[0], options[1], options[2]};
@@ -49,8 +49,8 @@ public class Presenter {
     }
     
     private void viewWriter(String[][] route){
-    	
-    	for (int i = 0; i < route.length - 1; i++) {
+        
+        for (int i = 0; i < route.length - 1; i++) {
             //Essentials string splitarg0
             //[0]=Accumulated Dist, [1]=name, [2]=lat, [3]=long [4]=id;
             String[] essentials1 = route[i][0].split(",");
@@ -61,10 +61,10 @@ public class Presenter {
             int mile = Integer.parseInt(essentials2[0]) - Integer.parseInt(essentials1[0]);
 
             double[] coordinates = {Double.parseDouble(essentials1[3]), Double.parseDouble(essentials1[2]), 
-            		Double.parseDouble(essentials2[3]), Double.parseDouble(essentials2[2])};
+                    Double.parseDouble(essentials2[3]), Double.parseDouble(essentials2[2])};
             
             view.addLeg(coordinates, essentials1[1], essentials1[4],
-            		essentials2[1], essentials2[4],  mile);
+                    essentials2[1], essentials2[4],  mile);
             
         }
         //Write the files
@@ -74,21 +74,20 @@ public class Presenter {
     
     //Write itinerary with new detailed legs
     private void viewItin(String[][] route){
-    	String[] ids = new String[route.length];
-    	for(int i=0;i<route.length;i++){
-    		String[] info = route[i][0].split(",");
-    		ids[i] = info[4];
-    	}
-    	Query q = new Query(subSet, null);
-    	Message m = q.getMsg();
-    	for(int j=0;j<m.content.length-1;j++){
-    		 String[] essentials1 = route[j][0].split(",");
+        String[] ids = new String[route.length];
+        for(int i=0;i<route.length;i++){
+            String[] info = route[i][0].split(",");
+            ids[i] = info[4];
+        }
+        String[] message = new Query().przQuery(subSet);
+        for(int j=0;j<message.length-1;j++){
+             String[] essentials1 = route[j][0].split(",");
              String[] essentials2 = route[j + 1][0].split(",");
              int mile = Integer.parseInt(essentials2[0]) - Integer.parseInt(essentials1[0]);
-             ItineraryLeg itinLeg = new ItineraryLeg(m.content[j].split(","), m.content[j+1].split(","),
-            		 mile, j+1, unit);
+             ItineraryLeg itinLeg = new ItineraryLeg(message[j].split(","), 
+                                        message[j+1].split(","), mile, j+1, unit);
              view.addItinLeg(itinLeg);
-    	}
+        }
     }
     //For Debugging
 //    private void printlines(){

@@ -19,7 +19,6 @@ public class Model{
 	public Model(String[] subset, boolean km){
 		KM=km;
 		locList = new LocationList();
-		Query q = new Query(this, subset);
 	}
 	
 	public boolean planTrip(boolean run2Opt, boolean run3Opt, String[] selection){
@@ -40,7 +39,7 @@ public class Model{
 	}
 	
 	//Set Location list from DB data for subset
-	public void setLocList(String[] subset){
+	public static void setLocList(String[] subset){
 		String [] titles = "id,name,longitude,latitude".split(",");
 		for(int i=0;i<subset.length;i++){
 			locList.lineHandler(subset[i], titles, new String[0]);
