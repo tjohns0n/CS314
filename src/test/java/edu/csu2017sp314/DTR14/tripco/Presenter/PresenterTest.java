@@ -53,20 +53,15 @@ public class PresenterTest {
     public void initObjects() {
         files = new ArrayList<File>();
         files.add(new File("test.csv"));
-        options = new boolean[7];
+        options = new boolean[4];
         Arrays.fill(options, false);
-        prez = new Presenter(files, null, null, options);
+        prez = new Presenter(options, "test.xml", new String[0]);
     }
 
 	@Test
 	public void testConstructor(){
-		// test empty constructor, no side effect
-		new Presenter(files);
-        
         // test full constructor
-		new Presenter(files, "test.xml", "test.svg", options);
-		new Presenter(files, null, "test.svg", options);
-		new Presenter(files, null, null, options);
+		new Presenter(options, "test.xml", new String[0]);
 		
 	}
 	

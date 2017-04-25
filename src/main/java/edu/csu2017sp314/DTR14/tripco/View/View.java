@@ -5,12 +5,8 @@ Creates and displays viewable files and pages from data provided by the Presente
 
 package edu.csu2017sp314.DTR14.tripco.View;
 
-import edu.csu2017sp314.DTR14.tripco.Presenter.Message;
-import edu.csu2017sp314.DTR14.tripco.Presenter.Presenter;
-import javafx.application.Application;
-import javafx.stage.Stage;
 
-public class View extends Application {
+public class View{
 
     // Name of the CSV input file, sans the .csv extension 
 	private String title;
@@ -28,13 +24,6 @@ public class View extends Application {
     private WorldMapWriter svgWrite;
     private HTMLItinerary htmlWrite;
 
-    private static Presenter prez = new Presenter();
-    
-    //Empty constructor, for javafx Application compliance
-    public View(){
-
-    }
-
     /*
     View Command Line constructor
     args:
@@ -44,45 +33,27 @@ public class View extends Application {
 	labels - whether to display distances, names, and ids on the map or not
     */
     
-    public View(String title, String SVGFile, int totalDistance, boolean[] labels, boolean miles, int numberLocs){
+    public View(String title, int totalDistance, boolean[] labels, boolean miles, int numberLocs){
     	legCount = 0;
-    	itinWrite = new ItineraryWriter();
+    	this.ids = labels[0];
+        this.distances = labels[1];
+        this.names = labels[2];
+    	this.title = title;
+        this.totalDistance = totalDistance;
+    	String dir = System.getProperty("user.dir") + "/main/resources/";
     	String units;
     	if (miles) {
     		units = "kilometers";
     	} else {
     		units = "miles";
     	}
-    	String dir = System.getProperty("user.dir") + "/main/resources/";
+    	itinWrite = new ItineraryWriter();
     	htmlWrite = new HTMLItinerary(numberLocs, dir + "base1.html", dir + "base2.html", units);
-//    	if(SVGFile == null || SVGFile.equals("null") || SVGFile.equals(""))
-//    		svgWrite = new ColoradoSVGWriter();
-//    	else
-//    		svgWrite = new ColoradoSVGWriter(SVGFile);
     	svgWrite = new WorldMapWriter("World3.svg");
-        this.title = title;
-        this.totalDistance = totalDistance;
-        
-        setTitle();
+    	svgWrite.addTitle(title, "Map Title");
         setFooter();
-        
-        this.ids = labels[0];
-        this.distances = labels[1];
-        this.names = false;
     }
     
-    public Message setMsg(Message msg){
-    	return prez.sendMessage(msg);
-    }
-    
-    private void setTitle() {
-    	String substring = title.substring(title.length() - 4).toLowerCase();
-    	if (substring.equals(".csv")) {
-    		title = title.substring(0, title.length() - 4);
-    	}
-    	
-    	svgWrite.addTitle(title, "maptitle");
-    }
     
     private void setFooter() {
     	if (miles) {
@@ -92,11 +63,6 @@ public class View extends Application {
         }
     }
     
-    @Override
-	public void start(Stage primaryStage) throws Exception {
-    	new FileChooserGUI().start(primaryStage);
-	}
-
     public String getRootName() {
     	return title;
     }

@@ -43,6 +43,7 @@ abstract class SVGWriter {
         header = new ArrayList<String>();
     	content = new ArrayList<String>();
     	footer = new ArrayList<String>();
+    	
         createLineElement();
         createTextElement();
         createGroupElement();

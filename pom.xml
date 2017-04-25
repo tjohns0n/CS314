@@ -50,5 +50,10 @@ URL - change team number which i already did in this file
       <version>4.11</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>5.1.41</version>
+    </dependency>
   </dependencies>      
 </project>

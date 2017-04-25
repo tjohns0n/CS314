@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.csu2017sp314.DTR14.tripco.Presenter;
+package edu.csu2017sp314.DTR14.tripco;
 
 import java.io.File;
 import java.io.FileNotFoundException;
