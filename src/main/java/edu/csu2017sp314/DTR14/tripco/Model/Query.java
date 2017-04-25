@@ -14,25 +14,25 @@ public class Query {
 	private final String user = "bcgood";
 	private final String pass = "830271534";
 	private final String itin = "SELECT airports.id,airports.name,latitude,longitude,elevation_ft,"+
-						"municipality,regions.name,countries.name,continents.name,airports.wikipedia_link,"+
-						"regions.wikipedia_link,countries.wikipedia_link FROM continents INNER JOIN"+
-						" countries ON countries.continent = continents.id INNER JOIN"+
-						" regions ON regions.iso_country = countries.code INNER JOIN" +
-						" airports ON airports.iso_region = regions.code ";
+			"municipality,regions.name,countries.name,continents.name,airports.wikipedia_link,"+
+			"regions.wikipedia_link,countries.wikipedia_link FROM continents INNER JOIN"+
+			" countries ON countries.continent = continents.id INNER JOIN"+
+			" regions ON regions.iso_country = countries.code INNER JOIN" +
+			" airports ON airports.iso_region = regions.code ";
 	private final String types = "SELECT distinct type FROM airports;";
 	private final String conts = "SELECT name FROM continents;";
 	private final String counts = "SELECT name FROM countries;";	
-	
+
 	// This will be called when Webpage First setting up
 	// Returns
 	// Type = "(types)"
 	// Contient = "(continents)"
 	// Country = "(countries)"
 	public String[] initQuery(){
-        String[] ret = {"","",""};
-        try	{ // connect to the database 
-            Class.forName(driver); 
-            Connection conn = DriverManager.getConnection(theURL, user, pass);	
+		String[] ret = {"","",""};
+		try	{ // connect to the database 
+			Class.forName(driver); 
+			Connection conn = DriverManager.getConnection(theURL, user, pass);	
 			try {
 				Statement st = conn.createStatement();
 				try {//Queries
@@ -77,8 +77,8 @@ public class Query {
 	public String continent2countries(String continent){
 		String ret = "";
 		try	{//Connect to DB 
-            Class.forName(driver); 
-            Connection conn = DriverManager.getConnection(theURL, user, pass);	
+			Class.forName(driver); 
+			Connection conn = DriverManager.getConnection(theURL, user, pass);	
 			try{
 				Statement st = conn.createStatement();
 				try {//Grab code from name
@@ -98,14 +98,14 @@ public class Query {
 		}
 		return ret;
 	}
-	
+
 	// Returns
 	// ret Region = "regions"
 	public String country2regions(String country){
 		String ret = "";
 		try	{//Connect to DB 
-            Class.forName(driver); 
-            Connection conn = DriverManager.getConnection(theURL, user, pass);	
+			Class.forName(driver); 
+			Connection conn = DriverManager.getConnection(theURL, user, pass);	
 			try{
 				Statement st = conn.createStatement();
 				try {//Grab code from name
@@ -125,15 +125,15 @@ public class Query {
 		}
 		return ret;
 	}
-	
+
 	// Returns
 	// ret[0] Identifier = "idts"
 	// ret[1] Name = "AirportNames"
 	public String[] region2airports(String region, String type){
 		String[] ret = {"",""};
-        try	{ // connect to the database 
-            Class.forName(driver); 
-            Connection conn = DriverManager.getConnection(theURL, user, pass);
+		try	{ // connect to the database 
+			Class.forName(driver); 
+			Connection conn = DriverManager.getConnection(theURL, user, pass);
 			try { // create a statement
 				Statement st = conn.createStatement();
 				try { //Make list of regions
@@ -163,22 +163,22 @@ public class Query {
 		}
 		return ret;
 	}
-	
+
 	//Order of itinerary query result set
 	//airport id, airport name, lat, long, elevation, municipality, regions, country, continent, 
 	//air link, region link, country link
 	//Itinerary constructor
 	//M-DB-ITIN
 	public String[] przQuery(String[] ids){
-        String[] ret = new String[ids.length];
-        try	{ // connect to the database 
-            Class.forName(driver); 
-            Connection conn = DriverManager.getConnection(theURL, user, pass);	
+		String[] ret = new String[ids.length];
+		try	{ // connect to the database 
+			Class.forName(driver); 
+			Connection conn = DriverManager.getConnection(theURL, user, pass);	
 			try { // create a statement
 				Statement st = conn.createStatement();
 				try { // submit a query
 					String query = itin+"WHERE airports.id in "+id2in(ids)+
-								" ORDER BY FIELD"+id2field(ids)+";";
+							" ORDER BY FIELD"+id2field(ids)+";";
 					System.out.println(query);
 					ResultSet rs = st.executeQuery(query);
 					try { // iterate through the query results and print
@@ -200,14 +200,14 @@ public class Query {
 		}
 		return ret;
 	}
-	
+
 	//ID query for Model trip planning
 	//M-DB-TRIP
 	public void planTrip(String[] ids){
-        ArrayList<String> ret = new ArrayList<String>();
-        try	{ // connect to the database 
-            Class.forName(driver); 
-            Connection conn = DriverManager.getConnection(theURL, user, pass);
+		ArrayList<String> ret = new ArrayList<String>();
+		try	{ // connect to the database 
+			Class.forName(driver); 
+			Connection conn = DriverManager.getConnection(theURL, user, pass);
 			try { // create a statement
 				Statement st = conn.createStatement();
 				try { // submit a query
@@ -226,11 +226,11 @@ public class Query {
 			System.err.printf("Exception: ");
 			System.err.println(e.getMessage());
 		}
-        ret.trimToSize();
-        String[] r = ret.toArray(new String[ret.size()]);
-        Model.setLocList(r);
+		ret.trimToSize();
+		String[] r = ret.toArray(new String[ret.size()]);
+		Model.setLocList(r);
 	}
-	
+
 	private String id2in(String [] id){
 		String r = "(";
 		for(int i=0;i<id.length;i++){
@@ -250,22 +250,22 @@ public class Query {
 		r+=")";
 		return r;
 	}
-	
+
 	//Search Query for given search token
 	public String[] searchQuery(String token){
 		String[] ret = {"",""};
-        try	{ // connect to the database 
-            Class.forName(driver); 
-            Connection conn = DriverManager.getConnection(theURL, user, pass);
+		try	{ // connect to the database 
+			Class.forName(driver); 
+			Connection conn = DriverManager.getConnection(theURL, user, pass);
 			try { // create a statement
 				Statement st = conn.createStatement();		
 				try { // submit a query
-						String query = "SELECT name,id FROM airports WHERE name like '%"+token+"%' ";
-						query+="or municipality like '%"+token+"%' ";
-						query+="or id like '%"+token+"%' ";
-						query+="or keywords like '%"+token+"%' ";
-						query+=";";
-						ResultSet rs = st.executeQuery(query);
+					String query = "SELECT name,id FROM airports WHERE name like '%"+token+"%' ";
+					query+="or municipality like '%"+token+"%' ";
+					query+="or id like '%"+token+"%' ";
+					query+="or keywords like '%"+token+"%' ";
+					query+=";";
+					ResultSet rs = st.executeQuery(query);
 					try { // iterate through the query results and print
 						while (rs.next()){
 							ret[0]+=rs.getString(1)+",";
@@ -282,5 +282,5 @@ public class Query {
 		}
 		return ret;
 	}	
-	
+
 }
