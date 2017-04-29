@@ -1,9 +1,3 @@
-var App = Grommet.App;
-var Box = Grommet.Box;
-var Button = Grommet.Button;
-var Heading = Grommet.Heading;
-var Paragraph = Grommet.Paragraph;
-var Search = Grommet.Search;
 
 // airport object
 function Airport (id, name, country) {
@@ -18,98 +12,107 @@ airports.push(new Airport(1, "Hartsfield Jackson Atlanta International", "United
 airports.push(new Airport(2, "Beijing Capital International", "China"));
 airports.push(new Airport(3, "Dubai International", "United Arab Emirates"));
 
-// store search results
-var searchResults = [];
-
-// Results class returns the result set of a search
-// It is correctly displaying the <Heading> but will not call printResults for some reason
-class Results extends React.Component {
-	
-	constructor(props) {
-		super(props);
-		
-		this.state = {
-			results: props.results
-		};
-		
-		this.printResults = this.printResults.bind(this);
-	}
-	
-	printResults() {
-		var resultString = JSON.stringify(this.results);
-		console.log(resultString + " ok");
-		return <p>resultString</p>;
-	}
-	
-	render () {
-	  
-		return (
-			<div>
-			<Heading>Results</Heading>
-			{this.printResults}
-			</div>
-		);
-	}
-};
-
+// Main Class for the whole page
 class Main extends React.Component {
-	
-	constructor(props) {
+   constructor(props) {
+      super(props);
+		
+      this.state = {
+         data: airports,
+         word: "hello"
+      }
+
+      this.updateState = this.updateState.bind(this);
+   }
+
+   updateState(results) {
+        console.log("[App] Table refreshes value " + results);
+        this.setState({data: results});
+   }
+
+   render() {
+      return (
+         <div>
+            <div>
+                <Search myDataProp = {this.state.word} 
+                updateStateProp = {this.updateState}></Search>
+            </div>
+            <Header/>
+            <table>
+               <tbody>
+                  {this.state.data.map((one, i) => <TableRow key = {i} data = {one} />)}
+               </tbody>
+            </table>
+         </div>
+      );
+   }
+}
+
+// TODO
+class Header extends React.Component {
+   render() {
+      return (
+         <div>
+            <h1>Header</h1>
+         </div>
+      );
+   }
+}
+
+// Add an table row for each entry
+class TableRow extends React.Component {
+   render() {
+      return (
+         <tr>
+            <td>{this.props.data.id}</td>
+            <td>{this.props.data.name}</td>
+            <td>{this.props.data.country}</td>
+         </tr>
+      );
+   }
+}
+
+// Search Function 
+class Search extends React.Component {
+
+    constructor(props) {
 		super(props);
-		
-		this.state = {
-			getResults: null
-		};
-		
 		this.handleSubmit = this.handleSubmit.bind(this);
-		this.handleEnterPress = this.handleEnterPress.bind(this);
+		this.checkInput = this.checkInput.bind(this);
 	}
-	
-	// when search is pressed or enter key is typed
-	handleSubmit(event) {
+
+    // if enter is pressed on the keyboard while typing:
+    checkInput(event) {
+		this.handleSubmit();
+	}
+
+    // when search is pressed or enter key is typed
+    handleSubmit() {
 		var query = this.refs.searchBox.value;
-		this.refs.searchBox.value = "";
-		console.log(query);
+		console.log("[Main] search box get value : " + query);
 		this.queryHandler(query);
 	}
-	
-	// if enter is pressed on the keyboard while typing:
-	handleEnterPress(event) {
-		if (event.key == "Enter") {
-			this.handleSubmit(event);
-			event.preventDefault();
-		}
-	}
-	
-	// Check the airport names and countries to see if there are matches 
+
+    // Check the airport names and countries to see if there are matches 
 	// Push them to the searchResults 
 	queryHandler(query) {
-		searchResults = [];
-		for (var i = 0; i < airports.length; i++) {
-			if (airports[i].name.includes(query) || airports[i].country.includes(query)) {
-				console.log("success");
-				searchResults.push(airports[i]);
+        console.log("[Main] Airports value " + airports);
+        var searchResults = airports.filter(function(obj) { 
+            if (obj.name.includes(query) || obj.country.includes(query)) {
+                return obj;
 			}
-		}
-		// Display search results
-		this.setState ({
-			getResults: <Results results={searchResults} />
-		});
+        });
+        console.log("[Main] search box find value " + searchResults);
+        this.props.updateStateProp(searchResults);
 	}
-	
-	render () {
-	  
-		return (
-			<App>
-			<Heading align="center">Where do you want to go?</Heading>
-			<Box>
-			<input onKeyPress={this.handleEnterPress} id="searchBox" ref="searchBox" type="search"></input>
-			<Button onClick={this.handleSubmit} label="Search"></Button>
-			{this.state.getResults}
-			</Box>
-			</App>
-		);
-	}
-};
 
-ReactDOM.render(<Main/>, document.getElementById("searchTest"));
+    render() {
+        return (
+            <div>
+            <input onChange={this.checkInput} id="searchBox" ref="searchBox" type="text"></input>
+            </div>
+        );
+    }
+}
+
+ReactDOM.render(<Main />, document.getElementById("searchTest"));
