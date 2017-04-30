@@ -16,6 +16,7 @@ var Table = Grommet.Table;
 var TableRow = Grommet.TableRow;
 var Tabs = Grommet.Tabs;
 var Topology = Grommet.Topology;
+var AddIcon = Grommet.Icons.Base.Add;
 var GlobeIcon = Grommet.Icons.Base.Globe
 
 // airport object
@@ -32,6 +33,19 @@ airports.push(new Airport(1, "Hartsfield Jackson Atlanta International", "Not Kn
 airports.push(new Airport(2, "Beijing Capital International", "Beijing", "China"));
 airports.push(new Airport(3, "Dubai International", "Not Known", "United Arab Emirates"));
 
+var ids = [];
+
+var selectedCheckboxes = new Set();
+
+function toggleCheckbox(item) {
+    console.log(item);
+    if (selectedCheckboxes.has(item)) {
+        selectedCheckboxes.delete(item);
+    } else {
+        selectedCheckboxes.add(item);
+    }
+}
+
 class TripCo extends React.Component {
   
   constructor(props) {
@@ -39,17 +53,27 @@ class TripCo extends React.Component {
 		
       this.state = {
          data: airports,
-         word: "hello"
+         word: "hello",
       }
 
       this.updateState = this.updateState.bind(this);
+      this.handleformSubmit = this.handleFormSubmit.bind(this);
+      
    }
 
    updateState(results) {
         console.log("[App] Table refreshes value " + results);
         this.setState({data: results});
    }
-
+   
+    handleFormSubmit(formSubmitEvent) {
+        formSubmitEvent.preventDefault();
+        
+        for (const checkbox of selectedCheckboxes) {
+            console.log(checkbox, 'is selected.');
+    }
+    }
+    
   render () {
     return (
       
@@ -65,6 +89,8 @@ class TripCo extends React.Component {
                 </Box>
 
                 <Box id="TripPreview" align='center' full='true'>
+                <form onSubmit={this.handleFormSubmit} >
+                <Button label="Add" onClick={this.handleFormSubmit} icon={<AddIcon />} plain={true}/><br />
                   <Table>
                     <thead><tr><th>
                       <Box align='left'>
@@ -75,7 +101,9 @@ class TripCo extends React.Component {
                     <tbody>
                       {this.state.data.map((one, i) => <MyTableRow key = {i} data = {one} />)}
                     </tbody>
+                    
                   </Table>
+                  </form>
                 </Box>          
               </App>
             </Box>
@@ -101,19 +129,26 @@ class TripCo extends React.Component {
 class MySelect extends React.Component {
   render(){
     return (
+    <div>
       <option value="A">Apple</option>
       <option value="B">Banana</option>
       <option value="C">Cranberry</option>
+      </div>
     );
   }
 }
 
 // Add an table row for each entry
 class MyTableRow extends React.Component {
+
+    constructor(props) {
+        super(props);
+    }
+
    render() {
       return (
          <TableRow>
-            <td><CheckBox/> {this.props.data.id}</td>
+            <td><CheckBox onClick={toggleCheckbox(this.props.data.id)}/> {this.props.data.id}</td>
             <td>{this.props.data.name}</td>
             <td>{this.props.data.region}</td>
             <td>{this.props.data.country}</td>
