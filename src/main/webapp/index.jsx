@@ -25,9 +25,9 @@ var GlobeIcon = Grommet.Icons.Base.Globe;
 var RefreshIcon = Grommet.Icons.Base.Refresh;
 
 // airport object
-function Airport (id, name, country, continent, type) {
-	this.id = id;
-	this.name = name;
+function Airport(id, name, country, continent, type) {
+  this.id = id;
+  this.name = name;
   this.country = country;
   this.continent = continent;
   this.type = type;
@@ -44,129 +44,243 @@ selectedAirports.push(new Airport(1, "Hartsfield Jackson Atlanta International",
 selectedAirports.push(new Airport(2, "Beijing Capital International", "China", "Asia", "large_airports"));
 selectedAirports.push(new Airport(3, "Dubai International", "United Arab Emirates", "Unknown", "closed"));
 
-var countries = [];
-countries.push("United States");
-countries.push("China");
-
-var types = [];
-types.push("large_airports");
-types.push("small_airports");
-types.push("closed");
-
-var continents = [];
-continents.push("Asia");
-continents.push("America");
-
+/**
+ * 
+ * Main Class to be Render
+ * @class TripCo
+ * @extends {React.Component}
+ */
 class TripCo extends React.Component {
-  
   constructor(props) {
-      super(props);
-		
-      this.state = {
-         error: null,
-         data: airports,
-         word: "hello"
-      }
+    super(props);
 
-      this.updateState = this.updateState.bind(this);
-   }
-     // Check the airport names and countries to see if there are matches 
-	// Push them to the searchResults 
+    var loc = window.location, new_uri;
+    if (loc.protocol === "https:") {
+      new_uri = "wss:";
+    } else {
+      new_uri = "ws:";
+    }
+    new_uri += "//" + document.location.host + document.location.pathname;
 
-   updateState(query) {
-     if (query == "refresh"){this.setState({data: airports});}
-     else {
-      var searchResults = airports.filter(function(obj) { 
-            if (obj.name.includes(query) || 
-                obj.country.includes(query) ||
-                obj.continent.includes(query) ||
-                obj.type.includes(query))
-                return obj;
-			});
-      this.setState({data: searchResults});
-     }
-     
-     console.log("[App] Table refreshes value " + query);
-   }
+    this.state = {
+      error: null,
+      selected_data: [],
+      back_data: [],
+      front_data: airports,
+      word: "hello",
+      countries: [],
+      types: [],
+      continents : [],
+      webSocket: new WebSocket(new_uri + "websocket")
+    };
 
-  render () {
-    return (
-      
-        <Box id='screen' pad='medium'>
-        <Headline align='center' size='medium'>TripCo Online</Headline>
-        <Tabs>
-          <Tab title="Plan">
-            <Box id="PlanBox" full='false'>
-              <App>
-                <Box id='Search' margin='medium' full='true' pad='small'>
-                  <MySearch myDataProp = {this.state.word} 
-                    updateStateProp = {this.updateState}></MySearch>
-                </Box>
-                <MySelectionTable data={this.state.data}
-                  updateStateProp = {this.updateState}/>
-              </App>
-            </Box>
-          </Tab>
-          
-          <Tab title="Selections">
-            <App>
-              <MySelectedTable data={selectedAirports}/>
-            </App>
-          </Tab>
-
-          <Tab title="Itinerary">
-            <Box id="mapBox" full='true' margin='large'>
-            </Box>  
-          </Tab>
-
-          <Tab title="TravelMap">
-            <Box id="mapBox" full='true' margin='large'>
-            </Box>  
-          </Tab>
-        </Tabs>
-        
-        </Box>
-      
-    );
-  }
-};
-
-class MySelectionTable extends React.Component {
-  constructor(props) {
-      super(props);
-      this.state = {
-         Country: countries,
-         Continent: continents,
-         Type: types
-      }
-      this.handleChange = this.handleChange.bind(this);
-      this.refreshItems = this.refreshItems.bind(this);
+    this.initiateWebPage = this.initiateWebPage.bind(this);
+    this.updateCountry = this.updateCountry.bind(this);
+    this.searchQuery = this.searchQuery.bind(this);
+    this.updateFrontData = this.updateFrontData.bind(this);
+    this.updateBackData = this.updateBackData.bind(this);
   }
 
-  handleChange(value){
-    console.log("[MySelectionTable] get selected value:" + value);
-    this.props.updateStateProp(value);
+  componentDidMount() {
+    this.state.webSocket.onopen = e => {this.socketOpen(e);}
+    this.state.webSocket.onmessage = e => {this.messageHandler(e);};
+    this.state.webSocket.onerror = e => this.setState({ error: "WebSocket error" });
+    this.state.webSocket.onclose = e => !e.wasClean && this.setState({ error: `WebSocket error: ${e.code} ${e.reason}` });
   }
 
-  refreshItems(){
-    this.props.updateStateProp("refresh")
+  socketOpen(event){
+    console.log("[TripCo] Socket Open");
+    var obj = new Object();
+    obj.Key = "Init";
+    var jsonString = JSON.stringify(obj);
+    this.state.webSocket.send(jsonString);
+  }
+
+  // Default Function Extends onmessage();
+  messageHandler(event) {
+    var jsonMessage = JSON.parse(event.data);
+    switch (jsonMessage.Key){
+      case "Init":
+        this.initiateWebPage(jsonMessage);
+        break;
+      case "Contient":
+        this.updateCountry(jsonMessage);
+        break;
+      case "Country":
+        break;
+      case "Search":
+        this.updateBackData(jsonMessage);
+        break;
+      case "ReadXML":
+        break;
+      case "PlanTrip":
+        break;
+    }
+  }
+
+  // Default Function Extends onclose();
+  componentWillUnmount() {
+    this.state.webSocket.close();
+  }
+
+  initiateWebPage(jsonMessage){
+    var mytypes = jsonMessage.Type.split(",");
+    var mycontinents = jsonMessage.Continent.split(",");
+    var myTypes = [];
+    var myContinents = [];
+    var i;
+    for(i = 0; i < mytypes.length; i++) myTypes.push(mytypes[i]);
+    for(i = 0; i < mycontinents.length; i++) myContinents.push(mycontinents[i]);
+    this.setState({ types: myTypes.filter((x, i, a) => a.indexOf(x) == i)});
+    this.setState({ continents: myContinents.filter((x, i, a) => a.indexOf(x) == i)});
+  }
+
+  updateCountry(jsonMessage){
+    var mycountries = jsonMessage.Country.split(",");
+    var myCountries = [];
+    for(var i = 0; i < mycountries.length; i++) myCountries.push(mycountries[i]);
+    this.setState({ countries: myCountries.filter((x, i, a) => a.indexOf(x) == i) });
+  }
+
+  searchQuery(query){
+    var obj = new Object();
+    obj.Key = "Search";
+    obj.Value = query;
+    var jsonString = JSON.stringify(obj);
+    console.log("[TripCo] Search Query" + query);
+    this.state.webSocket.send(jsonString);
+  }
+
+  updateBackData(jsonMessage){
+    var airport_Names = jsonMessage.Name.split(",");
+    var airport_Countries = jsonMessage.Country.split(",");
+    var airport_Continents = jsonMessage.Continent.split(",");
+    var airport_Types = jsonMessage.Type.split(",");
+    var newAirports = [];
+    for(var i = 0; i < airport_Names.length; i++){
+      newAirports.push(new Airport(i, airport_Names[i], airport_Countries[i], airport_Continents[i], airport_Types[i]));
+    }
+    this.setState({ back_data: newAirports });
+    this.setState({ front_data: newAirports });
+    this.initiateWebPage(jsonMessage);
+    this.updateCountry(jsonMessage);
+  }
+
+  // Check the airport names and countries to see if there are matches
+  // Push them to the searchResults
+  updateFrontData(query) {
+    if (query == "refresh") {
+      this.setState({ front_data: this.state.back_data });
+    } else {
+      var searchResults = this.state.back_data.filter(function(obj) {
+        if (
+          obj.name.includes(query) ||
+          obj.country.includes(query) ||
+          obj.continent.includes(query) ||
+          obj.type.includes(query)
+        )
+          return obj;
+      });
+      this.setState({ front_data: searchResults });
+    }
+    console.log("[App] Table refreshes value " + query);
   }
 
   render() {
     return (
-      <Box id="TripPreview" align='center' full='true'>
-        <Table >
-          <thead><tr><th width='10%'>id</th>
-            <th width='35%'> <Button icon={<RefreshIcon />} plain={true} onClick={this.refreshItems}/> Airport </th>
-            <th width='20%'><Menu responsive={true} label='Country' size='small' closeOnClick={false}>
-              {this.state.Country.map((one, i) => <Myset key = {i} data = {one} filter={this.handleChange}/>)}</Menu></th>
-            <th width='20%'><Menu responsive={true} label='Continent' size='small' closeOnClick={false}>
-              {this.state.Continent.map((one, i) => <Myset key = {i} data = {one} filter={this.handleChange}/>)}</Menu></th>
-            <th width='20%'><Menu responsive={true} label='Type' size='small' closeOnClick={false}>
-              {this.state.Type.map((one, i) => <Myset key = {i} data = {one} filter={this.handleChange}/>)}</Menu></th>
-            </tr></thead>
+      <Box id="screen" pad="medium">
+        <Headline align="center" size="medium">TripCo Online</Headline>
+        <Tabs>
+          <Tab title="Plan">
+            <Box id="PlanBox" full="false">
+              <App>
+                <Box id="Search" margin="medium" full="true" pad="small">
+                  <MySearch
+                    myDataProp={this.state.word}
+                    updateStateProp={this.updateFrontData}
+                    searchQuery={this.searchQuery}
+                  />
+                </Box>
+                <MySelectionTable
+                  data={this.state.front_data}
+                  countries={this.state.countries}
+                  continents={this.state.continents}
+                  types={this.state.types}
+                  updateStateProp={this.updateFrontData}
+                />
+              </App>
+            </Box>
+          </Tab>
+
+          <Tab title="Selections">
+            <App>
+              <MySelectedTable data={selectedAirports} />
+            </App>
+          </Tab>
+
+          <Tab title="Itinerary">
+            <Box id="mapBox" full="true" margin="large" />
+          </Tab>
+
+          <Tab title="TravelMap">
+            <Box id="mapBox" full="true" margin="large" />
+          </Tab>
+        </Tabs>
+
+      </Box>
+    );
+  }
+}
+
+class MySelectionTable extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.handleChange = this.handleChange.bind(this);
+    this.refreshItems = this.refreshItems.bind(this);
+  }
+
+  handleChange(value) {
+    console.log("[MySelectionTable] get selected value:" + value);
+    this.props.updateStateProp(value);
+  }
+
+  refreshItems() {
+    this.props.updateStateProp("refresh");
+  }
+
+  render() {
+    return (
+      <Box id="TripPreview" align="center" full="true">
+        <Table>
+          <thead>
+            <tr>
+              <th width="10%">id</th>
+              <th width="35%">
+                <Button icon={<RefreshIcon />} plain={true} onClick={this.refreshItems}/>
+                Airport
+              </th>
+              <th width="20%">
+                <Menu responsive={true} label="Country" size="small" closeOnClick={false}>
+                  {this.props.countries.map((one, i) => (
+                    <Myset key={i} data={one} filter={this.handleChange} />
+                  ))}
+                </Menu></th>
+              <th width="20%">
+                <Menu responsive={true} label="Continent" size="small" closeOnClick={false}>
+                  {this.props.continents.map((one, i) => (
+                    <Myset key={i} data={one} filter={this.handleChange} />
+                  ))}
+                </Menu></th>
+              <th width="20%"> <Menu responsive={true} label="Type" size="small" closeOnClick={false}>
+                  {this.props.types.map((one, i) => (
+                    <Myset key={i} data={one} filter={this.handleChange} />
+                  ))}
+                </Menu></th>
+            </tr>
+          </thead>
           <tbody>
-            {this.props.data.map((one, i) => <MyTableRow key = {i} data = {one} />)}
+            {this.props.data.map((one, i) => <MyTableRow key={i} data={one} />)}
           </tbody>
         </Table>
       </Box>
@@ -176,129 +290,143 @@ class MySelectionTable extends React.Component {
 
 class Myset extends React.Component {
   constructor(props) {
-      super(props);
+    super(props);
   }
 
   clicked(item, event) {
-    event.preventDefault()
+    event.preventDefault();
     this.props.filter(item);
   }
 
-  render(){
-    return(
-      <Button label={this.props.data} onClick={this.clicked.bind(this, this.props.data)} plain={true} />
+  render() {
+    return (
+      <Button
+        label={this.props.data}
+        onClick={this.clicked.bind(this, this.props.data)}
+        plain={true}
+      />
     );
   }
 }
 
 class MySelectedTable extends React.Component {
   constructor(props) {
-      super(props);
+    super(props);
 
-      this.uploadFile = this.uploadFile.bind(this);
-      this.downloadFile = this.downloadFile.bind(this);
-      this.planTrip = this.planTrip.bind(this);
+    this.uploadFile = this.uploadFile.bind(this);
+    this.downloadFile = this.downloadFile.bind(this);
+    this.planTrip = this.planTrip.bind(this);
   }
 
-  uploadFile(){
+  uploadFile() {}
 
-  }
+  downloadFile() {}
 
-  downloadFile(){
-
-  }
-
-  planTrip(){
-
-  }
+  planTrip() {}
 
   render() {
     return (
       <App>
-        <Box id="TripPreview" align='center' full='true' pad='large'>
-        <Box direction='row' justify='center'>
-          <Button icon={<DocumentUploadIcon />} label='Upload' onClick={this.uploadFile} plain={true} />
-          <Button icon={<DocumentDownloadIcon />} label='Download' onClick={this.downloadFile} plain={true} />
-          <Button icon={<GlobeIcon />} label='Plan Trip' onClick={this.planTrip} plain={true} />
+        <Box id="TripPreview" align="center" full="true" pad="large">
+          <Box direction="row" justify="center">
+            <Button icon={<DocumentUploadIcon />} label="Upload" onClick={this.uploadFile} plain={true}/>
+            <Button icon={<DocumentDownloadIcon />} label="Download" onClick={this.downloadFile} plain={true}/>
+            <Button icon={<GlobeIcon />} label="Plan Trip" onClick={this.planTrip} plain={true}/>
+          </Box>
+
+          <Paragraph size="xlarge"> View Your Trip </Paragraph>
+          <Table>
+            <thead>
+              <tr>
+                <th width="10%">id</th>
+                <th width="35%"> Airport </th>
+                <th width="20%"> Country</th>
+                <th width="20%"> Continent</th>
+                <th width="20%"> Type</th>
+              </tr>
+            </thead>
+            <tbody>
+              {this.props.data.map((one, i) => (
+                <MySelectedRow key={i} data={one} />
+              ))}
+            </tbody>
+          </Table>
         </Box>
-        
-      
-        <Paragraph size='xlarge'> View Your Trip </Paragraph>
-        <Table >
-          <thead><tr><th width='10%'>id</th>
-            <th width='35%'> Airport </th>
-            <th width='20%'> Country</th>
-            <th width='20%'> Continent</th>
-            <th width='20%'> Type</th>
-            </tr></thead>
-          <tbody>
-            {this.props.data.map((one, i) => <MySelectedRow key = {i} data = {one} />)}
-          </tbody>
-        </Table>
-      </Box>
       </App>
     );
   }
 }
 
 class MySelectedRow extends React.Component {
-   render() {
-      return (
-         <TableRow>
-            <td>{this.props.data.id}</td>
-            <td>{this.props.data.name}</td>
-            <td>{this.props.data.country}</td>
-            <td>{this.props.data.continent}</td>
-            <td>{this.props.data.type}</td>
-         </TableRow>
-      );
-   }
+  render() {
+    return (
+      <TableRow>
+        <td>{this.props.data.id}</td>
+        <td>{this.props.data.name}</td>
+        <td>{this.props.data.country}</td>
+        <td>{this.props.data.continent}</td>
+        <td>{this.props.data.type}</td>
+      </TableRow>
+    );
+  }
 }
 
 // Add an table row for each entry
 class MyTableRow extends React.Component {
-   render() {
-      return (
-         <TableRow>
-            <td><CheckBox/> {this.props.data.id}</td>
-            <td>{this.props.data.name}</td>
-            <td>{this.props.data.country}</td>
-            <td>{this.props.data.continent}</td>
-            <td>{this.props.data.type}</td>
-         </TableRow>
-      );
-   }
+  render() {
+    return (
+      <TableRow>
+        <td><CheckBox /> {this.props.data.id}</td>
+        <td>{this.props.data.name}</td>
+        <td>{this.props.data.country}</td>
+        <td>{this.props.data.continent}</td>
+        <td>{this.props.data.type}</td>
+      </TableRow>
+    );
+  }
 }
 
-// Search Function 
+/**
+ * 
+ * 
+ * @class MySearch
+ * @extends {React.Component}
+ * @extends {TripCo.Class}
+ */
 class MySearch extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.checkInput = this.checkInput.bind(this);
+    this.checkEnter = this.checkEnter.bind(this);
+  }
 
-    constructor(props) {
-		super(props);
-		this.handleSubmit = this.handleSubmit.bind(this);
-		this.checkInput = this.checkInput.bind(this);
-	}
+  // if enter is pressed on the keyboard while typing:
+  checkInput(event) {
+    this.handleSubmit();
+  }
 
-    // if enter is pressed on the keyboard while typing:
-    checkInput(event) {
-		this.handleSubmit();
-	}
-
-    // when search is pressed or enter key is typed
-    handleSubmit() {
-		var query = this.refs.searchBox.value;
-		console.log("[Main] search box get value : " + query);
+  // when search is pressed or enter key is typed
+  handleSubmit() {
+    var query = this.refs.searchBox.value;
+    console.log("[Main] search box get value : " + query);
     this.props.updateStateProp(query);
-	}
+  }
 
-    render() {
-        return (
-          <input onChange={this.checkInput} defaultValue="Search Airport"
-            id="searchBox" ref="searchBox" 
-            type="text"></input>
-        );
+  checkEnter(event){
+    if(event.key == "Enter"){
+      this.props.searchQuery(this.refs.searchBox.value);
+      this.refs.searchBox.value = "";
     }
+  }
+
+  render() {
+    return (
+      <input onChange={this.checkInput} onKeyPress={this.checkEnter}
+        defaultValue="Search Airport" id="searchBox" ref="searchBox" type="text"/>
+    );
+  }
 }
 
-var element = document.getElementById('content');
+var element = document.getElementById("content");
 ReactDOM.render(React.createElement(TripCo), element);
