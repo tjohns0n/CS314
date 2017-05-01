@@ -30,6 +30,8 @@ import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
 import edu.csu2017sp314.DTR14.tripco.Model.Query;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 //Corrosponds to Server endpoint name in Server.js for clients
 @ServerEndpoint("/websocket")
@@ -45,6 +47,8 @@ public class WebSocket {
     private final static Query query = new Query();
     
     private static FileOutputStream fos = null;
+
+    private static File uploadedFile;
     
     //Primary Message Handling method. 
     //default stub is string, changed to void for our example
@@ -211,7 +215,7 @@ public class WebSocket {
     private void processXMLFile(Session session, JsonObject json) {   
         String fileName = removeQuotes(json.get("FileName").toString());
         System.out.println("[ServerSide] Server Accept " + fileName);
-        File uploadedFile = new File(fileRoot + session.getId() + "/" + fileName);
+        uploadedFile = new File(fileRoot + session.getId() + "/" + fileName);
         try {
             fos = new FileOutputStream(uploadedFile);
         } catch (FileNotFoundException e) {     
@@ -223,7 +227,6 @@ public class WebSocket {
     public void processUpload(ByteBuffer data, Session session) { 
         boolean status = true;
         while(data.hasRemaining()) {         
-            System.out.println("[ServerSide] Server Accept " + data);
             try {
                 fos.write(data.get());
             } catch (IOException e) {               
@@ -238,9 +241,21 @@ public class WebSocket {
             e.printStackTrace();
         }
         finally{
+            String[] subSet = null;
+            try {
+                subSet = new XMLReader().
+                    readSelectFile(uploadedFile.getAbsolutePath(), new StringBuilder());
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(WebSocket.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            String[] answer = query.searchQuery(subSet);
             JsonObject jso = Json.createObjectBuilder()
                 .add("Key", "ReadXML")
-                .add("Status", status)
+                .add("Identifier", answer[0])
+                .add("Name", answer[1])
+                .add("Country", answer[2])
+                .add("Continent", answer[3])
+                .add("Type", answer[4])
                 .build();
             sendBack(session, jso);
         }
