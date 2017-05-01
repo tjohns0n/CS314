@@ -5,6 +5,8 @@ Creates and displays viewable files and pages from data provided by the Presente
 
 package edu.csu2017sp314.DTR14.tripco.View;
 
+import javax.json.JsonArray;
+
 
 public class View{
 
@@ -22,7 +24,7 @@ public class View{
     // ItineraryWriter and SVGWriter:
     private ItineraryWriter itinWrite;
     private WorldMapWriter svgWrite;
-    private HTMLItinerary htmlWrite;
+    private JSONItinerary jsonWrite;
 
     /*
     View Command Line constructor
@@ -48,7 +50,7 @@ public class View{
     		units = "miles";
     	}
     	itinWrite = new ItineraryWriter();
-    	htmlWrite = new HTMLItinerary(numberLocs, dir + "base1.html", dir + "base2.html", units);
+    	jsonWrite = new JSONItinerary();
     	svgWrite = new WorldMapWriter("World3.svg");
     	svgWrite.addTitle(title, "Map Title");
         setFooter();
@@ -107,7 +109,7 @@ public class View{
     
     public void addItinLeg(ItineraryLeg il){
     	itinWrite.addDetailedLeg(il);
-    	//htmlWrite.addLeg(il);
+    	jsonWrite.addLeg(il);
     }
 
     /*
@@ -116,8 +118,10 @@ public class View{
     public void writeFiles() {
         svgWrite.writeSVG(title + ".svg");
         itinWrite.writeXML(title + ".xml");
-        htmlWrite.writeHTMLItinerary();
         new GenerateJavascript(getRootName());
     }
 
+    public JsonArray getJsonItinerary() {
+        return jsonWrite.getItinerary();
+    }
 }

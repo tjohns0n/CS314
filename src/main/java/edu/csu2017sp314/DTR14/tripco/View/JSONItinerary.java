@@ -20,7 +20,7 @@ public class JSONItinerary {
         legs = new ArrayList<JsonObject>();
     }
     
-    private void addLeg(ItineraryLeg il) {
+    public void addLeg(ItineraryLeg il) {
         String[] leg = il.getLocation1();
         JsonObject ok = Json.createObjectBuilder()
                 .add("id", leg[0])
