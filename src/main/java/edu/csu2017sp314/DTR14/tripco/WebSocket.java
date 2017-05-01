@@ -248,13 +248,14 @@ public class WebSocket {
 
     // refer to the comments in switch syntax
     private void planTrip(Session session, JsonObject json){
-        String name = removeQuotes(json.get("Name").toString());
+        // String name = removeQuotes(json.get("Name").toString());
         String[] idts = removeQuotes(json.get("Identifier").toString()).split(",");
-        String[] options = removeQuotes(json.get("Option").toString()).split(",");
-        boolean[] opts = new boolean[options.length];
-        for(int i = 0; i < options.length; i++)
-            opts[i] = options[i].equals("true") ? true : false;
+        // String[] options = removeQuotes(json.get("Option").toString()).split(",");
+        // boolean[] opts = new boolean[options.length];
+        // for(int i = 0; i < options.length; i++)
+        //    opts[i] = options[i].equals("true") ? true : false;
         // new TripCo(name, opts, idts);
+        System.out.println("[ServerSide] Start to Plan Trip ");
         sendBack(session, json);
     }
 

@@ -23,6 +23,7 @@ var DocumentUploadIcon = Grommet.Icons.Base.DocumentUpload;
 var DocumentDownloadIcon = Grommet.Icons.Base.DocumentDownload;
 var GlobeIcon = Grommet.Icons.Base.Globe;
 var RefreshIcon = Grommet.Icons.Base.Refresh;
+var SearchIcon = Grommet.Icons.Base.SearchAdvanced;
 
 // airport object
 function Airport(id, name, country, continent, type) {
@@ -79,6 +80,7 @@ class TripCo extends React.Component {
     this.searchQuery = this.searchQuery.bind(this);
     this.updateFrontData = this.updateFrontData.bind(this);
     this.updateBackData = this.updateBackData.bind(this);
+    this.planTrip = this.planTrip.bind(this);
   }
 
   componentDidMount() {
@@ -186,6 +188,20 @@ class TripCo extends React.Component {
     console.log("[App] Table refreshes value " + query);
   }
 
+  planTrip(){
+    var obj = new Object();
+    obj.Key = "PlanTrip";
+    var idts = "";
+    for(var i = 0; i < this.state.selected_data.length; i++){
+      if(i != 0) idts += ",";
+      idts += this.state.selected_data[i].id;
+    }
+    obj.Identifier = idts;
+    var jsonString = JSON.stringify(obj);
+    console.log("[TripCo] Plan Trip" + idts);
+    this.state.webSocket.send(jsonString);
+  }
+
   render() {
     return (
       <Box id="screen" pad="medium">
@@ -214,7 +230,9 @@ class TripCo extends React.Component {
 
           <Tab title="Selections">
             <App>
-              <MySelectedTable data={selectedAirports} />
+              <MySelectedTable 
+                data={selectedAirports}
+                planTrip={this.planTrip}/>
             </App>
           </Tab>
 
@@ -232,6 +250,13 @@ class TripCo extends React.Component {
   }
 }
 
+/**
+ * 
+ * 
+ * @class MySelectionTable
+ * @extends {React.Component}
+ * @extends {TripCo.Class}
+ */
 class MySelectionTable extends React.Component {
   constructor(props) {
     super(props);
@@ -288,6 +313,13 @@ class MySelectionTable extends React.Component {
   }
 }
 
+/**
+ * 
+ * 
+ * @class Myset
+ * @extends {React.Component}
+ * @extends {MySelectionTable.Class}
+ */
 class Myset extends React.Component {
   constructor(props) {
     super(props);
@@ -309,20 +341,24 @@ class Myset extends React.Component {
   }
 }
 
+/**
+ * 
+ * 
+ * @class MySelectedTable
+ * @extends {React.Component}
+ * @extends {TripCo.Class}
+ */
 class MySelectedTable extends React.Component {
   constructor(props) {
     super(props);
 
     this.uploadFile = this.uploadFile.bind(this);
     this.downloadFile = this.downloadFile.bind(this);
-    this.planTrip = this.planTrip.bind(this);
   }
 
   uploadFile() {}
 
   downloadFile() {}
-
-  planTrip() {}
 
   render() {
     return (
@@ -331,7 +367,7 @@ class MySelectedTable extends React.Component {
           <Box direction="row" justify="center">
             <Button icon={<DocumentUploadIcon />} label="Upload" onClick={this.uploadFile} plain={true}/>
             <Button icon={<DocumentDownloadIcon />} label="Download" onClick={this.downloadFile} plain={true}/>
-            <Button icon={<GlobeIcon />} label="Plan Trip" onClick={this.planTrip} plain={true}/>
+            <Button icon={<GlobeIcon />} label="Plan Trip" onClick={this.props.planTrip} plain={true}/>
           </Box>
 
           <Paragraph size="xlarge"> View Your Trip </Paragraph>
@@ -396,9 +432,15 @@ class MyTableRow extends React.Component {
 class MySearch extends React.Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      defaultValue : "Enter Airport Name or City"
+    }
     this.handleSubmit = this.handleSubmit.bind(this);
     this.checkInput = this.checkInput.bind(this);
-    this.checkEnter = this.checkEnter.bind(this);
+    this.searchQuery = this.searchQuery.bind(this);
+    this.ClearPlaceHolder = this.ClearPlaceHolder.bind(this);
+    this.SetPlaceHolder = this.SetPlaceHolder.bind(this);
   }
 
   // if enter is pressed on the keyboard while typing:
@@ -413,17 +455,35 @@ class MySearch extends React.Component {
     this.props.updateStateProp(query);
   }
 
-  checkEnter(event){
-    if(event.key == "Enter"){
-      this.props.searchQuery(this.refs.searchBox.value);
+  searchQuery(event){
+    this.props.searchQuery(this.refs.searchBox.value);
+    this.refs.searchBox.value = "";
+  }
+
+  ClearPlaceHolder(){
+    if(this.refs.searchBox.value == this.state.defaultValue){
       this.refs.searchBox.value = "";
+    }
+  }
+
+  SetPlaceHolder(){
+    if (this.refs.searchBox.value == "") {
+      this.refs.searchBox.value = this.state.defaultValue;
     }
   }
 
   render() {
     return (
-      <input onChange={this.checkInput} onKeyPress={this.checkEnter}
-        defaultValue="Search Airport" id="searchBox" ref="searchBox" type="text"/>
+      <Box full='horizontal' colorIndex='light-2' pad='small' justify='end'> 
+      Trip Planning Make Life Easy
+      <Box full='horizontal' direction='row'> 
+        <Box full='horizontal' colorIndex='light-1' margin='small'> 
+        <input onChange={this.checkInput} onKeyPress={this.checkEnter} onFocus={this.ClearPlaceHolder} onBlur={this.SetPlaceHolder}
+          defaultValue={this.state.defaultValue} id="searchBox" ref="searchBox" type="text" background/>
+        </Box>
+        <Button icon={<SearchIcon />} label="Search" onClick={this.searchQuery} plain={true}/>
+      </Box>
+      </Box>
     );
   }
 }
