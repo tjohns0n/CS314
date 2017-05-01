@@ -3,7 +3,7 @@ package edu.csu2017sp314.DTR14.tripco.Model;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
-import java.util.ArrayList;
+import java.util.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -22,7 +22,39 @@ public class Query {
 	private final String types = "SELECT distinct type FROM airports;";
 	private final String conts = "SELECT name FROM continents;";
 	private final String counts = "SELECT name FROM countries;";	
+	private Map<String, String> countryMap = new HashMap<String, String>();
+	private Map<String, String> countinentMap = new HashMap<String, String>();
 
+	public Query(){
+		try	{ // connect to the database 
+			Class.forName(driver); 
+			Connection conn = DriverManager.getConnection(theURL, user, pass);
+			try { // create a statement
+				Statement st = conn.createStatement();
+				try { // submit a query
+					String query = "select id, name from continents;";
+					ResultSet rs = st.executeQuery(query);
+					try { // iterate through the query results
+						while(rs.next()){
+							countinentMap.put(rs.getString(1), rs.getString(2));
+						}
+					} finally { rs.close(); }
+
+					query = "select code, name from countries;";
+					rs = st.executeQuery(query);
+					try { // iterate through the query results
+						while(rs.next()){
+							countryMap.put(rs.getString(1), rs.getString(2));
+						}
+					} finally { rs.close(); }
+
+				} finally { st.close(); }
+			} finally { conn.close(); }
+		} catch (ClassNotFoundException | SQLException e) {
+			System.err.printf("Exception: ");
+			System.err.println(e.getMessage());
+		}
+	}
 	// This will be called when Webpage First setting up
 	// Returns
 	// Type = "(types)"
@@ -253,14 +285,14 @@ public class Query {
 
 	//Search Query for given search token
 	public String[] searchQuery(String token){
-		String[] ret = {"",""};
+		String[] ret = {"","","","",""};
 		try	{ // connect to the database 
 			Class.forName(driver); 
 			Connection conn = DriverManager.getConnection(theURL, user, pass);
 			try { // create a statement
 				Statement st = conn.createStatement();		
 				try { // submit a query
-					String query = "SELECT name,id FROM airports WHERE name like '%"+token+"%' ";
+					String query = "SELECT id, name, iso_country, continent, type FROM airports WHERE name like '%"+token+"%' ";
 					query+="or municipality like '%"+token+"%' ";
 					query+="or id like '%"+token+"%' ";
 					query+="or keywords like '%"+token+"%' ";
@@ -270,9 +302,15 @@ public class Query {
 						while (rs.next()){
 							ret[0]+=rs.getString(1)+",";
 							ret[1]+=rs.getString(2)+",";
+							ret[2]+=countryMap.get(rs.getString(3))+",";
+							ret[3]+=countinentMap.get(rs.getString(4))+",";
+							ret[4]+=rs.getString(5)+",";
 						}
 						ret[0] = ret[0].substring(0, ret[0].length()-1);//Remove trailing ,
 						ret[1] = ret[1].substring(0, ret[1].length()-1);
+						ret[2] = ret[2].substring(0, ret[2].length()-1);
+						ret[3] = ret[3].substring(0, ret[3].length()-1);
+						ret[4] = ret[4].substring(0, ret[4].length()-1);
 					} finally { rs.close(); }
 				} finally { st.close(); }
 			} finally { conn.close(); }
@@ -281,6 +319,5 @@ public class Query {
 			System.err.println(e.getMessage());
 		}
 		return ret;
-	}	
-
+	}
 }
