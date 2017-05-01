@@ -10,6 +10,9 @@ import javax.json.JsonArray;
 
 public class View{
 
+    private final static String WORKDIR = View.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+    // the FILEPATH we want to write to is a few folders up. This refers to the web folder
+    private final static String FILEPATH = WORKDIR.substring(0, WORKDIR.indexOf("WEB-INF/"));
     // Name of the CSV input file, sans the .csv extension 
 	private String title;
     // Optionally display labels on the SVG
@@ -36,13 +39,13 @@ public class View{
     */
     
     public View(String title, int totalDistance, boolean[] labels, boolean miles, int numberLocs){
+        System.out.println("PATH -----------" + FILEPATH);
     	legCount = 0;
     	this.ids = labels[0];
         this.distances = labels[1];
         this.names = labels[2];
     	this.title = title;
         this.totalDistance = totalDistance;
-    	String dir = System.getProperty("user.dir") + "/main/resources/";
     	String units;
     	if (miles) {
     		units = "kilometers";
@@ -51,7 +54,7 @@ public class View{
     	}
     	itinWrite = new ItineraryWriter();
     	jsonWrite = new JSONItinerary();
-    	svgWrite = new WorldMapWriter("World3.svg");
+    	svgWrite = new WorldMapWriter(FILEPATH + "World3.svg");
     	svgWrite.addTitle(title, "Map Title");
         setFooter();
     }
@@ -116,9 +119,9 @@ public class View{
      * Write the SVG and XML files once all the legs have been added
      */
     public void writeFiles() {
-        svgWrite.writeSVG(title + ".svg");
-        itinWrite.writeXML(title + ".xml");
-        new GenerateJavascript(getRootName());
+        
+        svgWrite.writeSVG(FILEPATH + title + ".svg");
+        itinWrite.writeXML(FILEPATH + title + ".xml");
     }
 
     public JsonArray getJsonItinerary() {

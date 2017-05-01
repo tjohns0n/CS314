@@ -11,6 +11,9 @@ import java.util.ArrayList;
 
 abstract class SVGWriter {
 
+    private final static String WORKDIR = View.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+    // the FILEPATH we want to write to is a few folders up. This refers to the web folder
+    private final static String FILEPATH = WORKDIR.substring(0, WORKDIR.indexOf("WEB-INF/"));
 	// Width and height of the SVG.
     double width;
     double height;
@@ -373,16 +376,14 @@ abstract class SVGWriter {
     		testData.addAll(originalContent);
     	testData.addAll(content);
     	testData.addAll(footer);
-		String loc = System.getProperty("user.dir");
-		if (loc.contains("src")) {
-			loc += "/main/resources/";
-		} else {
-			loc += "/src/main/resources/";
-		}
+        System.out.println("Attempting to write to: " + FILEPATH);
 		
     	try {
+            File test = new File(filename);
+            
+            test.createNewFile();
 			// New BufferedWriter with filename of original input file
-    		BufferedWriter write = new BufferedWriter(new FileWriter(loc + filename));
+    		BufferedWriter write = new BufferedWriter(new FileWriter(test));
 			// Write the contents of the original SVG, as well as whatever header elements added
 			for (String s: header) 
 				write.write(s + "\n");
@@ -403,7 +404,7 @@ abstract class SVGWriter {
     		write.close();
     		
     	} catch (IOException e) {
-    		
+    		e.printStackTrace();
     	}
     	return testData;
     }
