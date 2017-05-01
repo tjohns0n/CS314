@@ -4,6 +4,9 @@ var App = Grommet.App;
 var Box = Grommet.Box;
 var Button = Grommet.Button;
 var CheckBox = Grommet.CheckBox;
+var Form = Grommet.Form;
+var FormField = Grommet.FormField;
+var TextInput = Grommet.TextInput;
 var Heading = Grommet.Heading;
 var Headline = Grommet.Headline;
 var Label = Grommet.Label;
@@ -24,11 +27,11 @@ var DocumentDownloadIcon = Grommet.Icons.Base.DocumentDownload;
 var GlobeIcon = Grommet.Icons.Base.Globe;
 var RefreshIcon = Grommet.Icons.Base.Refresh;
 var SearchIcon = Grommet.Icons.Base.SearchAdvanced;
+var title = "";
 
 // airport object
-function Airport(id, idt, name, country, continent, type) {
+function Airport(id, name, country, continent, type) {
   this.id = id;
-  this.idt = idt;
   this.name = name;
   this.country = country;
   this.continent = continent;
@@ -37,14 +40,19 @@ function Airport(id, idt, name, country, continent, type) {
 
 // list of searchable airports
 var airports = [];
-airports.push(new Airport(1, "HYDS","Hartsfield Jackson Atlanta International", "United States", "America", "large_airports"));
-airports.push(new Airport(2, "SDASD", "Beijing Capital International", "China", "Asia", "large_airports"));
-airports.push(new Airport(3, "DSAD","Dubai International", "United Arab Emirates", "Unknown", "closed"));
+airports.push(new Airport(1, "Hartsfield Jackson Atlanta International", "United States", "America", "large_airports"));
+airports.push(new Airport(2, "Beijing Capital International", "China", "Asia", "large_airports"));
+airports.push(new Airport(3, "Dubai International", "United Arab Emirates", "Unknown", "closed"));
 
 var selectedAirports = [];
-selectedAirports.push(new Airport(1, "HYDS","Hartsfield Jackson Atlanta International", "United States", "America", "large_airports"));
-selectedAirports.push(new Airport(2, "SDASD", "Beijing Capital International", "China", "Asia", "large_airports"));
-selectedAirports.push(new Airport(3, "DSAD","Dubai International", "United Arab Emirates", "Unknown", "closed"));
+selectedAirports.push(new Airport(1, "Hartsfield Jackson Atlanta International", "United States", "America", "large_airports"));
+selectedAirports.push(new Airport(2, "Beijing Capital International", "China", "Asia", "large_airports"));
+selectedAirports.push(new Airport(3, "Dubai International", "United Arab Emirates", "Unknown", "closed"));
+
+function addEntry(data){
+    selectedAirports.push(new Airport(data.id, data.name, data.country, data.continent, data.type));
+}
+
 /**
  * 
  * Main Class to be Render
@@ -81,9 +89,6 @@ class TripCo extends React.Component {
     this.updateFrontData = this.updateFrontData.bind(this);
     this.updateBackData = this.updateBackData.bind(this);
     this.planTrip = this.planTrip.bind(this);
-    this.addToSet = this.addToSet.bind(this);
-    this.removeFromSet = this.removeFromSet.bind(this);
-    this.uploadFile = this.uploadFile.bind(this);
   }
 
   componentDidMount() {
@@ -157,14 +162,13 @@ class TripCo extends React.Component {
   }
 
   updateBackData(jsonMessage){
-    var airport_idts = jsonMessage.Identifier.split(",");
     var airport_Names = jsonMessage.Name.split(",");
     var airport_Countries = jsonMessage.Country.split(",");
     var airport_Continents = jsonMessage.Continent.split(",");
     var airport_Types = jsonMessage.Type.split(",");
     var newAirports = [];
     for(var i = 0; i < airport_Names.length; i++){
-      newAirports.push(new Airport(i, airport_idts[i], airport_Names[i], airport_Countries[i], airport_Continents[i], airport_Types[i]));
+      newAirports.push(new Airport(i, airport_Names[i], airport_Countries[i], airport_Continents[i], airport_Types[i]));
     }
     this.setState({ back_data: newAirports });
     this.setState({ front_data: newAirports });
@@ -206,34 +210,6 @@ class TripCo extends React.Component {
     this.state.webSocket.send(jsonString);
   }
 
-  addToSet(query){
-    console.log("[TripCo] selected_data query " + query);
-    console.log("[TripCo] selected_data query " + this.state.selected_data.length);
-    var selectedResults = this.state.back_data.filter(function(obj) {
-      if (obj.idt.includes(query)) return obj;});
-
-    // if(this.state.selected_data.length != 0) 
-    //   selectedResults.concat(selectedResults.filter(function (item) {
-    //     return -1;
-    //   }))
-    selectedResults = [...new Set([...selectedResults ,...this.state.selected_data])];
-    console.log("[TripCo] selected_data query " + selectedResults[0]);
-    this.setState({ selected_data: selectedResults});
-  }
-
-  removeFromSet(query){
-    var selectedResults = this.state.back_data.filter(function(obj) {
-      if (obj.idt.includes(query))return obj;});
-    this.setState({ selected_data: this.state.selected_data.filter(function(item) {
-        return selectedResults.indexOf(item) === -1;
-      })
-    });
-  }
-
-  uploadFile(){
-
-  }
-
   render() {
     return (
       <Box id="screen" pad="medium">
@@ -255,8 +231,6 @@ class TripCo extends React.Component {
                   continents={this.state.continents}
                   types={this.state.types}
                   updateStateProp={this.updateFrontData}
-                  removeFromSet={this.removeFromSet}
-                  addToSet={this.addToSet}
                 />
               </App>
             </Box>
@@ -265,9 +239,9 @@ class TripCo extends React.Component {
           <Tab title="Selections">
             <App>
               <MySelectedTable 
-                uploadFile={this.state.uploadFile}
-                data={this.state.selected_data}
-                planTrip={this.planTrip}/>
+                data={selectedAirports}
+                planTrip={this.planTrip}
+                addTitle={this.addTitle}/>
             </App>
           </Tab>
 
@@ -308,7 +282,7 @@ class MySelectionTable extends React.Component {
   refreshItems() {
     this.props.updateStateProp("refresh");
   }
-
+ 
   render() {
     return (
       <Box id="TripPreview" align="center" full="true">
@@ -340,10 +314,7 @@ class MySelectionTable extends React.Component {
             </tr>
           </thead>
           <tbody>
-            {this.props.data.map((one, i) => 
-              <MyTableRow key={i} data={one} 
-                addToSet={this.props.addToSet}
-                removeFromSet={this.props.removeFromSet}/>)}
+            {this.props.data.map((one, i) => <MyTableRow key={i} data={one} />)}
           </tbody>
         </Table>
       </Box>
@@ -389,35 +360,40 @@ class Myset extends React.Component {
 class MySelectedTable extends React.Component {
   constructor(props) {
     super(props);
-    this.downloadFile = this.downloadFile.bind(this);
+
     this.uploadFile = this.uploadFile.bind(this);
+    this.downloadFile = this.downloadFile.bind(this);
+    this.addTitle = this.addTitle.bind(this);
   }
+
+  uploadFile() {}
 
   downloadFile() {}
-
-  uploadFile(){
-    
-    if(document.getElementById("selectedFile").value == "")
-      document.getElementById('selectedFile').click();
-    else
-      console.log("[MySelectedTable] chosen file " + document.getElementById("selectedFile").value);
+  
+  addTitle(){
+    this.setState({word: this.refs.titleSet.value})
   }
+  
   render() {
     return (
       <App>
         <Box id="TripPreview" align="center" full="true" pad="large">
           <Box direction="row" justify="center">
-            <input type="file" id="selectedFile" style={{display:'none'}} onChange={this.uploadFile} />
             <Button icon={<DocumentUploadIcon />} label="Upload" onClick={this.uploadFile} plain={true}/>
             <Button icon={<DocumentDownloadIcon />} label="Download" onClick={this.downloadFile} plain={true}/>
             <Button icon={<GlobeIcon />} label="Plan Trip" onClick={this.props.planTrip} plain={true}/>
           </Box>
-
+          <Box>
+            <Box heading='Input Trip Title' full='true' colorIndex='light-1' margin='small'> 
+                 <input onChange={this.checkInput} id="titleSet" ref="titleSet" type="text" background/>
+            </Box>
+            <Button icon={<GlobeIcon />} label="Set Title" onClick={this.addTitle} plain={true}/>
+          </Box>
           <Paragraph size="xlarge"> View Your Trip </Paragraph>
           <Table>
             <thead>
               <tr>
-                <th width="10%"> Identifier</th>
+                <th width="10%">id</th>
                 <th width="35%"> Airport </th>
                 <th width="20%"> Country</th>
                 <th width="20%"> Continent</th>
@@ -437,11 +413,10 @@ class MySelectedTable extends React.Component {
 }
 
 class MySelectedRow extends React.Component {
-
   render() {
     return (
       <TableRow>
-        <td>{this.props.data.idt}</td>
+        <td>{this.props.data.id}</td>
         <td>{this.props.data.name}</td>
         <td>{this.props.data.country}</td>
         <td>{this.props.data.continent}</td>
@@ -453,25 +428,10 @@ class MySelectedRow extends React.Component {
 
 // Add an table row for each entry
 class MyTableRow extends React.Component {
-  
-  constructor(props) {
-    super(props);
-  }
-
-  changed(item, event) {
-    console.log("[MyTableRow]" + item);
-    if(event.target.checked)
-      this.props.addToSet(item);
-    else
-      this.props.removeFromSet(item);
-  }
-
   render() {
     return (
       <TableRow>
-        <td><CheckBox 
-          onChange={this.changed.bind(this, this.props.data.idt)}/> 
-          {this.props.data.id}</td>
+        <td><CheckBox /> {this.props.data.id}</td>
         <td>{this.props.data.name}</td>
         <td>{this.props.data.country}</td>
         <td>{this.props.data.continent}</td>
@@ -538,7 +498,7 @@ class MySearch extends React.Component {
       <Box full='horizontal' direction='row'> 
         <Box full='horizontal' colorIndex='light-1' margin='small'> 
         <input onChange={this.checkInput} onKeyPress={this.checkEnter} onFocus={this.ClearPlaceHolder} onBlur={this.SetPlaceHolder}
-          defaultValue={this.state.defaultValue} id="searchBox" ref="searchBox" type="text"/>
+          defaultValue={this.state.defaultValue} id="searchBox" ref="searchBox" type="text" background/>
         </Box>
         <Button icon={<SearchIcon />} label="Search" onClick={this.searchQuery} plain={true}/>
       </Box>
