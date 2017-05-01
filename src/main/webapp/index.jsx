@@ -29,6 +29,7 @@ var NextIcon = Grommet.Icons.Base.LinkNext;
 var PreviosIcon = Grommet.Icons.Base.LinkPrevious;
 var RefreshIcon = Grommet.Icons.Base.Refresh;
 var SearchIcon = Grommet.Icons.Base.SearchAdvanced;
+var title = "";
 
 // airport object
 function Airport(id, idt, name, country, continent, type) {
@@ -317,7 +318,8 @@ class TripCo extends React.Component {
                 clearAll={this.clearAll}
                 uploadFile={this.uploadFile}
                 data={this.state.selected_data}
-                planTrip={this.planTrip}/>
+                planTrip={this.planTrip}
+                addTitle={this.addTitle}/>
             </App>
           </Tab>
 
@@ -450,9 +452,12 @@ class MySelectedTable extends React.Component {
     super(props);
     this.downloadFile = this.downloadFile.bind(this);
     this.uploadFile = this.uploadFile.bind(this);
+    this.addTitle = this.addTitle.bind(this);
   }
 
-  downloadFile() {}
+  downloadFile() {
+      
+  }
 
   uploadFile(){
     
@@ -461,6 +466,11 @@ class MySelectedTable extends React.Component {
     else
       this.props.uploadFile(document.getElementById("selectedFile"));
   }
+  
+  addTitle(){
+    this.setState({word: this.refs.titleSet.value})
+  }
+  
   render() {
     return (
       <App>
@@ -476,7 +486,14 @@ class MySelectedTable extends React.Component {
             <Button icon={<DocumentDownloadIcon />} label="Download" onClick={this.downloadFile} plain={true}/>
             <Button icon={<CloseIcon />} label="ClearAll" onClick={this.props.clearAll} plain={true}/>
           </Box>
-          <Table >
+          <Box>
+            <Box heading='Input Trip Title' full='true' colorIndex='light-1' margin='small'> 
+                 <input onChange={this.checkInput} id="titleSet" ref="titleSet" type="text" background/>
+            </Box>
+            <Button icon={<GlobeIcon />} label="Set Title" onClick={this.addTitle} plain={true}/>
+          </Box>
+          <Paragraph size="xlarge"> View Your Trip </Paragraph>
+          <Table>
             <thead>
               <tr>
                 <th width="10%"> Identifier</th>

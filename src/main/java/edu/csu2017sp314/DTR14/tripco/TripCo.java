@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import edu.csu2017sp314.DTR14.tripco.Presenter.Presenter;
+import javax.json.JsonArray;
 
 public class TripCo{
 	//List of input .csv files
@@ -20,6 +21,8 @@ public class TripCo{
 	private boolean _name;		//-n
 	private boolean _kilo;
 	private String[] subset;
+        private JsonArray jsonItinerary;
+        
 	//Std usage message
 	private static void usage(){
 		System.out.println("TripCo is a trip planning program that creates the shortest trip from a given list of locations");
@@ -64,6 +67,8 @@ public class TripCo{
 		Presenter present = new Presenter(opt, name, subset);
         
 		present.run();
+                
+                jsonItinerary = present.getJsonItinerary();
 		
 		/* Open js webpage with proper port set
 		 * Send XML
