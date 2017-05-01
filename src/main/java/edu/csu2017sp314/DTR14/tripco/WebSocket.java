@@ -30,6 +30,10 @@ import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
 import edu.csu2017sp314.DTR14.tripco.Model.Query;
+import edu.csu2017sp314.DTR14.tripco.Presenter.Presenter;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import javax.json.JsonArray;
 
 //Corrosponds to Server endpoint name in Server.js for clients
 @ServerEndpoint("/websocket")
@@ -145,6 +149,20 @@ public class WebSocket {
             e.printStackTrace();
         }
     }
+    
+    private void sendBack(Session session, JsonArray array) {
+        JsonObject arrayJson = Json.createObjectBuilder()
+                .add("Key", "PlanTrip")
+                .add("Array", array)
+                .build();
+        System.out.println(array.toString());
+        RemoteEndpoint.Basic remote = session.getBasicRemote();
+        try {
+            remote.sendText(arrayJson.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     // refer to the comments in switch syntax
     private void initWebPage(Session session){
@@ -256,7 +274,18 @@ public class WebSocket {
         //    opts[i] = options[i].equals("true") ? true : false;
         // new TripCo(name, opts, idts);
         System.out.println("[ServerSide] Start to Plan Trip ");
-        sendBack(session, json);
+        
+        
+        TripCo trip = new TripCo("test", new boolean[] {false, false, false, false}, idts);
+        
+        
+        try {
+            trip.initiate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        JsonArray array = trip.getJsonItinerary();
+        sendBack(session, array);
     }
 
     //Removes quotes from strings for JSON handling
