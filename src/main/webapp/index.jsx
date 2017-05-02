@@ -138,7 +138,7 @@ class TripCo extends React.Component {
         this.updateSelectedData(this.state.back_data);
         break;
       case "DownloadXML":
-        this.downloadFile(jsonMessage);
+        this.download(jsonMessage);
         break;
       case "PlanTrip":
         this.setItinerary(jsonMessage);
@@ -223,21 +223,6 @@ class TripCo extends React.Component {
           console.log(itin[i]);
       }
       this.setState({ itinerary: itin });
-  }
-
-  downloadFile() {
-    var obj = new Object();
-    obj.Key = "DownloadXML";
-    obj.Title = this.state.title;
-    var idts = "";
-    for(var i = 0; i < this.state.selected_data.length; i++){
-      if(i !== 0) idts += ",";
-      idts += this.state.selected_data[i].idt;
-    }
-    obj.data = idts;
-    var jsonString = JSON.stringify(obj);
-    console.log("[TripCo] Download XML" + idts);
-    this.state.webSocket.send(jsonString); 
   }
 
   // Check the airport names and countries to see if there are matches
@@ -338,16 +323,14 @@ class TripCo extends React.Component {
   }
   
   download(jsonMessage){
-      setTimeout(() => {
-      const response = {
-        file: jsonMessage.Path,
-      };
-      // server sent the url to the file!
-      // now, let's download:
-      window.location.href = response.file;
-      // you could also do:
-      // window.open(response.file);
-    }, 100);
+    var blah = window.location.pathname + jsonMessage.Path;
+    console.log(blah);
+    var link = document.createElement("a");
+    link.download = jsonMessage.Path;
+    link.href = blah;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
   render() {
     return (
@@ -384,7 +367,6 @@ class TripCo extends React.Component {
               <MySelectedTable 
                 clearAll={this.clearAll}
                 uploadFile={this.uploadFile}
-                downloadFile={this.downLoadFile}
                 data={this.state.selected_data}
                 downloadFile={this.downloadFile}
                 planTrip={this.planTrip}/>
@@ -615,14 +597,14 @@ class MySelectedTable extends React.Component {
                 <Box heading='Input Trip Title' full='horizontal' colorIndex='light-1' margin='small'> 
                      <input onChange={this.checkInput} id="titleSet" ref="titleSet" type="text" background/>
                 </Box>
-               <Button icon={<GlobeIcon />} label="Plan Trip" onClick={this.planTrip} plain={true}/>
+               <Button icon={<GlobeIcon />} label="Plan Trip" onClick={this.addTitle} plain={true}/>
             </Box>
           </Box>
           <Box direction="row" justify="center" margin='medium'>
             <Button icon={<PreviosIcon />} label="Plan" onClick={this.uploadFile} plain={true}/>
             <input type="file" id="selectedFile" style={{display:'none'}} onChange={this.uploadFile} />
             <Button icon={<DocumentUploadIcon />} label="Upload" onClick={this.uploadFile} plain={true}/>
-            <Button icon={<DocumentDownloadIcon />} label="Download" onClick={this.downloadFile} plain={true}/>
+            <Button icon={<DocumentDownloadIcon />} label="Download" onClick={this.props.downloadFile} plain={true}/>
             <Button icon={<CloseIcon />} label="ClearAll" onClick={this.props.clearAll} plain={true}/>
           </Box>
           <Table >
