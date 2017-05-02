@@ -30,6 +30,7 @@ import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
 import edu.csu2017sp314.DTR14.tripco.Model.Query;
+import edu.csu2017sp314.DTR14.tripco.View.SelectionWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -117,6 +118,16 @@ public class WebSocket {
             case "ReadXML":
                 processXMLFile(session, json);
                 break;
+                
+            /* Case <--DownloadXML-->  NOTE:THIS IS IN MY TODO LIST
+             * This will be called when User downloads XML File
+             * Input Json {Key = "DownloadXML", Title = "Title", Data = "data"}
+             * Output Json {Key = "DownloadXML", Status = "(true/false)"}
+             */ 
+            case "DownloadXML":
+                writeXML(session, json);
+                break;
+                
 
             /* Case <--PlanTrip-->
              * This will be called when Webpage Search specific content
@@ -221,6 +232,21 @@ public class WebSocket {
         } catch (FileNotFoundException e) {     
             e.printStackTrace();
         }
+    }
+    
+    private void writeXML(Session session, JsonObject json) {
+        String title = removeQuotes(json.get("Title").toString());
+        System.out.println("[ServerSide]: download xml"+title);
+        String loc = System.getProperty("user.dir");
+        String data=json.get("data").toString();
+        data = data.replace("\"","");
+        SelectionWriter sw = new SelectionWriter(data.split(","), title, title);
+        sw.writeXML();
+        JsonObject jso = Json.createObjectBuilder()
+            .add("Key", "DownloadXML")
+            .add("Path", sw.path)
+            .build();
+        sendBack(session, jso);
     }
 
     @OnMessage
