@@ -240,11 +240,12 @@ public class WebSocket {
         String loc = System.getProperty("user.dir");
         String data=json.get("data").toString();
         data = data.replace("\"","");
-        SelectionWriter sw = new SelectionWriter(data.split(","), title, title);
+        SelectionWriter sw = new SelectionWriter(data.split(","), title, fileRoot+ session.getId() + "/");
         sw.writeXML();
+        System.out.println("[ServerSide]: download xml:"+sw.path);
         JsonObject jso = Json.createObjectBuilder()
             .add("Key", "DownloadXML")
-            .add("Path", sw.path)
+            .add("Path", session.getId()+"/"+title+".xml")
             .build();
         sendBack(session, jso);
     }
