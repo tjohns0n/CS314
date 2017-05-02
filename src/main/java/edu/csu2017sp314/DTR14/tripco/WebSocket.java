@@ -52,6 +52,8 @@ public class WebSocket {
 
     private static File uploadedFile;
     
+    private String imagePath;
+    
     //Primary Message Handling method. 
     //default stub is string, changed to void for our example
     @OnMessage
@@ -166,6 +168,7 @@ public class WebSocket {
         JsonObject arrayJson = Json.createObjectBuilder()
                 .add("Key", "PlanTrip")
                 .add("Array", array)
+                .add("Image", imagePath)
                 .build();
         RemoteEndpoint.Basic remote = session.getBasicRemote();//Get Session remote end 
         try{
@@ -311,13 +314,15 @@ public class WebSocket {
         // for(int i = 0; i < options.length; i++)
         //    opts[i] = options[i].equals("true") ? true : false;
         // new TripCo(name, opts, idts);
+        imagePath = json.get("Title").toString();
         System.out.println("[ServerSide] Start to Plan Trip ");
-        TripCo trip = new TripCo("test", new boolean[] {false, false, false, false}, idts);
+        TripCo trip = new TripCo(imagePath, new boolean[] {false, false, false, false}, idts);
                 try {
                     trip.initiate();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+        imagePath += ".svg";
         JsonArray array = trip.getJsonItinerary();
         sendBack(session, array);
         System.out.println("AHHHH");
