@@ -18,6 +18,7 @@ public class SelectionWriter {
 
 	private String xmlFile;
 	public String path;
+        public String fileRoot;
         
 	public SelectionWriter(String[] subSet, String xmlFile, String csvFile){
 		header = new ArrayList<String>();
@@ -25,6 +26,7 @@ public class SelectionWriter {
 		footer = new ArrayList<String>();
 		this.xmlFile = xmlFile;
                 path="";
+                fileRoot = csvFile;
     	XMLElement xml = new XMLElement("xml", "version=\"1.0\" encoding=\"UTF-8\"");
         header.add(xml.getStart());
         header.add("\n");
@@ -83,10 +85,8 @@ public class SelectionWriter {
      	data.addAll(header);
      	data.addAll(body);
      	data.addAll(footer);
-     	String loc = System.getProperty("user.dir");
-        loc+="/../";
-        System.out.println(loc);
-        path=loc+xmlFile+".xml";
+        path=fileRoot+xmlFile+".xml";
+        System.out.println("SW:"+path);
       	try {
             //New writer with filename of selection
       		BufferedWriter write = new BufferedWriter(new FileWriter(path));
