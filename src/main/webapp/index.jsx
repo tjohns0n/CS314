@@ -99,6 +99,7 @@ class TripCo extends React.Component {
     this.addFrontToSelected = this.addFrontToSelected.bind(this);
     this.setItinerary = this.setItinerary.bind(this);
     this.downloadFile = this.downloadFile.bind(this);
+    this.setHint = this.setHint.bind(this);
     this.setImage = this.setImage.bind(this);
   }
 
@@ -192,10 +193,13 @@ class TripCo extends React.Component {
 
   addFrontToSelected(){
     this.updateSelectedData(this.state.front_data);
+    var cities = this.state.front_data.length;
+    this.setHint(cities + " Cities Added Successfully!");
+  }
+  
+  setHint(hints){
     const element = (
-      <Toast status='ok'>
-        {this.state.front_data.length} Cities Added Successfully!
-      </Toast>
+      <Toast status='ok'>{hints}</Toast>
     );
     ReactDOM.render(
       element,
@@ -232,6 +236,13 @@ class TripCo extends React.Component {
           console.log(itin[i]);
       }
       this.setState({ itinerary: itin });
+      const element = (
+        <Toast status='ok'>Plan Trip Successfully</Toast>
+      );
+      ReactDOM.render(
+        element,
+        document.getElementById('hint2')
+      );
   }
 
   // Check the airport names and countries to see if there are matches
@@ -344,14 +355,15 @@ class TripCo extends React.Component {
   }
   render() {
     return (
-      <Box id="screen" pad="medium">
+      <Box id="screen" pad="small">
         <div id="hint"/>
+        <div id="hint2"/>
         <Headline align="center" size="medium">TripCo Online</Headline>
         <Tabs>
           <Tab title="Plan">
             <Box id="PlanBox" full="false">
               <App>
-                <Box id="Search" margin="medium" full="true" pad="small">
+                <Box id="Search" margin="small" full="true" pad="small">
                   <MySearch
                     myDataProp={this.state.word}
                     updateStateProp={this.updateFrontData}
@@ -583,8 +595,13 @@ class Myset extends React.Component {
 class MySelectedTable extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      defaultValue : "Name Trip To Start"
+    }
     this.uploadFile = this.uploadFile.bind(this);
     this.addTitle = this.addTitle.bind(this);
+    this.ClearPlaceHolder = this.ClearPlaceHolder.bind(this);
+    this.SetPlaceHolder = this.SetPlaceHolder.bind(this);
   }
 
   uploadFile(){
@@ -594,25 +611,37 @@ class MySelectedTable extends React.Component {
       this.props.uploadFile(document.getElementById("selectedFile"));
   }
 
-  addTitle(){
-    
+  addTitle(){ 
     this.props.planTrip(this.refs.titleSet.value);
+  }
+
+  ClearPlaceHolder(){
+    if(this.refs.titleSet.value == this.state.defaultValue){
+      this.refs.titleSet.value = "";
+    }
+  }
+
+  SetPlaceHolder(){
+    if (this.refs.titleSet.value == "") {
+      this.refs.titleSet.value = this.state.defaultValue;
+    }
   }
 
   render() {
     return (
       <App>
-        <Box id="TripPreview" align="center" full="true" pad="large">
-          <Box full='horizontal' colorIndex='light-2' pad='small' justify='center'> 
+        <Box id="TripPreview" align="center" full="true" pad="small">
+          <Box full='horizontal' colorIndex='light-2' pad='small' justify='center' margin='small'> 
             View Your Trip -- {this.props.data.length} Airports
             <Box full="horizontal" direction="row">
                 <Box heading='Input Trip Title' full='horizontal' colorIndex='light-1' margin='small'> 
-                     <input onChange={this.checkInput} id="titleSet" ref="titleSet" type="text" background/>
+                     <input onChange={this.checkInput} id="titleSet" ref="titleSet" type="text"
+                     defaultValue={this.state.defaultValue} onFocus={this.ClearPlaceHolder} onBlur={this.SetPlaceHolder}/>
                 </Box>
                <Button icon={<GlobeIcon />} label="Plan Trip" onClick={this.addTitle} plain={true}/>
             </Box>
           </Box>
-          <Box direction="row" justify="center" margin='medium'>
+          <Box direction="row" justify="center" margin='small'>
             <Button icon={<PreviosIcon />} label="Plan" onClick={this.uploadFile} plain={true}/>
             <input type="file" id="selectedFile" style={{display:'none'}} onChange={this.uploadFile} />
             <Button icon={<DocumentUploadIcon />} label="Upload" onClick={this.uploadFile} plain={true}/>
