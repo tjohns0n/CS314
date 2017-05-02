@@ -30,6 +30,7 @@ var NextIcon = Grommet.Icons.Base.LinkNext;
 var PreviosIcon = Grommet.Icons.Base.LinkPrevious;
 var RefreshIcon = Grommet.Icons.Base.Refresh;
 var SearchIcon = Grommet.Icons.Base.SearchAdvanced;
+var title = "";
 
 // airport object
 function Airport(id, idt, name, country, continent, type) {
@@ -95,6 +96,8 @@ class TripCo extends React.Component {
     this.updateSelectedData = this.updateSelectedData.bind(this);
     this.addFrontToSelected = this.addFrontToSelected.bind(this);
     this.setItinerary = this.setItinerary.bind(this);
+    this.downloadFile = this.downloadFile.bind(this);
+    this.download = this.download.bind(this);
   }
 
   componentDidMount() {
@@ -133,6 +136,9 @@ class TripCo extends React.Component {
         console.log("[TripCo] ReadXML Reply");
         this.updateBackData(jsonMessage);
         this.updateSelectedData(this.state.back_data);
+        break;
+      case "DownloadXML":
+        this.download(jsonMessage);
         break;
       case "PlanTrip":
         this.setItinerary(jsonMessage);
@@ -285,7 +291,34 @@ class TripCo extends React.Component {
     reader.readAsArrayBuffer(file);
     inputFile.value = "";
   }
-
+  
+  downloadFile() {
+    var obj = new Object();
+    obj.Key = "DownloadXML";
+    obj.Title = title;
+    var idts = "";
+    for(var i = 0; i < this.state.selected_data.length; i++){
+      if(i !== 0) idts += ",";
+      idts += this.state.selected_data[i].idt;
+    }
+    obj.data = idts;
+    var jsonString = JSON.stringify(obj);
+    console.log("[TripCo] Download XML" + idts);
+    this.state.webSocket.send(jsonString); 
+  }
+  
+  download(jsonMessage){
+      setTimeout(() => {
+      const response = {
+        file: jsonMessage.Path,
+      };
+      // server sent the url to the file!
+      // now, let's download:
+      window.location.href = response.file;
+      // you could also do:
+      // window.open(response.file);
+    }, 100);
+  }
   render() {
     return (
       <Box id="screen" pad="medium">
@@ -320,6 +353,7 @@ class TripCo extends React.Component {
               <MySelectedTable 
                 clearAll={this.clearAll}
                 uploadFile={this.uploadFile}
+                downloadFile={this.downLoadFile}
                 data={this.state.selected_data}
                 planTrip={this.planTrip}/>
             </App>
@@ -523,8 +557,8 @@ class Myset extends React.Component {
 class MySelectedTable extends React.Component {
   constructor(props) {
     super(props);
-    this.downloadFile = this.downloadFile.bind(this);
     this.uploadFile = this.uploadFile.bind(this);
+    this.addTitle = this.addTitle.bind(this);
   }
 
   downloadFile() {}
@@ -536,13 +570,25 @@ class MySelectedTable extends React.Component {
     else
       this.props.uploadFile(document.getElementById("selectedFile"));
   }
+  addTitle(){
+    this.setState({word: this.refs.titleSet.value})
+    title = this.refs.titleSet.value;
+    console.log(title);
+    this.props.planTrip;
+  }
+  
   render() {
     return (
       <App>
         <Box id="TripPreview" align="center" full="true" pad="large">
-          <Box full='horizontal' colorIndex='light-2' pad='small' justify='center' direction="row"> 
+          <Box full='horizontal' colorIndex='light-2' pad='small' justify='center'> 
             <Paragraph size="large"> View Your Trip -- {this.props.data.length} Airports </Paragraph>
-            <Button icon={<GlobeIcon />} label="Plan My Trip" onClick={this.props.planTrip} plain={true}/>
+            <Box full="horizontal" direction="row">
+                <Box heading='Input Trip Title' full='horizontal' colorIndex='light-1' margin='small'> 
+                     <input onChange={this.checkInput} id="titleSet" ref="titleSet" type="text" background/>
+                </Box>
+               <Button icon={<GlobeIcon />} label="Set Title" onClick={this.addTitle} plain={true}/>
+            </Box>
           </Box>
           <Box direction="row" justify="center" margin='medium'>
             <Button icon={<PreviosIcon />} label="Plan" onClick={this.uploadFile} plain={true}/>
