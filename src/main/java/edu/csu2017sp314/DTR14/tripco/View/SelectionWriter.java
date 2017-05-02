@@ -17,12 +17,16 @@ public class SelectionWriter {
 	ArrayList<String> footer;
 
 	private String xmlFile;
-	
-	protected SelectionWriter(String[] subSet, String xmlFile, String csvFile){
+	public String path;
+        public String fileRoot;
+        
+	public SelectionWriter(String[] subSet, String xmlFile, String csvFile){
 		header = new ArrayList<String>();
 		body = new ArrayList<String>();
 		footer = new ArrayList<String>();
 		this.xmlFile = xmlFile;
+                path="";
+                fileRoot = csvFile;
     	XMLElement xml = new XMLElement("xml", "version=\"1.0\" encoding=\"UTF-8\"");
         header.add(xml.getStart());
         header.add("\n");
@@ -73,7 +77,7 @@ public class SelectionWriter {
 		}
 	}
 	
-	protected boolean writeXML() {
+	public boolean writeXML() {
     	//Return value, assume bad return
     	boolean flag = false;
     	// Add all elements together
@@ -81,10 +85,11 @@ public class SelectionWriter {
      	data.addAll(header);
      	data.addAll(body);
      	data.addAll(footer);
-     	
+        path=fileRoot+xmlFile+".xml";
+        System.out.println("SW:"+path);
       	try {
             //New writer with filename of selection
-      		BufferedWriter write = new BufferedWriter(new FileWriter(xmlFile));
+      		BufferedWriter write = new BufferedWriter(new FileWriter(path));
             //Write each element
             for(String s : data) {
                 write.write(s);

@@ -30,6 +30,7 @@ var NextIcon = Grommet.Icons.Base.LinkNext;
 var PreviosIcon = Grommet.Icons.Base.LinkPrevious;
 var RefreshIcon = Grommet.Icons.Base.Refresh;
 var SearchIcon = Grommet.Icons.Base.SearchAdvanced;
+var title = "";
 
 // airport object
 function Airport(id, idt, name, country, continent, type) {
@@ -317,7 +318,32 @@ class TripCo extends React.Component {
     reader.readAsArrayBuffer(file);
     inputFile.value = "";
   }
-
+  
+  downloadFile() {
+    var obj = new Object();
+    obj.Key = "DownloadXML";
+    obj.Title = title;
+    var idts = "";
+    for(var i = 0; i < this.state.selected_data.length; i++){
+      if(i !== 0) idts += ",";
+      idts += this.state.selected_data[i].idt;
+    }
+    obj.data = idts;
+    var jsonString = JSON.stringify(obj);
+    console.log("[TripCo] Download XML" + idts);
+    this.state.webSocket.send(jsonString); 
+  }
+  
+  download(jsonMessage){
+    var blah = window.location.pathname + jsonMessage.Path;
+    console.log(blah);
+    var link = document.createElement("a");
+    link.download = jsonMessage.Path;
+    link.href = blah;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
   render() {
     return (
       <Box id="screen" pad="medium">
@@ -353,6 +379,7 @@ class TripCo extends React.Component {
               <MySelectedTable 
                 clearAll={this.clearAll}
                 uploadFile={this.uploadFile}
+                downloadFile={this.downloadFile}
                 data={this.state.selected_data}
                 downloadFile={this.downloadFile}
                 planTrip={this.planTrip}/>
@@ -571,7 +598,6 @@ class MySelectedTable extends React.Component {
     else
       this.props.uploadFile(document.getElementById("selectedFile"));
   }
-
   render() {
     return (
       <App>
