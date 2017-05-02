@@ -11,7 +11,7 @@ import javax.json.JsonString;
 import javax.json.stream.JsonParser;
 
 public class JSONItinerary {
-    
+    private int legCount = 1;
     JsonArray json;
     
     ArrayList<JsonObject> legs;
@@ -23,6 +23,7 @@ public class JSONItinerary {
     public void addLeg(ItineraryLeg il) {
         String[] leg = il.getLocation1();
         JsonObject ok = Json.createObjectBuilder()
+                .add("num", legCount++)
                 .add("id", leg[0])
                 .add("name", leg[1])
                 .add("latitude", leg[2])

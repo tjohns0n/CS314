@@ -1,5 +1,7 @@
 package edu.csu2017sp314.DTR14.tripco.Model;
 
+import java.util.Arrays;
+
 
 public class Model{
 	
@@ -22,6 +24,8 @@ public class Model{
 	}
 	
 	public boolean planTrip(boolean run2Opt, boolean run3Opt, String[] selection){
+                System.out.println(Arrays.toString(selection));
+                setLocList(selection);
 		src = new ShortestRouteCalculator(locList, 0, KM);
 		if (run3Opt) {
 			src.findBestNearestNeighbor(true, true);

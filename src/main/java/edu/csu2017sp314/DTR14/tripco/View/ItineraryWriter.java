@@ -5,11 +5,15 @@
 package edu.csu2017sp314.DTR14.tripco.View;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class ItineraryWriter {
+     private final static String WORKDIR = View.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+    // the FILEPATH we want to write to is a few folders up. This refers to the web folder
+    private final static String FILEPATH = WORKDIR.substring(0, WORKDIR.indexOf("WEB-INF/"));
     // Includes <xml> and <trip> elements:
     ArrayList<String> header;
     // All of the legs added with addLeg method
@@ -109,17 +113,14 @@ public class ItineraryWriter {
     	data.addAll(header);
     	data.addAll(legs);
     	data.addAll(footer);
-    	String loc = System.getProperty("user.dir");
-    	if (loc.contains("src")) {
-    		loc += "/main/resources/";
-    	} else {
-    		loc += "/src/main/resources/";
-    	}
      
 		
       	try {
+            File test = new File(filename);
+            
+            test.createNewFile();
             // New BufferedWriter with filename of original input file
-      		BufferedWriter write = new BufferedWriter(new FileWriter(loc+filename));
+      		BufferedWriter write = new BufferedWriter(new FileWriter(test));
             // Loop through and write all of the XML data
             for(String s : data) {
                 write.write(s);
