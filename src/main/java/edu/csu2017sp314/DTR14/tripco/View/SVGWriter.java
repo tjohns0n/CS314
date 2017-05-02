@@ -10,7 +10,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 abstract class SVGWriter {
-
+    private final static String WORKDIR = View.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+    private final static String FILEPATH = WORKDIR.substring(0, WORKDIR.indexOf("WEB-INF/"));
 	// Width and height of the SVG.
     double width;
     double height;
@@ -381,9 +382,9 @@ abstract class SVGWriter {
 		}
 		
     	try {
-			// New BufferedWriter with filename of original input file
-    		BufferedWriter write = new BufferedWriter(new FileWriter(loc + filename));
-			// Write the contents of the original SVG, as well as whatever header elements added
+            File test = new File(filename);
+            test.createNewFile();
+            BufferedWriter write = new BufferedWriter(new FileWriter(test));
 			for (String s: header) 
 				write.write(s + "\n");
 
@@ -403,7 +404,7 @@ abstract class SVGWriter {
     		write.close();
     		
     	} catch (IOException e) {
-    		
+    		e.printStackTrace();
     	}
     	return testData;
     }
