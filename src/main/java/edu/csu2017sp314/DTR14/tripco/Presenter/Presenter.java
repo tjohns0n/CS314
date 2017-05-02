@@ -18,6 +18,7 @@ public class Presenter {
     private String unit;
     private Model model;
     private View view;
+    private Query query;
     private JsonArray jsonItinerary;
     
     public Presenter(boolean[] options, String Name, String[] sub) {
@@ -28,6 +29,7 @@ public class Presenter {
             this.unit="Km";
         else
             this.unit = "Miles";
+        query = new Query();
     }
     
     public void run(){
@@ -35,7 +37,8 @@ public class Presenter {
         viewHandler(modelHandler());
     }
     private String[][] modelHandler(){
-        model.planTrip(true, true, subSet);
+        String[] results = query.planTrip(subSet);
+        model.planTrip(true, true, results);
         return model.reteriveTrip();
     }
     
