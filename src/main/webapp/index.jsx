@@ -263,10 +263,12 @@ class TripCo extends React.Component {
   clearAll(){
     this.setState({ selected_data: []});
   }
-  
+
   planTrip(tripTitle){
-    this.setState({title:tripTitle});
-    console.log(this.state.title);
+    console.log("Entered plan trip");
+    title = tripTitle;
+    console.log(title);
+
     var obj = new Object();
     obj.Key = "PlanTrip";
     var idts = "";
@@ -276,6 +278,7 @@ class TripCo extends React.Component {
     }
     obj.Identifier = idts;
     var jsonString = JSON.stringify(obj);
+    console.log(jsonString);
     console.log("[TripCo] Plan Trip" + idts);
     this.state.webSocket.send(jsonString);
   }
@@ -335,14 +338,16 @@ class TripCo extends React.Component {
   }
   
   download(jsonMessage){
-    var blah = window.location.pathname + jsonMessage.Path;
-    console.log(blah);
-    var link = document.createElement("a");
-    link.download = jsonMessage.Path;
-    link.href = blah;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+      setTimeout(() => {
+      const response = {
+        file: jsonMessage.Path,
+      };
+      // server sent the url to the file!
+      // now, let's download:
+      window.location.href = response.file;
+      // you could also do:
+      // window.open(response.file);
+    }, 100);
   }
   render() {
     return (
@@ -379,7 +384,7 @@ class TripCo extends React.Component {
               <MySelectedTable 
                 clearAll={this.clearAll}
                 uploadFile={this.uploadFile}
-                downloadFile={this.downloadFile}
+                downloadFile={this.downLoadFile}
                 data={this.state.selected_data}
                 downloadFile={this.downloadFile}
                 planTrip={this.planTrip}/>
@@ -585,11 +590,7 @@ class MySelectedTable extends React.Component {
   constructor(props) {
     super(props);
     this.uploadFile = this.uploadFile.bind(this);
-    this.planTrip = this.planTrip.bind(this);
-  }
-  
-  planTrip(){
-    this.props.planTrip(this.refs.titleSet.value);
+    this.addTitle = this.addTitle.bind(this);
   }
 
   uploadFile(){
@@ -598,6 +599,12 @@ class MySelectedTable extends React.Component {
     else
       this.props.uploadFile(document.getElementById("selectedFile"));
   }
+
+  addTitle(){
+    
+    this.props.planTrip(this.refs.titleSet.value);
+  }
+
   render() {
     return (
       <App>
@@ -615,7 +622,7 @@ class MySelectedTable extends React.Component {
             <Button icon={<PreviosIcon />} label="Plan" onClick={this.uploadFile} plain={true}/>
             <input type="file" id="selectedFile" style={{display:'none'}} onChange={this.uploadFile} />
             <Button icon={<DocumentUploadIcon />} label="Upload" onClick={this.uploadFile} plain={true}/>
-            <Button icon={<DocumentDownloadIcon />} label="Download" onClick={this.props.downloadFile} plain={true}/>
+            <Button icon={<DocumentDownloadIcon />} label="Download" onClick={this.downloadFile} plain={true}/>
             <Button icon={<CloseIcon />} label="ClearAll" onClick={this.props.clearAll} plain={true}/>
           </Box>
           <Table >

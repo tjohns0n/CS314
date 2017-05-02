@@ -134,4 +134,8 @@ public class TripCo{
 		}
 	}
 
+        JsonArray getJsonItinerary() {
+            return jsonItinerary;
+        }
+        
 }

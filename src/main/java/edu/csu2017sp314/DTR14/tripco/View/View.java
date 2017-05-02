@@ -9,7 +9,8 @@ import javax.json.JsonArray;
 
 
 public class View{
-
+    private final static String WORKDIR = View.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+    private final static String FILEPATH = WORKDIR.substring(0, WORKDIR.indexOf("WEB-INF/"));
     // Name of the CSV input file, sans the .csv extension 
 	private String title;
     // Optionally display labels on the SVG
@@ -51,7 +52,7 @@ public class View{
     	}
     	itinWrite = new ItineraryWriter();
     	jsonWrite = new JSONItinerary();
-    	svgWrite = new WorldMapWriter("World3.svg");
+        svgWrite = new WorldMapWriter(FILEPATH + "World3.svg");
     	svgWrite.addTitle(title, "Map Title");
         setFooter();
     }
@@ -116,8 +117,8 @@ public class View{
      * Write the SVG and XML files once all the legs have been added
      */
     public void writeFiles() {
-        svgWrite.writeSVG(title + ".svg");
-        itinWrite.writeXML(title + ".xml");
+        svgWrite.writeSVG(FILEPATH + title + ".svg");
+        itinWrite.writeXML(FILEPATH + title + ".xml");
         new GenerateJavascript(getRootName());
     }
 
