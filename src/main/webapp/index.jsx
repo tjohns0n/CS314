@@ -81,6 +81,7 @@ class TripCo extends React.Component {
       types: [],
       continents : [],
       itinerary : [],
+      image : null,
       webSocket: new WebSocket(new_uri + "websocket")
     };
 
@@ -98,6 +99,7 @@ class TripCo extends React.Component {
     this.addFrontToSelected = this.addFrontToSelected.bind(this);
     this.setItinerary = this.setItinerary.bind(this);
     this.downloadFile = this.downloadFile.bind(this);
+    this.setImage = this.setImage.bind(this);
   }
 
   componentDidMount() {
@@ -142,8 +144,15 @@ class TripCo extends React.Component {
         break;
       case "PlanTrip":
         this.setItinerary(jsonMessage);
+        this.setImage(jsonMessage);
         break;
     }
+  }
+
+  setImage(jsonMessage) {
+      var path = jsonMessage.Image;
+      console.log(path);
+      this.setState({ image: <img src={path} width="100%"></img>});
   }
 
   // Default Function Extends onclose();
@@ -262,6 +271,7 @@ class TripCo extends React.Component {
       idts += this.state.selected_data[i].idt;
     }
     obj.Identifier = idts;
+    obj.Title = title;
     var jsonString = JSON.stringify(obj);
     console.log(jsonString);
     console.log("[TripCo] Plan Trip" + idts);
@@ -381,7 +391,9 @@ class TripCo extends React.Component {
           </Tab>
 
           <Tab title="TravelMap">
-            <Box id="mapBox" full="true" margin="large" />
+            <App>
+                {this.state.image}
+            </App>
           </Tab>
         </Tabs>
 
