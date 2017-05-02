@@ -1,6 +1,5 @@
 var Accordion = Grommet.Accordion;
 var AccordionPanel = Grommet.AccordionPanel;
-var Anchor = Grommet.Anchor;
 var App = Grommet.App;
 var Box = Grommet.Box;
 var Button = Grommet.Button;
@@ -79,7 +78,6 @@ class TripCo extends React.Component {
       countries: [],
       types: [],
       continents : [],
-      itinerary: [],
       webSocket: new WebSocket(new_uri + "websocket")
     };
 
@@ -95,7 +93,6 @@ class TripCo extends React.Component {
     this.clearAll = this.clearAll.bind(this);
     this.updateSelectedData = this.updateSelectedData.bind(this);
     this.addFrontToSelected = this.addFrontToSelected.bind(this);
-    this.setItinerary = this.setItinerary.bind(this);
   }
 
   componentDidMount() {
@@ -136,7 +133,6 @@ class TripCo extends React.Component {
         this.updateSelectedData(this.state.back_data);
         break;
       case "PlanTrip":
-        this.setItinerary(jsonMessage);
         break;
     }
   }
@@ -209,11 +205,6 @@ class TripCo extends React.Component {
     this.initiateWebPage(jsonMessage);
     this.updateCountry(jsonMessage);
   }
-
-  setItinerary(jsonMessage) {
-    var itin = jsonMessage.Array;
-    this.setState({ itinerary: itin });
-  }
   
   // Check the airport names and countries to see if there are matches
   // Push them to the searchResults
@@ -244,7 +235,7 @@ class TripCo extends React.Component {
     var idts = "";
     for(var i = 0; i < this.state.selected_data.length; i++){
       if(i != 0) idts += ",";
-      idts += this.state.selected_data[i].idt;
+      idts += this.state.selected_data[i].id;
     }
     obj.Identifier = idts;
     var jsonString = JSON.stringify(obj);
@@ -333,9 +324,7 @@ class TripCo extends React.Component {
           </Tab>
 
           <Tab title="Itinerary">
-            <App>
-                <MyItineraryTable data={this.state.itinerary}/>
-	    </App>
+            <Box id="mapBox" full="true" margin="large" />
           </Tab>
 
           <Tab title="TravelMap">
@@ -347,81 +336,6 @@ class TripCo extends React.Component {
     );
   }
 }
-
-class MyItineraryTable extends React.Component {
-   constructor(props) {
-     super(props);
-   }
-
-   render() {
-      return (
-        <Box>
-        <Table>
-        <thead>
-        <tr>
-        <th width="5%">#</th>
-        <th width="5%">ID</th>
-	<th width="40%">Name</th>
-	<th width="40%">Location</th>
-	<th width="15%">Coordinates</th>
-	<th width="5%">Mileage</th>
-	</tr>
-	</thead>
-	<tbody>
-	{this.props.data.map((one, i) =>
-	<ItineraryRow key={i} data={one}/>)}
-	</tbody>
-	</Table>
-	</Box>
-      )
-   }
-}
-
-class ItineraryRow extends React.Component {
-      
-  constructor(props) {
-    super(props);
-    
-    var tempLat = parseFloat(this.props.data.latitude).toFixed(2);
-    var tempLong = parseFloat(this.props.data.longitude).toFixed(2);
-    console.log(typeof tempLat);
-    var north;
-    var east;
-    
-    if (tempLong > 0) {
-        east = "E";
-    } else {
-        east = "W";
-    }
-    
-    if (tempLat > 0) {
-        north = "N";
-    } else {
-        north = "S";
-    }
-    
-    var finalCoordinates = tempLat + "° " + north + ", " + tempLong + "° " + east;
-    
-    console.log(typeof finalCoordinates);
-    
-    this.state = {
-        coordinates: finalCoordinates
-    };
-  }
-
-  render() {
-    return (
-      <TableRow>
-        <td>{this.props.data.num}</td>
-        <td>{this.props.data.id}</td>
-        <td><Anchor href={this.props.data.airportURL}>{this.props.data.name}</Anchor></td>
-        <td>{this.props.data.municipality}, <Anchor href={this.props.data.regionURL}>{this.props.data.region}</Anchor>, <Anchor href={this.props.data.countryURL}>{this.props.data.country}</Anchor>, {this.props.data.continent}</td>
-        <td>{this.state.coordinates}</td>
-        <td>{this.props.data.mileage}</td>
-      </TableRow>
-    );
-  }
-} 
 
 /**
  * 

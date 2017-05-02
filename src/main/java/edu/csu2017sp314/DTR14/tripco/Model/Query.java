@@ -235,7 +235,7 @@ public class Query {
 
 	//ID query for Model trip planning
 	//M-DB-TRIP
-	public String[] planTrip(String[] ids){
+	public void planTrip(String[] ids){
 		ArrayList<String> ret = new ArrayList<String>();
 		try	{ // connect to the database 
 			Class.forName(driver); 
@@ -260,7 +260,7 @@ public class Query {
 		}
 		ret.trimToSize();
 		String[] r = ret.toArray(new String[ret.size()]);
-		return r;
+		Model.setLocList(r);
 	}
 
 	private String id2in(String [] id){
