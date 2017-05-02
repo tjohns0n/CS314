@@ -117,7 +117,7 @@ public class View{
      * Write the SVG and XML files once all the legs have been added
      */
     public void writeFiles() {
-        svgWrite.writeSVG(FILEPATH + title + ".svg");
+        svgWrite.writeSVG(title + ".svg");
         itinWrite.writeXML(FILEPATH + title + ".xml");
         new GenerateJavascript(getRootName());
     }

@@ -374,17 +374,9 @@ abstract class SVGWriter {
     		testData.addAll(originalContent);
     	testData.addAll(content);
     	testData.addAll(footer);
-		String loc = System.getProperty("user.dir");
-		if (loc.contains("src")) {
-			loc += "/main/resources/";
-		} else {
-			loc += "/src/main/resources/";
-		}
 		
     	try {
-            File test = new File(filename);
-            test.createNewFile();
-            BufferedWriter write = new BufferedWriter(new FileWriter(test));
+            BufferedWriter write = new BufferedWriter(new FileWriter(FILEPATH + filename));
 			for (String s: header) 
 				write.write(s + "\n");
 
