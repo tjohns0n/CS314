@@ -320,4 +320,37 @@ public class Query {
 		}
 		return ret;
 	}
+
+	public String[] searchQuery(String[] ids){
+		String[] ret = {"","","","",""};
+		try	{ // connect to the database 
+			Class.forName(driver); 
+			Connection conn = DriverManager.getConnection(theURL, user, pass);
+			try { // create a statement
+				Statement st = conn.createStatement();		
+				try { // submit a query
+					String query = "SELECT id, name, iso_country, continent, type FROM airports WHERE id in "+id2in(ids)+ ";";
+					ResultSet rs = st.executeQuery(query);
+					try { // iterate through the query results and print
+						while (rs.next()){
+							ret[0]+=rs.getString(1)+",";
+							ret[1]+=rs.getString(2)+",";
+							ret[2]+=countryMap.get(rs.getString(3))+",";
+							ret[3]+=countinentMap.get(rs.getString(4))+",";
+							ret[4]+=rs.getString(5)+",";
+						}
+						ret[0] = ret[0].substring(0, ret[0].length()-1);//Remove trailing ,
+						ret[1] = ret[1].substring(0, ret[1].length()-1);
+						ret[2] = ret[2].substring(0, ret[2].length()-1);
+						ret[3] = ret[3].substring(0, ret[3].length()-1);
+						ret[4] = ret[4].substring(0, ret[4].length()-1);
+					} finally { rs.close(); }
+				} finally { st.close(); }
+			} finally { conn.close(); }
+		} catch (Exception e) {
+			System.err.printf("Exception: ");
+			System.err.println(e.getMessage());
+		}
+		return ret;
+	}
 }
