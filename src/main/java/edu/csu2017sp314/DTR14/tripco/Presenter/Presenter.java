@@ -7,6 +7,7 @@ import edu.csu2017sp314.DTR14.tripco.Model.Model;
 import edu.csu2017sp314.DTR14.tripco.Model.Query;
 import edu.csu2017sp314.DTR14.tripco.View.ItineraryLeg;
 import edu.csu2017sp314.DTR14.tripco.View.View;
+import javax.json.JsonArray;
 
 public class Presenter {
 
@@ -17,6 +18,7 @@ public class Presenter {
     private String unit;
     private Model model;
     private View view;
+    private JsonArray jsonItinerary;
     
     public Presenter(boolean[] options, String Name, String[] sub) {
         this.options = options;
@@ -88,6 +90,7 @@ public class Presenter {
                                         message[j+1].split(","), mile, j+1, unit);
              view.addItinLeg(itinLeg);
         }
+        jsonItinerary = view.getJsonItinerary();
     }
     //For Debugging
 //    private void printlines(){
@@ -98,4 +101,8 @@ public class Presenter {
 //      for(int i = 0; i < subSet.length; i++)
 //          System.out.println("subSet = " + subSet[i]);
 //    }
+
+    public JsonArray getJsonItinerary() {
+        return jsonItinerary;
+    }
 }
