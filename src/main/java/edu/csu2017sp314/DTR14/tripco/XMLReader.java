@@ -21,11 +21,6 @@ public class XMLReader {
 			if(!checkValid(scan.nextLine().trim(), "<?xml")) break;
 			if(scan.hasNextLine() && !checkValid(scan.nextLine().trim(), "<selection")) break;
 			if(scan.hasNextLine() && !checkValid(scan.nextLine().trim(), "<title")) break;
-			if(scan.hasNextLine() && checkValid(temp = scan.nextLine().trim(), "<filename")){
-				temp = temp.substring(temp.indexOf('>')+1);
-				temp = temp.substring(0, temp.indexOf('<'));
-				csvName.append(temp);
-			}
 			if(scan.hasNextLine() && !checkValid(scan.nextLine().trim(), "<destinations")) break;
 			while(scan.hasNextLine() && checkValid(temp = scan.nextLine().trim(), "<id")){
 				temp = temp.substring(temp.indexOf('>')+1);
