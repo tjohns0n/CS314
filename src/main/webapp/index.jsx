@@ -308,16 +308,14 @@ class TripCo extends React.Component {
   }
   
   download(jsonMessage){
-      setTimeout(() => {
-      const response = {
-        file: jsonMessage.Path,
-      };
-      // server sent the url to the file!
-      // now, let's download:
-      window.location.href = response.file;
-      // you could also do:
-      // window.open(response.file);
-    }, 100);
+    var blah = window.location.pathname + jsonMessage.Path;
+    console.log(blah);
+    var link = document.createElement("a");
+    link.download = jsonMessage.Path;
+    link.href = blah;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
   render() {
     return (
@@ -353,7 +351,7 @@ class TripCo extends React.Component {
               <MySelectedTable 
                 clearAll={this.clearAll}
                 uploadFile={this.uploadFile}
-                downloadFile={this.downLoadFile}
+                downloadFile={this.downloadFile}
                 data={this.state.selected_data}
                 planTrip={this.planTrip}/>
             </App>
@@ -561,8 +559,6 @@ class MySelectedTable extends React.Component {
     this.addTitle = this.addTitle.bind(this);
   }
 
-  downloadFile() {}
-
   uploadFile(){
     
     if(document.getElementById("selectedFile").value === "")
@@ -594,7 +590,7 @@ class MySelectedTable extends React.Component {
             <Button icon={<PreviosIcon />} label="Plan" onClick={this.uploadFile} plain={true}/>
             <input type="file" id="selectedFile" style={{display:'none'}} onChange={this.uploadFile} />
             <Button icon={<DocumentUploadIcon />} label="Upload" onClick={this.uploadFile} plain={true}/>
-            <Button icon={<DocumentDownloadIcon />} label="Download" onClick={this.downloadFile} plain={true}/>
+            <Button icon={<DocumentDownloadIcon />} label="Download" onClick={this.props.downloadFile} plain={true}/>
             <Button icon={<CloseIcon />} label="ClearAll" onClick={this.props.clearAll} plain={true}/>
           </Box>
           <Table >
