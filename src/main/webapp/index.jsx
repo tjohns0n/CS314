@@ -71,6 +71,7 @@ class TripCo extends React.Component {
 
     this.state = {
       error: null,
+      title: null,
       selected_data: [],
       back_data: [],
       front_data: airports,
@@ -95,6 +96,7 @@ class TripCo extends React.Component {
     this.updateSelectedData = this.updateSelectedData.bind(this);
     this.addFrontToSelected = this.addFrontToSelected.bind(this);
     this.setItinerary = this.setItinerary.bind(this);
+    this.downloadFile = this.downloadFile.bind(this);
   }
 
   componentDidMount() {
@@ -133,6 +135,9 @@ class TripCo extends React.Component {
         console.log("[TripCo] ReadXML Reply");
         this.updateBackData(jsonMessage);
         this.updateSelectedData(this.state.back_data);
+        break;
+      case "DownloadXML":
+        this.downloadFile(jsonMessage);
         break;
       case "PlanTrip":
         this.setItinerary(jsonMessage);
@@ -177,6 +182,15 @@ class TripCo extends React.Component {
 
   addFrontToSelected(){
     this.updateSelectedData(this.state.front_data);
+    const element = (
+      <Toast status='ok'>
+        {this.state.front_data.length} Cities Added Successfully!
+      </Toast>
+    );
+    ReactDOM.render(
+      element,
+      document.getElementById('hint')
+    );
   }
 
   updateSelectedData(newData){
@@ -210,6 +224,21 @@ class TripCo extends React.Component {
       this.setState({ itinerary: itin });
   }
 
+  downloadFile() {
+    var obj = new Object();
+    obj.Key = "DownloadXML";
+    obj.Title = this.state.title;
+    var idts = "";
+    for(var i = 0; i < this.state.selected_data.length; i++){
+      if(i !== 0) idts += ",";
+      idts += this.state.selected_data[i].idt;
+    }
+    obj.data = idts;
+    var jsonString = JSON.stringify(obj);
+    console.log("[TripCo] Download XML" + idts);
+    this.state.webSocket.send(jsonString); 
+  }
+
   // Check the airport names and countries to see if there are matches
   // Push them to the searchResults
   updateFrontData(query) {
@@ -233,7 +262,10 @@ class TripCo extends React.Component {
   clearAll(){
     this.setState({ selected_data: []});
   }
-  planTrip(){
+  
+  planTrip(tripTitle){
+    this.setState({title:tripTitle});
+    console.log(this.state.title);
     var obj = new Object();
     obj.Key = "PlanTrip";
     var idts = "";
@@ -289,6 +321,7 @@ class TripCo extends React.Component {
   render() {
     return (
       <Box id="screen" pad="medium">
+        <div id="hint"/>
         <Headline align="center" size="medium">TripCo Online</Headline>
         <Tabs>
           <Tab title="Plan">
@@ -321,6 +354,7 @@ class TripCo extends React.Component {
                 clearAll={this.clearAll}
                 uploadFile={this.uploadFile}
                 data={this.state.selected_data}
+                downloadFile={this.downloadFile}
                 planTrip={this.planTrip}/>
             </App>
           </Tab>
@@ -436,7 +470,7 @@ class MySelectionTable extends React.Component {
   }
 
   viewTrip(){
-
+    
   }
 
   render() {
@@ -523,32 +557,39 @@ class Myset extends React.Component {
 class MySelectedTable extends React.Component {
   constructor(props) {
     super(props);
-    this.downloadFile = this.downloadFile.bind(this);
     this.uploadFile = this.uploadFile.bind(this);
+    this.planTrip = this.planTrip.bind(this);
+  }
+  
+  planTrip(){
+    this.props.planTrip(this.refs.titleSet.value);
   }
 
-  downloadFile() {}
-
   uploadFile(){
-    
     if(document.getElementById("selectedFile").value === "")
       document.getElementById('selectedFile').click();
     else
       this.props.uploadFile(document.getElementById("selectedFile"));
   }
+
   render() {
     return (
       <App>
         <Box id="TripPreview" align="center" full="true" pad="large">
-          <Box full='horizontal' colorIndex='light-2' pad='small' justify='center' direction="row"> 
-            <Paragraph size="large"> View Your Trip -- {this.props.data.length} Airports </Paragraph>
-            <Button icon={<GlobeIcon />} label="Plan My Trip" onClick={this.props.planTrip} plain={true}/>
+          <Box full='horizontal' colorIndex='light-2' pad='small' justify='center'> 
+            View Your Trip -- {this.props.data.length} Airports
+            <Box full="horizontal" direction="row">
+                <Box heading='Input Trip Title' full='horizontal' colorIndex='light-1' margin='small'> 
+                     <input onChange={this.checkInput} id="titleSet" ref="titleSet" type="text" background/>
+                </Box>
+               <Button icon={<GlobeIcon />} label="Plan Trip" onClick={this.planTrip} plain={true}/>
+            </Box>
           </Box>
           <Box direction="row" justify="center" margin='medium'>
             <Button icon={<PreviosIcon />} label="Plan" onClick={this.uploadFile} plain={true}/>
             <input type="file" id="selectedFile" style={{display:'none'}} onChange={this.uploadFile} />
             <Button icon={<DocumentUploadIcon />} label="Upload" onClick={this.uploadFile} plain={true}/>
-            <Button icon={<DocumentDownloadIcon />} label="Download" onClick={this.downloadFile} plain={true}/>
+            <Button icon={<DocumentDownloadIcon />} label="Download" onClick={this.props.downloadFile} plain={true}/>
             <Button icon={<CloseIcon />} label="ClearAll" onClick={this.props.clearAll} plain={true}/>
           </Box>
           <Table >
