@@ -48,4 +48,4 @@ Notes:
         - 2-opt and 3-opt understanding:
             http://stackoverflow.com/questions/21205261/3-opt-local-search-for-tsp
             http://www.technical-recipes.com/2012/applying-c-implementations-of-2-opt-to-travelling-salesman-problems/
-``      - JavaFX used to build input GUI
+``      
