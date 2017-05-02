@@ -1,3 +1,4 @@
+var Anchor = Grommet.Anchor;
 var Accordion = Grommet.Accordion;
 var AccordionPanel = Grommet.AccordionPanel;
 var App = Grommet.App;
@@ -29,7 +30,6 @@ var NextIcon = Grommet.Icons.Base.LinkNext;
 var PreviosIcon = Grommet.Icons.Base.LinkPrevious;
 var RefreshIcon = Grommet.Icons.Base.Refresh;
 var SearchIcon = Grommet.Icons.Base.SearchAdvanced;
-var title = "";
 
 // airport object
 function Airport(id, idt, name, country, continent, type) {
@@ -78,6 +78,7 @@ class TripCo extends React.Component {
       countries: [],
       types: [],
       continents : [],
+      itinerary : [],
       webSocket: new WebSocket(new_uri + "websocket")
     };
 
@@ -93,6 +94,7 @@ class TripCo extends React.Component {
     this.clearAll = this.clearAll.bind(this);
     this.updateSelectedData = this.updateSelectedData.bind(this);
     this.addFrontToSelected = this.addFrontToSelected.bind(this);
+    this.setItinerary = this.setItinerary.bind(this);
   }
 
   componentDidMount() {
@@ -133,6 +135,7 @@ class TripCo extends React.Component {
         this.updateSelectedData(this.state.back_data);
         break;
       case "PlanTrip":
+        this.setItinerary(jsonMessage);
         break;
     }
   }
@@ -174,15 +177,6 @@ class TripCo extends React.Component {
 
   addFrontToSelected(){
     this.updateSelectedData(this.state.front_data);
-    const element = (
-      <Toast status='ok'>
-        {this.state.front_data.length} Airports Add Successfully!
-      </Toast>
-    );
-    ReactDOM.render(
-      element,
-      document.getElementById('hint')
-    );
   }
 
   updateSelectedData(newData){
@@ -206,6 +200,16 @@ class TripCo extends React.Component {
     this.updateCountry(jsonMessage);
   }
   
+  setItinerary(jsonMessage) {
+      console.log(jsonMessage);
+      var itin = jsonMessage.Array;
+      console.log(itin);
+      for (var i = 0; i < itin.length; i++) {
+          console.log(itin[i]);
+      }
+      this.setState({ itinerary: itin });
+  }
+
   // Check the airport names and countries to see if there are matches
   // Push them to the searchResults
   updateFrontData(query) {
@@ -235,7 +239,7 @@ class TripCo extends React.Component {
     var idts = "";
     for(var i = 0; i < this.state.selected_data.length; i++){
       if(i != 0) idts += ",";
-      idts += this.state.selected_data[i].id;
+      idts += this.state.selected_data[i].idt;
     }
     obj.Identifier = idts;
     var jsonString = JSON.stringify(obj);
@@ -290,7 +294,6 @@ class TripCo extends React.Component {
           <Tab title="Plan">
             <Box id="PlanBox" full="false">
               <App>
-                <Box id="hint" style={{display:'none'}}></Box>
                 <Box id="Search" margin="medium" full="true" pad="small">
                   <MySearch
                     myDataProp={this.state.word}
@@ -318,13 +321,15 @@ class TripCo extends React.Component {
                 clearAll={this.clearAll}
                 uploadFile={this.uploadFile}
                 data={this.state.selected_data}
-                planTrip={this.planTrip}
-                addTitle={this.addTitle}/>
+                planTrip={this.planTrip}/>
             </App>
           </Tab>
 
           <Tab title="Itinerary">
-            <Box id="mapBox" full="true" margin="large" />
+            <App>
+                <MyItineraryTable 
+                  data={this.state.itinerary}/>
+            </App>
           </Tab>
 
           <Tab title="TravelMap">
@@ -336,6 +341,74 @@ class TripCo extends React.Component {
     );
   }
 }
+
+class MyItineraryTable extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+    
+    render() {
+        return (
+                <Box>
+                <Table>
+                <thead>
+                <tr>
+                <th width="5%">#</th>
+                <th width="5%">ID</th>
+                <th width="40%">Name</th>
+                <th width="40%">Location</th>
+                <th width="15%">Coordinates</th>
+                <th width="5%">Mileage</th>
+                </tr>
+                </thead>
+                <tbody>
+                {this.props.data.map((one, i) => 
+                <ItineraryRow key={i} data={one}/>)}
+                </tbody>
+                </Table>
+                </Box>
+        )
+    }
+}
+ 
+class ItineraryRow extends React.Component { 
+  constructor(props) {
+    super(props);
+    var tempLat = parseFloat(this.props.data.latitude).toFixed(2);
+    var tempLong = parseFloat(this.props.data.longitude).toFixed(2);
+    console.log(typeof tempLat);
+    var north;
+    var east;
+    if (tempLong > 0) {
+        east = "E";
+    } else {
+        east = "W";
+    }
+    if (tempLat > 0) {
+        north = "N";
+    } else {
+        north = "S";
+    }
+    var finalCoordinates = tempLat + "° " + north + ", " + tempLong + "° " + east;
+    console.log(typeof finalCoordinates);
+    this.state = {
+        coordinates: finalCoordinates
+    };
+  }
+ 
+  render() {
+    return (
+      <TableRow>
+        <td>{this.props.data.num}</td>
+        <td>{this.props.data.id}</td>
+        <td><Anchor href={this.props.data.airportURL}>{this.props.data.name}</Anchor></td>
+        <td>{this.props.data.municipality}, <Anchor href={this.props.data.regionURL}>{this.props.data.region}</Anchor>, <Anchor href={this.props.data.countryURL}>{this.props.data.country}</Anchor>, {this.props.data.continent}</td>
+        <td>{this.state.coordinates}</td>
+        <td>{this.props.data.mileage}</td>
+      </TableRow>
+    );
+  }
+} 
 
 /**
  * 
@@ -452,12 +525,9 @@ class MySelectedTable extends React.Component {
     super(props);
     this.downloadFile = this.downloadFile.bind(this);
     this.uploadFile = this.uploadFile.bind(this);
-    this.addTitle = this.addTitle.bind(this);
   }
 
-  downloadFile() {
-      
-  }
+  downloadFile() {}
 
   uploadFile(){
     
@@ -466,11 +536,6 @@ class MySelectedTable extends React.Component {
     else
       this.props.uploadFile(document.getElementById("selectedFile"));
   }
-  
-  addTitle(){
-    this.setState({word: this.refs.titleSet.value})
-  }
-  
   render() {
     return (
       <App>
@@ -486,14 +551,7 @@ class MySelectedTable extends React.Component {
             <Button icon={<DocumentDownloadIcon />} label="Download" onClick={this.downloadFile} plain={true}/>
             <Button icon={<CloseIcon />} label="ClearAll" onClick={this.props.clearAll} plain={true}/>
           </Box>
-          <Box>
-            <Box heading='Input Trip Title' full='true' colorIndex='light-1' margin='small'> 
-                 <input onChange={this.checkInput} id="titleSet" ref="titleSet" type="text" background/>
-            </Box>
-            <Button icon={<GlobeIcon />} label="Set Title" onClick={this.addTitle} plain={true}/>
-          </Box>
-          <Paragraph size="xlarge"> View Your Trip </Paragraph>
-          <Table>
+          <Table >
             <thead>
               <tr>
                 <th width="10%"> Identifier</th>
