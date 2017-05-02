@@ -72,6 +72,7 @@ class TripCo extends React.Component {
 
     this.state = {
       error: null,
+      title: null,
       selected_data: [],
       back_data: [],
       front_data: airports,
@@ -97,7 +98,6 @@ class TripCo extends React.Component {
     this.addFrontToSelected = this.addFrontToSelected.bind(this);
     this.setItinerary = this.setItinerary.bind(this);
     this.downloadFile = this.downloadFile.bind(this);
-    this.download = this.download.bind(this);
   }
 
   componentDidMount() {
@@ -138,7 +138,7 @@ class TripCo extends React.Component {
         this.updateSelectedData(this.state.back_data);
         break;
       case "DownloadXML":
-        this.download(jsonMessage);
+        this.downloadFile(jsonMessage);
         break;
       case "PlanTrip":
         this.setItinerary(jsonMessage);
@@ -183,6 +183,15 @@ class TripCo extends React.Component {
 
   addFrontToSelected(){
     this.updateSelectedData(this.state.front_data);
+    const element = (
+      <Toast status='ok'>
+        {this.state.front_data.length} Cities Added Successfully!
+      </Toast>
+    );
+    ReactDOM.render(
+      element,
+      document.getElementById('hint')
+    );
   }
 
   updateSelectedData(newData){
@@ -216,6 +225,21 @@ class TripCo extends React.Component {
       this.setState({ itinerary: itin });
   }
 
+  downloadFile() {
+    var obj = new Object();
+    obj.Key = "DownloadXML";
+    obj.Title = this.state.title;
+    var idts = "";
+    for(var i = 0; i < this.state.selected_data.length; i++){
+      if(i !== 0) idts += ",";
+      idts += this.state.selected_data[i].idt;
+    }
+    obj.data = idts;
+    var jsonString = JSON.stringify(obj);
+    console.log("[TripCo] Download XML" + idts);
+    this.state.webSocket.send(jsonString); 
+  }
+
   // Check the airport names and countries to see if there are matches
   // Push them to the searchResults
   updateFrontData(query) {
@@ -239,10 +263,12 @@ class TripCo extends React.Component {
   clearAll(){
     this.setState({ selected_data: []});
   }
+
   planTrip(tripTitle){
     console.log("Entered plan trip");
     title = tripTitle;
     console.log(title);
+
     var obj = new Object();
     obj.Key = "PlanTrip";
     var idts = "";
@@ -326,6 +352,7 @@ class TripCo extends React.Component {
   render() {
     return (
       <Box id="screen" pad="medium">
+        <div id="hint"/>
         <Headline align="center" size="medium">TripCo Online</Headline>
         <Tabs>
           <Tab title="Plan">
@@ -359,6 +386,7 @@ class TripCo extends React.Component {
                 uploadFile={this.uploadFile}
                 downloadFile={this.downLoadFile}
                 data={this.state.selected_data}
+                downloadFile={this.downloadFile}
                 planTrip={this.planTrip}/>
             </App>
           </Tab>
@@ -474,7 +502,7 @@ class MySelectionTable extends React.Component {
   }
 
   viewTrip(){
-
+    
   }
 
   render() {
@@ -563,32 +591,31 @@ class MySelectedTable extends React.Component {
     super(props);
     this.uploadFile = this.uploadFile.bind(this);
     this.addTitle = this.addTitle.bind(this);
-   
   }
 
   uploadFile(){
-    
     if(document.getElementById("selectedFile").value === "")
       document.getElementById('selectedFile').click();
     else
       this.props.uploadFile(document.getElementById("selectedFile"));
   }
+
   addTitle(){
     
     this.props.planTrip(this.refs.titleSet.value);
   }
-  
+
   render() {
     return (
       <App>
         <Box id="TripPreview" align="center" full="true" pad="large">
           <Box full='horizontal' colorIndex='light-2' pad='small' justify='center'> 
-            <Paragraph size="large"> View Your Trip -- {this.props.data.length} Airports </Paragraph>
+            View Your Trip -- {this.props.data.length} Airports
             <Box full="horizontal" direction="row">
                 <Box heading='Input Trip Title' full='horizontal' colorIndex='light-1' margin='small'> 
                      <input onChange={this.checkInput} id="titleSet" ref="titleSet" type="text" background/>
                 </Box>
-               <Button icon={<GlobeIcon />} label="Set Title" onClick={this.addTitle} plain={true}/>
+               <Button icon={<GlobeIcon />} label="Plan Trip" onClick={this.planTrip} plain={true}/>
             </Box>
           </Box>
           <Box direction="row" justify="center" margin='medium'>
