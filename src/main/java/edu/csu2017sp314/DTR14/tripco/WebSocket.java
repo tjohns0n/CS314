@@ -30,9 +30,10 @@ import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
 import edu.csu2017sp314.DTR14.tripco.Model.Query;
+import edu.csu2017sp314.DTR14.tripco.View.SelectionWriter;
 
 //Corrosponds to Server endpoint name in Server.js for clients
-@ServerEndpoint("/cs314")
+@ServerEndpoint("/websocket")
 public class WebSocket {
     //Default root directory for Server End point
     //Working directory for everything called within executable classes
@@ -63,19 +64,19 @@ public class WebSocket {
             /* Case <--Init-->
              * This will be called when Webpage First setting up
              * Input Json {Key = "Init", Value = ""}
-             * Output Json {Key = "Init", Type = "(types)", Contient = "(continents)", Country = "(countries)"}
+             * Output Json {Key = "Init", Type = "(types)", Continent = "(continents)", Country = "(countries)"}
              */
             case "Init":
                 initWebPage(session);
                 break;
 
-            /* Case <--Contient-->
+            /* Case <--Continent-->
              * This will be called when Webpage First setting up
-             * Input Json {Key = "DefContient", Contient = "contient"}
-             * Output Json {Key = "DefContient", Country = "countries"}
+             * Input Json {Key = "DefContinent", Continent = "Continent"}
+             * Output Json {Key = "DefContinent", Country = "countries"}
              */
-            case "Contient":
-                defContient(session, json);
+            case "Continent":
+                defContinent(session, json);
                 break;
 
             /* Case <--Country-->
@@ -113,6 +114,16 @@ public class WebSocket {
             case "ReadXML":
                 processXMLFile(session, json);
                 break;
+                
+            /* Case <--DownloadXML-->  NOTE:THIS IS IN MY TODO LIST
+             * This will be called when User downloads XML File
+             * Input Json {Key = "DownloadXML", Title = "Title", Data = "data"}
+             * Output Json {Key = "DownloadXML", Status = "(true/false)"}
+             */ 
+            case "DownloadXML":
+                writeXML(session, json);
+                break;
+                
 
             /* Case <--PlanTrip-->
              * This will be called when Webpage Search specific content
@@ -152,18 +163,18 @@ public class WebSocket {
         JsonObject jso = Json.createObjectBuilder()
             .add("Key", "Init")
             .add("Type", answer[0])
-            .add("Contient", answer[1])
+            .add("Continent", answer[1])
             .add("Country", answer[2])
             .build();
         sendBack(session, jso);
     }
 
     // refer to the comments in switch syntax
-    private void defContient(Session session, JsonObject json){
-        String continent = removeQuotes(json.get("Contient").toString());
+    private void defContinent(Session session, JsonObject json){
+        String continent = removeQuotes(json.get("Continent").toString());
         String answer = query.continent2countries(continent);
         JsonObject jso = Json.createObjectBuilder()
-            .add("Key", "DefContient")
+            .add("Key", "DefContinent")
             .add("Country", answer)
             .build();
         sendBack(session, jso);
@@ -198,9 +209,12 @@ public class WebSocket {
         String content = removeQuotes(json.get("Value").toString());
         String[] answer = query.searchQuery(content);
         JsonObject jso = Json.createObjectBuilder()
-            .add("Key", "Init")
+            .add("Key", "Search")
             .add("Identifier", answer[0])
             .add("Name", answer[1])
+            .add("Country", answer[2])
+            .add("Continent", answer[3])
+            .add("Type", answer[4])
             .build();
         sendBack(session, jso);
     }
@@ -214,6 +228,21 @@ public class WebSocket {
         } catch (FileNotFoundException e) {     
             e.printStackTrace();
         }
+    }
+    
+    private void writeXML(Session session, JsonObject json) {
+        String title = removeQuotes(json.get("Title").toString());
+        System.out.println("[ServerSide]: download xml"+title);
+        String loc = System.getProperty("user.dir");
+        String data=json.get("data").toString();
+        data = data.replace("\"","");
+        SelectionWriter sw = new SelectionWriter(data.split(","), title, title);
+        sw.writeXML();
+        JsonObject jso = Json.createObjectBuilder()
+            .add("Key", "DownloadXML")
+            .add("Path", sw.path)
+            .build();
+        sendBack(session, jso);
     }
 
     @OnMessage
@@ -245,13 +274,14 @@ public class WebSocket {
 
     // refer to the comments in switch syntax
     private void planTrip(Session session, JsonObject json){
-        String name = removeQuotes(json.get("Name").toString());
+        // String name = removeQuotes(json.get("Name").toString());
         String[] idts = removeQuotes(json.get("Identifier").toString()).split(",");
-        String[] options = removeQuotes(json.get("Option").toString()).split(",");
-        boolean[] opts = new boolean[options.length];
-        for(int i = 0; i < options.length; i++)
-            opts[i] = options[i].equals("true") ? true : false;
+        // String[] options = removeQuotes(json.get("Option").toString()).split(",");
+        // boolean[] opts = new boolean[options.length];
+        // for(int i = 0; i < options.length; i++)
+        //    opts[i] = options[i].equals("true") ? true : false;
         // new TripCo(name, opts, idts);
+        System.out.println("[ServerSide] Start to Plan Trip ");
         sendBack(session, json);
     }
 
