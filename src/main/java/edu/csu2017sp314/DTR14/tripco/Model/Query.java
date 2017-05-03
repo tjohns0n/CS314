@@ -118,7 +118,7 @@ public class Query {
 					ResultSet rs = st.executeQuery(query);
 					try{//Grab code from rs
 						while(rs.next()){
-							ret+=rs.getString(1)+",";
+							ret+=rs.getString(1).replace(",", "")+",";
 						}
 						ret = ret.substring(0, ret.length()-1);
 					} finally { rs.close(); }
@@ -180,8 +180,8 @@ public class Query {
 					ResultSet rs = st.executeQuery(query);
 					try { //Grab countries
 						while(rs.next()){
-							ret[0] += rs.getString(2) + ",";
-							ret[1] += rs.getString(1) + ",";
+							ret[0] += rs.getString(2).replace(",", "") + ",";
+							ret[1] += rs.getString(1).replace(",", "") + ",";
 						}
 						ret[0] = ret[0].substring(0, ret[0].length()-1);
 						ret[1] = ret[1].substring(0, ret[1].length()-1);
@@ -217,7 +217,7 @@ public class Query {
 						int i=0;
 						while(rs.next()){
 							String add="";
-							add+=rs.getString(1)+","+rs.getString(2)+","+rs.getString(3)+","+rs.getString(4)+",";
+							add+=rs.getString(1)+","+rs.getString(2).replace(",", "")+","+rs.getString(3)+","+rs.getString(4)+",";
 							add+=rs.getString(5)+","+rs.getString(6)+","+rs.getString(7)+","+rs.getString(8)+",";
 							add+=rs.getString(9)+","+rs.getString(10)+","+rs.getString(11)+","+rs.getString(12);
 							ret[i] = add;
@@ -248,7 +248,7 @@ public class Query {
 					ResultSet rs = st.executeQuery(query);
 					try { // iterate through the query results
 						while(rs.next()){
-							String add=rs.getString(1)+","+rs.getString(2)+","+rs.getString(3)+","+rs.getString(4);
+							String add=rs.getString(1)+","+rs.getString(2).replace(",", "")+","+rs.getString(3)+","+rs.getString(4);
 							ret.add(add);
 						}
 					} finally { rs.close(); }
@@ -301,7 +301,7 @@ public class Query {
 					try { // iterate through the query results and print
 						while (rs.next()){
 							ret[0]+=rs.getString(1)+",";
-							ret[1]+=rs.getString(2)+",";
+							ret[1]+=rs.getString(2).replace(",", "")+",";
 							ret[2]+=countryMap.get(rs.getString(3))+",";
 							ret[3]+=countinentMap.get(rs.getString(4))+",";
 							ret[4]+=rs.getString(5)+",";
@@ -334,7 +334,7 @@ public class Query {
 					try { // iterate through the query results and print
 						while (rs.next()){
 							ret[0]+=rs.getString(1)+",";
-							ret[1]+=rs.getString(2)+",";
+							ret[1]+=rs.getString(2).replace(",", "")+",";
 							ret[2]+=countryMap.get(rs.getString(3))+",";
 							ret[3]+=countinentMap.get(rs.getString(4))+",";
 							ret[4]+=rs.getString(5)+",";

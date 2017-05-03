@@ -62,7 +62,7 @@ public class LocationList{
 		String template = "";
 		String id 		= "";
 		String parts[] = line.split(cvsSplitRegex);
-		for(int i = 0; i < parts.length; i++){
+		for(int i = 0; i < 4; i++){
 			String valid = parts[i].trim();
 			String title = titles[i].trim();
 
