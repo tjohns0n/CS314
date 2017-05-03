@@ -6,11 +6,13 @@ package edu.csu2017sp314.DTR14.tripco.Presenter;
 import edu.csu2017sp314.DTR14.tripco.Model.Model;
 import edu.csu2017sp314.DTR14.tripco.Model.Query;
 import edu.csu2017sp314.DTR14.tripco.View.ItineraryLeg;
+import edu.csu2017sp314.DTR14.tripco.View.KMLWriter;
 import edu.csu2017sp314.DTR14.tripco.View.View;
 import javax.json.JsonArray;
 
 public class Presenter {
-
+    private final static String WORKDIR = View.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+    private final static String FILEPATH = WORKDIR.substring(0, WORKDIR.indexOf("WEB-INF/"));
     // boolean[] opt = {_id, _mileage, _name, _unit};
     private boolean[] options;
     private String name;
@@ -93,6 +95,13 @@ public class Presenter {
                                         message[j+1].split(","), mile, j+1, unit);
              view.addItinLeg(itinLeg);
         }
+        KMLWriter kw = new KMLWriter(name);
+        for(int k=0;k<message.length;k++){
+            String[] temp = message[k].split(",");
+            kw.addLocation(temp[0], temp[1], Double.parseDouble(temp[3]), Double.parseDouble(temp[2]));
+        }
+        kw.addRoute();
+        kw.writeKML(FILEPATH+name+".kml");
         jsonItinerary = view.getJsonItinerary();
     }
     //For Debugging
